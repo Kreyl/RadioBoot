@@ -1,0 +1,126 @@
+
+build/flash_copy.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000000ec  20000000  20000000  00008000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .comment      00000070  00000000  00000000  000080ec  2**0
+                  CONTENTS, READONLY
+  2 .ARM.attributes 00000028  00000000  00000000  0000815c  2**0
+                  CONTENTS, READONLY
+
+Disassembly of section .text:
+
+20000000 <flash_copy>:
+20000000:	b5f0      	push	{r4, r5, r6, r7, lr}
+20000002:	b085      	sub	sp, #20
+20000004:	1c06      	adds	r6, r0, #0
+20000006:	1c0d      	adds	r5, r1, #0
+20000008:	9201      	str	r2, [sp, #4]
+2000000a:	f3bf 8f4f 	dsb	sy
+2000000e:	f3bf 8f6f 	isb	sy
+20000012:	4c29      	ldr	r4, [pc, #164]	; (200000b8 <flash_copy+0xb8>)
+20000014:	68e3      	ldr	r3, [r4, #12]
+20000016:	07db      	lsls	r3, r3, #31
+20000018:	d502      	bpl.n	20000020 <flash_copy+0x20>
+2000001a:	46c0      	nop			; (mov r8, r8)
+2000001c:	46c0      	nop			; (mov r8, r8)
+2000001e:	e7f8      	b.n	20000012 <flash_copy+0x12>
+20000020:	6923      	ldr	r3, [r4, #16]
+20000022:	061b      	lsls	r3, r3, #24
+20000024:	d539      	bpl.n	2000009a <flash_copy+0x9a>
+20000026:	4b25      	ldr	r3, [pc, #148]	; (200000bc <flash_copy+0xbc>)
+20000028:	6063      	str	r3, [r4, #4]
+2000002a:	4b25      	ldr	r3, [pc, #148]	; (200000c0 <flash_copy+0xc0>)
+2000002c:	6063      	str	r3, [r4, #4]
+2000002e:	e034      	b.n	2000009a <flash_copy+0x9a>
+20000030:	68e2      	ldr	r2, [r4, #12]
+20000032:	4b21      	ldr	r3, [pc, #132]	; (200000b8 <flash_copy+0xb8>)
+20000034:	07d2      	lsls	r2, r2, #31
+20000036:	d4fb      	bmi.n	20000030 <flash_copy+0x30>
+20000038:	2220      	movs	r2, #32
+2000003a:	68d9      	ldr	r1, [r3, #12]
+2000003c:	4211      	tst	r1, r2
+2000003e:	d000      	beq.n	20000042 <flash_copy+0x42>
+20000040:	60da      	str	r2, [r3, #12]
+20000042:	2202      	movs	r2, #2
+20000044:	6923      	ldr	r3, [r4, #16]
+20000046:	4393      	bics	r3, r2
+20000048:	6123      	str	r3, [r4, #16]
+2000004a:	2380      	movs	r3, #128	; 0x80
+2000004c:	011b      	lsls	r3, r3, #4
+2000004e:	18f3      	adds	r3, r6, r3
+20000050:	9303      	str	r3, [sp, #12]
+20000052:	2201      	movs	r2, #1
+20000054:	9b01      	ldr	r3, [sp, #4]
+20000056:	3604      	adds	r6, #4
+20000058:	3304      	adds	r3, #4
+2000005a:	9301      	str	r3, [sp, #4]
+2000005c:	3b04      	subs	r3, #4
+2000005e:	681b      	ldr	r3, [r3, #0]
+20000060:	4f15      	ldr	r7, [pc, #84]	; (200000b8 <flash_copy+0xb8>)
+20000062:	9302      	str	r3, [sp, #8]
+20000064:	6923      	ldr	r3, [r4, #16]
+20000066:	4313      	orrs	r3, r2
+20000068:	9a02      	ldr	r2, [sp, #8]
+2000006a:	6123      	str	r3, [r4, #16]
+2000006c:	0c12      	lsrs	r2, r2, #16
+2000006e:	1f33      	subs	r3, r6, #4
+20000070:	801a      	strh	r2, [r3, #0]
+20000072:	f000 f829 	bl	200000c8 <flash_cmd_program_execute>
+20000076:	2800      	cmp	r0, #0
+20000078:	d11c      	bne.n	200000b4 <flash_copy+0xb4>
+2000007a:	2201      	movs	r2, #1
+2000007c:	693b      	ldr	r3, [r7, #16]
+2000007e:	4313      	orrs	r3, r2
+20000080:	613b      	str	r3, [r7, #16]
+20000082:	466b      	mov	r3, sp
+20000084:	891b      	ldrh	r3, [r3, #8]
+20000086:	8033      	strh	r3, [r6, #0]
+20000088:	f000 f81e 	bl	200000c8 <flash_cmd_program_execute>
+2000008c:	2800      	cmp	r0, #0
+2000008e:	d111      	bne.n	200000b4 <flash_copy+0xb4>
+20000090:	9b03      	ldr	r3, [sp, #12]
+20000092:	429e      	cmp	r6, r3
+20000094:	d1dd      	bne.n	20000052 <flash_copy+0x52>
+20000096:	4b0b      	ldr	r3, [pc, #44]	; (200000c4 <flash_copy+0xc4>)
+20000098:	18ed      	adds	r5, r5, r3
+2000009a:	2d00      	cmp	r5, #0
+2000009c:	d009      	beq.n	200000b2 <flash_copy+0xb2>
+2000009e:	2202      	movs	r2, #2
+200000a0:	6923      	ldr	r3, [r4, #16]
+200000a2:	4313      	orrs	r3, r2
+200000a4:	6123      	str	r3, [r4, #16]
+200000a6:	6166      	str	r6, [r4, #20]
+200000a8:	6923      	ldr	r3, [r4, #16]
+200000aa:	323e      	adds	r2, #62	; 0x3e
+200000ac:	4313      	orrs	r3, r2
+200000ae:	6123      	str	r3, [r4, #16]
+200000b0:	e7be      	b.n	20000030 <flash_copy+0x30>
+200000b2:	1c28      	adds	r0, r5, #0
+200000b4:	b005      	add	sp, #20
+200000b6:	bdf0      	pop	{r4, r5, r6, r7, pc}
+200000b8:	40022000 	.word	0x40022000
+200000bc:	45670123 	.word	0x45670123
+200000c0:	cdef89ab 	.word	0xcdef89ab
+200000c4:	fffffe00 	.word	0xfffffe00
+
+200000c8 <flash_cmd_program_execute>:
+200000c8:	4b07      	ldr	r3, [pc, #28]	; (200000e8 <flash_cmd_program_execute+0x20>)
+200000ca:	68da      	ldr	r2, [r3, #12]
+200000cc:	07d2      	lsls	r2, r2, #31
+200000ce:	d4fb      	bmi.n	200000c8 <flash_cmd_program_execute>
+200000d0:	2220      	movs	r2, #32
+200000d2:	68d9      	ldr	r1, [r3, #12]
+200000d4:	4211      	tst	r1, r2
+200000d6:	d000      	beq.n	200000da <flash_cmd_program_execute+0x12>
+200000d8:	60da      	str	r2, [r3, #12]
+200000da:	2101      	movs	r1, #1
+200000dc:	691a      	ldr	r2, [r3, #16]
+200000de:	2000      	movs	r0, #0
+200000e0:	438a      	bics	r2, r1
+200000e2:	611a      	str	r2, [r3, #16]
+200000e4:	4770      	bx	lr
+200000e6:	46c0      	nop			; (mov r8, r8)
+200000e8:	40022000 	.word	0x40022000

@@ -12,9 +12,13 @@
 #include "led.h"
 #include "Sequences.h"
 
+#include "flash_copy.h"
+
 App_t App;
 
 LedRGB_t Led { {LED_GPIO, LEDR_PIN, LED_TMR, LEDR_CHNL}, {LED_GPIO, LEDG_PIN, LED_TMR, LEDG_CHNL}, {LED_GPIO, LEDB_PIN, LED_TMR, LEDB_CHNL} };
+
+#define FLASH_SECTOR_SIZE                       2048
 
 int main(void) {
     // ==== Setup clock frequency ====
@@ -32,6 +36,19 @@ int main(void) {
     Uart.Init(115200, UART_GPIO, UART_TX_PIN, UART_GPIO, UART_RX_PIN);
     Uart.Printf("\r%S %S\r", APP_NAME, BUILD_TIME);
     Clk.PrintFreqs();
+
+
+    uint8_t ram_func[FLASH_COPY_FN_SIZE] = {0};
+    memcpy(ram_func, __FLASH_COPY_FN, FLASH_COPY_FN_SIZE);
+
+//    ((FLASH_COPY_FN_TYPE)((unsigned int)ram_func + 1))(0x08008000, 0x08000000, 16); // doesn't work
+
+    ((FLASH_COPY_FN_TYPE)((unsigned int)__FLASH_COPY_FN + 1))(0x08008000, 0x08000000, 16); // work well
+
+
+    Uart.Printf("Program complete\r");
+
+    /*
 
     Led.Init();
 
@@ -57,6 +74,7 @@ int main(void) {
         chThdSleepMilliseconds(2700);
     }
     else Led.StartSequence(lsqStart);
+*/
 
     // Main cycle
     App.ITask();

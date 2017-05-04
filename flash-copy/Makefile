@@ -13,12 +13,12 @@ NM                         = $(CROSS)nm
 
 #----------------------------------------------------------
 MCU                         = STM32F072RB
-TARGET_NAME                 = flash_copy
-HEADER_TARGET               = flash_copy_ram
+TARGET_NAME                 = flash_copy-core
+HEADER_TARGET               = flash_copy
 #----------------------------------------------------------
 BUILD_DIR                   = build
 OUTPUT_DIR                  = output
-RAMCODE_DIR                 = ram_code
+RAMCODE_DIR                 = code
 LD_SCRIPT                   = script.ld
 #----------------------------------------------------------
 CMSIS_DIR                   = ../CMSIS

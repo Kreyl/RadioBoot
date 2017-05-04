@@ -27,7 +27,7 @@ hdr.write("#define " + sys.argv[2].upper() + "_H\n\n")
 hdr.write("#include <stdint.h>\n\n")
 hdr.write("#define FLASH_COPY_FN_SIZE                   " + str(len(h) / 2) + "\n\n")
 hdr.write("extern const uint8_t __FLASH_COPY_FN[FLASH_COPY_FN_SIZE];\n\n")
-hdr.write("typedef int (*FLASH_COPY_FN_TYPE)(uint32_t*, unsigned int, uint32_t*);\n\n")
+hdr.write("typedef int (*FLASH_COPY_FN_TYPE)(uint32_t, uint32_t, unsigned int);\n\n")
 hdr.write("#endif // " + sys.argv[2].upper() + "_H\n")
 hdr.close
 

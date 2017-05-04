@@ -27,9 +27,17 @@ static void flash_cmd_unlock()
 #ifdef STM32F0
     if ((FLASH->CR & FLASH_CR_LOCK) != 0)                           /* (2) */
     {
-        FLASH->KEYR = FLASH_FKEY1;                                  /* (3) */
-        FLASH->KEYR = FLASH_FKEY2;
+        FLASH->KEYR = FLASH_KEY1;                                   /* (3) */
+        FLASH->KEYR = FLASH_KEY2;
     }
+#endif
+}
+
+static inline void flash_cmd_lock()
+{
+    /* lock FLASH */
+#ifdef STM32F0
+    FLASH->CR |= FLASH_CR_LOCK;
 #endif
 }
 
@@ -63,7 +71,7 @@ static int flash_cmd_program_execute()
     return OK;
 }
 
-static inline int flash_cmd_erase_page(uint32_t* page_addr)
+static inline int flash_cmd_erase_page(uint32_t page_addr)
 {
     /* (1) Set the PER bit in the FLASH_CR register to enable page erasing */
     /* (2) Program the FLASH_AR register to select a page to erase */
@@ -74,7 +82,7 @@ static inline int flash_cmd_erase_page(uint32_t* page_addr)
     /* (7) Reset the PER Bit to disable the page erase */
 #ifdef STM32F0
     FLASH->CR |= FLASH_CR_PER;                      /* (1) */
-    FLASH->AR = (uint32_t)page_addr;                /* (2) */
+    FLASH->AR = page_addr;                          /* (2) */
     FLASH->CR |= FLASH_CR_STRT;                     /* (3) */
     while ((FLASH->SR & FLASH_SR_BSY) != 0) {}      /* (4) */
     if ((FLASH->SR & FLASH_SR_EOP) != 0)            /* (5) */
@@ -88,45 +96,41 @@ static inline int flash_cmd_erase_page(uint32_t* page_addr)
     return OK;
 }
 
-static inline int flash_cmd_program_halfword(uint16_t* addr, uint16_t halfword)
+static inline int flash_cmd_program_word(unsigned int addr, unsigned int data)
 {
     flash_cmd_program_prepare();
-    *addr = halfword;
+    *((uint16_t*)addr) = (uint16_t)data;
+    *((uint16_t*)(addr + sizeof(uint16_t))) = (uint16_t)(data >> 16);
     return flash_cmd_program_execute();
 }
 
-static inline int flash_cmd_program_word(uint32_t* addr, uint32_t word)
-{
-    int err = flash_cmd_program_halfword((uint16_t*)addr, ((uint16_t)(word >> 16)));
-    if(err != OK)
-        return err;
-
-    return flash_cmd_program_halfword((uint16_t*)addr + 2, (uint16_t)word);
-}
-
 // IRQ should be disabled
-// size checked
-
-int flash_copy(uint32_t* src_addr, unsigned int size, uint32_t* dst_addr)
+// addr and size also checked
+// size -  should be in words
+int flash_copy(uint32_t dst_addr, uint32_t src_addr, unsigned int size)
 {
-    int res;
+//    int res;
     unsigned int i;
+    unsigned int start_addr = dst_addr & ~(FLASH_SECTOR_SIZE - 1);
+    unsigned int end_addr = (dst_addr + size + FLASH_SECTOR_SIZE) & ~(FLASH_SECTOR_SIZE - 1);
 
     __DSB();
     __ISB();
 
     flash_cmd_unlock();
 
-    // TODO: temporary logic
-    for(; size; size -= FLASH_SECTOR_SIZE_WORDS)
-    {
-        if ((res = flash_cmd_erase_page(src_addr)) != 0)
-            return res;
+    for(i = start_addr; i < end_addr; i += FLASH_SECTOR_SIZE)
+        flash_cmd_erase_page(i);
 
-        for (i = 0; i < FLASH_SECTOR_SIZE_WORDS; ++i)
-            if ((res = flash_cmd_program_word(src_addr++, *dst_addr++)) != 0)
-                return res;
+    for (i = 0; i < size; ++i)
+    {
+        flash_cmd_program_word(dst_addr, *(unsigned int*)src_addr);
+        dst_addr += sizeof(uint32_t);
+        src_addr += sizeof(uint32_t);
     }
-    return OK;
+
+    flash_cmd_lock();
+
+    return 0;
 }
 

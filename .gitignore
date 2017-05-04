@@ -1,3 +1,5 @@
 flash-copy/build/
 flash-copy/output/flash_copy.bin
 flash-copy/ram_code/
+flash-copy/code/
+flash-copy/output/

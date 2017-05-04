@@ -56,7 +56,11 @@ extern "C" {
 void HardFault_Handler(void)
 {
     LOOP();
-    PrintfCNow("HARD FAULT\r");
+    PrintfCNow("HARD FAULT: ");
+    if (SCB_HFSR & HFSR_VECTTBL)
+        PrintfCNow("Vector table read fault\r");
+    else
+        PrintfCNow("General hard fault\r");
     panic();
 }
 
@@ -70,14 +74,38 @@ void MemManage_Handler(void)
 void BusFault_Handler(void)
 {
     LOOP();
-    PrintfCNow("BUS FAULT\r");
-    panic();
+    if (SCB_CFSR & (CFSR_BSTKERR | CFSR_BUNSTKERR | CFSR_IMPRECISERR | CFSR_PRECISERR | CFSR_IBUSERR))
+    {
+        PrintfCNow("BUS FAULT: ");
+        if (SCB_CFSR & CFSR_BSTKERR)
+            PrintfCNow("Stacking failed\r");
+        else if (SCB_CFSR & CFSR_BUNSTKERR)
+            PrintfCNow("Unstacking failed\r");
+        else if (SCB_CFSR & (CFSR_IMPRECISERR | CFSR_PRECISERR))
+            PrintfCNow("Data bus error\r");
+        else if (SCB_CFSR & CFSR_IBUSERR)
+            PrintfCNow("Instruction bus error\r");
+
+        panic();
+    }
+    else
+        HardFault_Handler();
 }
 
 void UsageFault_Handler(void)
 {
     LOOP();
-    PrintfCNow("USAGE FAULT\r");
+    PrintfCNow("USAGE FAULT: ");
+    if (SCB_CFSR & CFSR_DIVBYZERO)
+        PrintfCNow("Division by zero\r");
+    else if (SCB_CFSR & CFSR_UNALIGNED)
+        PrintfCNow("Unaligned access\r");
+    else if (SCB_CFSR & CFSR_NOCP)
+        PrintfCNow("No coprocessor found\r");
+    else if (SCB_CFSR & (CFSR_UNDEFINSTR | CFSR_INVPC))
+        PrintfCNow("Undefined instruction\r");
+    else if (SCB_CFSR & CFSR_INVSTATE)
+        PrintfCNow("Invalid state\r");
     panic();
 }
 }

@@ -11,6 +11,7 @@
 #include "radio_lvl1.h"
 #include "led.h"
 #include "Sequences.h"
+#include "core_dbg.h"
 
 #include "flash_copy.h"
 
@@ -41,10 +42,9 @@ int main(void) {
     uint8_t ram_func[FLASH_COPY_FN_SIZE] = {0};
     memcpy(ram_func, __FLASH_COPY_FN, FLASH_COPY_FN_SIZE);
 
-//    ((FLASH_COPY_FN_TYPE)((unsigned int)ram_func + 1))(0x08008000, 0x08000000, 16); // doesn't work
+    ((FLASH_COPY_FN_TYPE)((unsigned int)ram_func + 1))(0x08008000, 0x08000000, 16); // doesn't work
 
-    ((FLASH_COPY_FN_TYPE)((unsigned int)__FLASH_COPY_FN + 1))(0x08008000, 0x08000000, 16); // work well
-
+//    ((FLASH_COPY_FN_TYPE)((unsigned int)__FLASH_COPY_FN + 1))(0x08008000, 0x08000000, 16); // work well
 
     Uart.Printf("Program complete\r");
 

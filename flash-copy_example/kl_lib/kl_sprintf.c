@@ -40,8 +40,8 @@ uint32_t kl_vsprintf(ftVoidChar PPutChar, uint32_t MaxLength, const char *format
 
         // Here goes optional width specification.
         // If it starts with zero (zero_padded is true), it means we use '0' instead of ' ' as a filler.
-        width = 0;
-        zero_padded = false;
+        width = 2;
+        zero_padded = true;
         while(true) {
             c = *f++;
             if(c < '0' || c > '9') break;

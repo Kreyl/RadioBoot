@@ -106,12 +106,14 @@ static inline int flash_cmd_program_word(unsigned int addr, unsigned int data)
 
 // IRQ should be disabled
 // addr and size also checked
-// size -  should be in words
-int flash_copy(uint32_t dst_addr, uint32_t src_addr, unsigned int size)
+// size -  in bytes
+int flash_copy(uint32_t dst_addr, uint32_t src_addr, unsigned int bytes_to_copy)
 {
 //    int res;
     unsigned int i;
+    // trim values
     unsigned int start_addr = dst_addr & ~(FLASH_SECTOR_SIZE - 1);
+    unsigned int size = (bytes_to_copy + 3) >> 2;
     unsigned int end_addr = (dst_addr + size + FLASH_SECTOR_SIZE) & ~(FLASH_SECTOR_SIZE - 1);
 
     __DSB();

@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 
-#define FLASH_COPY_FN_SIZE                   204
+#define FLASH_COPY_FN_SIZE                   208
 
 extern const uint8_t __FLASH_COPY_FN[FLASH_COPY_FN_SIZE];
 

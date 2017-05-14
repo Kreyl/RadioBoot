@@ -33,6 +33,10 @@
 #define UART_BUF_SIZE                                       16
 //generally UART is used as stdout/stdio, so fine-tuning is required only on hi load
 #define UART_STREAM_SIZE                                    32
+
+// ------------------------------- SPI -----------------------------------------------
+#define SPI_DEBUG_ERRORS                                    0
+
 //-------------------------------- USB -----------------------------------------------
 #define USB_EP_COUNT_MAX                                    4
 //low-level USB debug. Turn on only in case of IO problems

@@ -11,11 +11,6 @@
 #include <stdint.h>
 #include "io.h"
 
-typedef enum {
-    SPI_MODE_MASTER,
-    SPI_MODE_SLAVE
-} MODE;
-
 #define SPI_DATA_FIRST_EDGE         (0 << 0)
 #define SPI_DATA_SECOND_EDGE        (1 << 0)
 
@@ -46,10 +41,18 @@ typedef enum {
 #define SPI_MODE_FULLDUPLEX         (0 << 10)
 #define SPI_MODE_RECIEVE            (1 << 10)
 
+typedef enum {
+    SPI_BYTE = IPC_USER,
+    SPI_SEND_DATA,
+    SPI_GET_DATA,
+    SPI_IPC_MAX
+} SPI_IPCS;
 
 bool spi_open(int port, unsigned int settings);
 void spi_close(int port);
 
-int spi_data(int port, IO* io, unsigned int max_size);
+unsigned int spi_byte(int port, uint8_t byte);
+unsigned int spi_send_data(int port, uint8_t* data, unsigned int data_size);
+unsigned int spi_get_data(int port, uint8_t* data);
 
 #endif /* SPI_H */

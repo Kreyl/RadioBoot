@@ -20,7 +20,7 @@
 #include "led.h"
 #include "config.h"
 
-//#include "cc11xx/cc1101.h"
+#include "cc11xx/cc1101.h"
 
 void app();
 
@@ -37,28 +37,6 @@ const REX __APP = {
     app
 };
 
-
-static inline void stat()
-{
-    SYSTIME uptime;
-    int i;
-    unsigned int diff;
-
-    get_uptime(&uptime);
-    for (i = 0; i < TEST_ROUNDS; ++i)
-        svc_test();
-    diff = systime_elapsed_us(&uptime);
-    printf("average kernel call time: %d.%dus\n", diff / TEST_ROUNDS, (diff / (TEST_ROUNDS / 10)) % 10);
-
-    get_uptime(&uptime);
-    for (i = 0; i < TEST_ROUNDS; ++i)
-        process_switch_test();
-    diff = systime_elapsed_us(&uptime);
-    printf("average switch time: %d.%dus\n", diff / TEST_ROUNDS, (diff / (TEST_ROUNDS / 10)) % 10);
-
-    printf("core clock: %d\n", power_get_core_clock());
-    process_info();
-}
 
 static inline void app_setup_dbg()
 {
@@ -80,8 +58,7 @@ static inline void app_init(APP* app)
     process_create(&__STM32_CORE);
 #if (APP_DEBUG)
     app_setup_dbg();
-//    stat();
-    printf("RBoot Host, CPU %d MHz\n", power_get_core_clock()/1000000);
+    printf("Try RBoot Host, CPU %d MHz\n", power_get_core_clock()/1000000);
 #endif
 }
 
@@ -89,10 +66,15 @@ void app()
 {
     APP app;
     IPC ipc;
+    CC1101 cc11xx;
 
     app_init(&app);
     led_init(&app);
-    comm_init(&app);
+
+    sleep_ms(200);
+
+    cc1101_hw_init(&cc11xx);
+//    comm_init(&app);
 
     for (;;)
     {

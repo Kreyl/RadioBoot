@@ -16,11 +16,11 @@
 #include "../rexos/userspace/pin.h"
 #include "../rexos/userspace/gpio.h"
 #include "app_private.h"
+#include "app_radio.h"
 #include "comm.h"
 #include "led.h"
 #include "config.h"
 
-#include "cc11xx/cc1101.h"
 
 void app();
 
@@ -58,7 +58,7 @@ static inline void app_init(APP* app)
     process_create(&__STM32_CORE);
 #if (APP_DEBUG)
     app_setup_dbg();
-    printf("Try RBoot Host, CPU %d MHz\n", power_get_core_clock()/1000000);
+    printf("RadioBoot Host, CPU %d MHz\n", power_get_core_clock()/1000000);
 #endif
 }
 
@@ -66,15 +66,14 @@ void app()
 {
     APP app;
     IPC ipc;
-    CC1101 cc11xx;
 
     app_init(&app);
     led_init(&app);
+    app_radio_init(&app);
+    comm_init(&app);
 
     sleep_ms(200);
-
-    cc1101_hw_init(&cc11xx);
-//    comm_init(&app);
+    process_info();
 
     for (;;)
     {

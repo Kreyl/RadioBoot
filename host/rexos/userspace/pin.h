@@ -11,3 +11,5 @@
 
 void pin_enable(unsigned int pin, unsigned int mode, unsigned int mode2);
 void pin_disable(unsigned int pin);
+void pin_enable_exti(unsigned int pin, unsigned int flags);
+void pin_disable_exti(unsigned int pin);

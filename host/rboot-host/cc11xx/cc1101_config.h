@@ -20,9 +20,11 @@
 #define CC1101_GDO0_PIN                         A2
 #define CC1101_GDO2_PIN                         A3
 
+#define CC1101_GDO0_EXTI_IRQ                    EXTI2_IRQn
+
 #define CC1101_IO_SIZE                          64
 
-#define CC1101_DEBUG                            1
+#define CC1101_DEBUG                            0
 #define CC1101_DEBUG_INFO                       1
 #define CC1101_DEBUG_ERRORS                     1
 #define CC1101_DEBUG_FLOW                       1

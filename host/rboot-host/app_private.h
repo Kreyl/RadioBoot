@@ -12,9 +12,15 @@
 #include "led.h"
 #include <stdint.h>
 
+
+typedef enum {
+    HAL_RADIO = HAL_APP
+} HAL_APP_GROUPS;
+
 typedef struct _APP {
     HANDLE timer;
     HANDLE usbd;
+    HANDLE radio;
 
     COMM comm;
     LEDS leds;

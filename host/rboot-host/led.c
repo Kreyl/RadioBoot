@@ -28,7 +28,6 @@ void led_init(APP* app)
 #if (APP_LED_DEBUG)
     printf("LED: init\n");
 #endif // APP_LED_DEBUG
-
 }
 
 void led_mode(APP* app, LED_COLOR color, LED_MODE mode)

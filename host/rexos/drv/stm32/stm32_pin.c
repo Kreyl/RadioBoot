@@ -166,6 +166,7 @@ void stm32_pin_request(CORE* core, IPC* ipc)
         stm32_gpio_enable_pin(&core->gpio, (PIN)ipc->param1, ipc->param2, (AF)ipc->param3);
 #endif
         break;
+
     case STM32_GPIO_ENABLE_EXTI:
         stm32_gpio_enable_exti(&core->gpio, (PIN)ipc->param1, ipc->param2);
         break;

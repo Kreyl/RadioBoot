@@ -32,6 +32,7 @@
 #if (APP_DEBUG)
 #define APP_COMM_DEBUG                              1
 #define APP_LED_DEBUG                               1
+#define APP_RADIO_DEBUG                             1
 
 #endif //  APP_DEBUG
 #endif // CONFIG_H

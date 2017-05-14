@@ -151,30 +151,33 @@
 // FIFO
 #define CC_FIFO                                 0x3F
 
-#pragma pack(push, 1)
-typedef struct {
-    uint8_t addr;
-    uint8_t data;
-} CC1101_REG;
+
+typedef enum {
+    CC1101_STATE_OFF = 0,
+    CC1101_STATE_IDLE,
+    CC1101_STATE_SLEEP,
+    CC1101_STATE_RX,
+    CC1101_STATE_TX
+} CC1101_STATE;
 
 typedef struct {
-    uint8_t status;
-    uint8_t data;
-} CC1101_PKT;
-#pragma pack(pop)
-
-typedef struct {
-    bool active;
+    CC1101_STATE state;
     HANDLE handle, user;
-    uint8_t state;
+    uint8_t status;
+    uint8_t channel;
+    uint8_t packet_size;
 } CC1101;
 
 void cc1101_hw_init(CC1101* cc1101);
 void cc1101_hw_deinit(CC1101* cc1101);
 
+void cc1101_reset(CC1101* cc1101);
+void cc1101_calibrate(CC1101* cc1101);
 void cc1101_set_channel(CC1101* cc1101, uint8_t channel_num);
 void cc1101_set_tx_power(CC1101* cc1101, uint8_t power);
 void cc1101_set_radio_pkt_size(CC1101* cc1101, uint8_t size);
+void cc1101_tx(CC1101* cc1101);
+void cc1101_rx(CC1101* cc1101);
 
 //void cc1101_tx();
 //void cc1101_rx();

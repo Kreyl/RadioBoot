@@ -1,0 +1,4 @@
+asm_defines.h
+*.pro.*
+/example/build
+/example/output

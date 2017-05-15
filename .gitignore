@@ -5,3 +5,4 @@ flash-copy/code/
 flash-copy/output/
 host/rboot-host/build/
 host/rboot-host/output/stm32_template.bin
+host/rboot-host/output/

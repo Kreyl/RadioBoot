@@ -47,8 +47,6 @@ void app_radio_tx_sync(APP* app, uint8_t* data, unsigned int data_size)
     ack(app->radio, HAL_REQ(HAL_RADIO, RADIO_TX), (unsigned int)data, data_size, 0);
 }
 
-
-
 // ========================== RADIO PROCESS ====================================
 static void radio_request(CC1101* cc1101, IPC* ipc)
 {

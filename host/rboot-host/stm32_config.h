@@ -63,7 +63,7 @@
 //------------------------------ TIMER -----------------------------------------------
 #define HPET_TIMER                              TIM_2
 //only required if no STM32_RTC_DRIVER is set
-#define SECOND_PULSE_TIMER                      TIM_11
+#define SECOND_PULSE_TIMER                      TIM_6
 //disable to save few bytes
 #define TIMER_IO                                1
 //------------------------------- ADC ------------------------------------------------

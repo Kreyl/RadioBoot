@@ -13,9 +13,9 @@
 //marks objects with magic in headers. Decrease perfomance on few tacts, but very useful for debug if you don't have MPU enabled
 #define KERNEL_MARKS                                0
 //check range of dynamic objects in pools0
-#define KERNEL_RANGE_CHECKING                       0
+#define KERNEL_RANGE_CHECKING                       1
 //check kernel handles. Require few tacts, but making kernel calls much safer
-#define KERNEL_HANDLE_CHECKING                      1
+#define KERNEL_HANDLE_CHECKING                      0
 //check user adresses. Require few tacts, but making kernel calls much safer
 #define KERNEL_ADDRESS_CHECKING                     0
 //some kernel statistics (stack, mem, etc). Decrease perfomance in any object creation.
@@ -24,7 +24,7 @@
 //Don't forget to turn off in production.
 #define KERNEL_DEVELOPER_MODE                       1
 //enable this only if you have problems with system timer. May decrease perfomance
-#define KERNEL_TIMER_DEBUG                          0
+#define KERNEL_TIMER_DEBUG                          1
 //Enabling this you will get stats on each thread uptime, but decreasing context switching up to 2 times
 #define KERNEL_PROCESS_STAT                         1
 //size of IPC queue per process

@@ -196,7 +196,7 @@ typedef enum {
     TIM_2 = 0,
     TIM_3,
     TIM_4,
-    TIM_5,
+    TIM_5, // This TIMER is available in Cat.3, Cat.4, Cat.5 and Cat.6 devices only
     TIM_6,
     TIM_7,
     TIM_9,

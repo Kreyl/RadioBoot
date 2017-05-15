@@ -69,17 +69,33 @@ void app()
 
     app_init(&app);
     led_init(&app);
-    app_radio_init(&app);
-    comm_init(&app);
+//    app_radio_init(&app);
+//    comm_init(&app);
 
     sleep_ms(200);
     process_info();
+
+    app.timer = timer_create(0, HAL_APP);
+    if(app.timer == INVALID_HANDLE)
+        printf("TO invalid\n");
+    else
+    {
+        printf("TO start\n");
+        timer_start_ms(app.timer, 5000);
+    }
+
 
     for (;;)
     {
         ipc_read(&ipc);
         switch (HAL_GROUP(ipc.cmd))
         {
+
+        case HAL_APP:
+            printf("TO fire\n");
+            timer_start_ms(app.timer, 5000);
+        break;
+
         case HAL_USBD:
             comm_request(&app, &ipc);
             break;

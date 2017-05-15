@@ -41,7 +41,15 @@ void app_radio_init(APP* app)
     led_mode(app, LED_COLOR_BLUE, LED_MODE_ON);
 }
 
+void app_radio_tx_sync(APP* app, uint8_t* data, unsigned int data_size)
+{
+    led_mode(app, LED_COLOR_BLUE, LED_MODE_BLINK);
+    ack(app->radio, HAL_REQ(HAL_RADIO, RADIO_TX), (unsigned int)data, data_size, 0);
+}
 
+
+
+// ========================== RADIO PROCESS ====================================
 static void radio_request(CC1101* cc1101, IPC* ipc)
 {
     switch (HAL_ITEM(ipc->cmd))
@@ -68,7 +76,7 @@ static void radio_request(CC1101* cc1101, IPC* ipc)
             cc1101_set_radio_pkt_size(cc1101, ipc->param1);
             break;
         case RADIO_TX:
-            cc1101_tx(cc1101);
+            cc1101_tx(cc1101, (uint8_t*)ipc->param1, ipc->param2);
             break;
         case RADIO_RX:
             cc1101_rx(cc1101);

@@ -176,7 +176,7 @@ void cc1101_calibrate(CC1101* cc1101);
 void cc1101_set_channel(CC1101* cc1101, uint8_t channel_num);
 void cc1101_set_tx_power(CC1101* cc1101, uint8_t power);
 void cc1101_set_radio_pkt_size(CC1101* cc1101, uint8_t size);
-void cc1101_tx(CC1101* cc1101);
+void cc1101_tx(CC1101* cc1101, uint8_t* data, unsigned int data_size);
 void cc1101_rx(CC1101* cc1101);
 
 //void cc1101_tx();

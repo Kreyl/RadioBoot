@@ -24,7 +24,7 @@
 
 #define CC1101_IO_SIZE                          64
 
-#define CC1101_DEBUG                            0
+#define CC1101_DEBUG                            1
 #define CC1101_DEBUG_INFO                       1
 #define CC1101_DEBUG_ERRORS                     1
 #define CC1101_DEBUG_FLOW                       1

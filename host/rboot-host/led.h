@@ -28,6 +28,7 @@ typedef struct {
     bool is_on;
     LED_MODE mode;
     uint8_t pin;
+    int need_blink;
 } LED_SETUP;
 
 typedef struct {

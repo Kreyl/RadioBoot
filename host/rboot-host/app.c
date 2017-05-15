@@ -69,21 +69,18 @@ void app()
 
     app_init(&app);
     led_init(&app);
-//    app_radio_init(&app);
-//    comm_init(&app);
+    app_radio_init(&app);
+    comm_init(&app);
 
     sleep_ms(200);
     process_info();
 
     app.timer = timer_create(0, HAL_APP);
-    if(app.timer == INVALID_HANDLE)
-        printf("TO invalid\n");
-    else
-    {
-        printf("TO start\n");
-        timer_start_ms(app.timer, 5000);
-    }
+    timer_start_ms(app.timer, 10000);
 
+    uint8_t radio_packet[5] = {
+            0x00, 0x01, 0xFF, 0xFF, 0xFF
+    };
 
     for (;;)
     {
@@ -92,8 +89,8 @@ void app()
         {
 
         case HAL_APP:
-            printf("TO fire\n");
-            timer_start_ms(app.timer, 5000);
+            app_radio_tx_sync(&app, radio_packet, sizeof(radio_packet));
+            timer_start_ms(app.timer, 10000);
         break;
 
         case HAL_USBD:

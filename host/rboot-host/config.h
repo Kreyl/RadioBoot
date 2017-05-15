@@ -11,6 +11,14 @@
 #define LED_WHITE_PIN                               B0
 #define LED_BLUE_PIN                                B1
 
+#define LED_BLINK_FREQ_HZ                           25
+#define LED_BLINK_TOGGLE_TIMES                      6
+
+#define LED_BLINK_TIM_REG                           TIM3
+#define LED_BLINK_TIM                               TIM_3
+#define LED_BLINK_TIM_CHANNEL                       TIM_CHANNEL1
+#define LED_BLINK_IRQ_VECTOR                        TIM3_IRQn
+
 // =============================== USB =========================================
 #define USB_PORT_NUM                                USB_0
 #define USBD_PROCESS_SIZE                           1200

@@ -24,8 +24,9 @@ typedef enum {
 } RADIO_IPCS;
 
 void app_radio_init(APP* app);
-void app_radio_tx(APP* app, uint8_t data);
-void app_radio_rx(APP* app, uint8_t data);
+
+void app_radio_tx_sync(APP* app, uint8_t* data, unsigned int data_size);
+void app_radio_rx(APP* app, uint8_t* data);
 
 
 #endif /* APP_RADIO_H_ */

@@ -126,6 +126,9 @@ static inline unsigned int cc1101_receive_packet(CC1101* cc1101, uint8_t* data)
 
 static inline void cc1101_chip_reset(CC1101* cc1101)
 {
+#if (CC1101_DEBUG)
+    printf("CC1101: reset\n");
+#endif // CC1101_DEBUG_INFO
     cc1101_write_strobe(cc1101, CC_SRES);
 }
 
@@ -136,6 +139,9 @@ static inline void cc1101_flush_tx_fifo(CC1101* cc1101)
 
 static inline void cc1101_flush_rx_fifo(CC1101* cc1101)
 {
+#if (CC1101_DEBUG)
+    printf("CC1101: flush RX\n");
+#endif // CC1101_DEBUG_INFO
     cc1101_write_strobe(cc1101, CC_SFRX);
 }
 
@@ -159,6 +165,7 @@ static inline void cc1101_go_idle(CC1101* cc1101)
     while(cc1101->status != CC_STB_IDLE)
     {
         cc1101_write_strobe(cc1101, CC_SIDLE);
+        sleep_ms(9);
     }
 
     cc1101->state = CC1101_STATE_IDLE;
@@ -177,6 +184,10 @@ static inline void cc1101_go_sleep(CC1101* cc1101)
 
 static inline void cc1101_rf_config(CC1101* cc1101)
 {
+#if (CC1101_DEBUG)
+    printf("CC1101: RF config\n");
+#endif // CC1101_DEBUG_INFO
+
     cc1101_write_register(CC_FSCTRL1,  CC_FSCTRL1_VALUE);    // Frequency synthesizer control.
     cc1101_write_register(CC_FSCTRL0,  CC_FSCTRL0_VALUE);    // Frequency synthesizer control.
     cc1101_write_register(CC_FREQ2,    CC_FREQ2_VALUE);      // Frequency control word, high byte.
@@ -208,10 +219,8 @@ static inline void cc1101_rf_config(CC1101* cc1101)
 //    cc1101_write_register(CC_IOCFG2,   CC_IOCFG2_VALUE);     // GDO2 output pin configuration.
     cc1101_write_register(CC_IOCFG2,   0x35);
     cc1101_write_register(CC_IOCFG0,   CC_IOCFG0_VALUE);     // GDO0 output pin configuration.
-//    cc1101_write_register(CC_IOCFG0,   0x35);                // GDO0 is 27MHz/192 = 4.5MHz clock XOSC
     cc1101_write_register(CC_PKTCTRL1, CC_PKTCTRL1_VALUE);   // Packet automation control.
     cc1101_write_register(CC_PKTCTRL0, CC_PKTCTRL0_VALUE);   // Packet automation control.
-//    cc1101_write_register(CC_PKTLEN,   7);                   // Packet length, dummy
 
     cc1101_write_register(CC_PATABLE, CC_Pwr0dBm);
 
@@ -285,10 +294,6 @@ void cc1101_hw_deinit(CC1101* cc1101)
 
 void cc1101_reset(CC1101* cc1101)
 {
-#if (CC1101_DEBUG)
-    printf("CC1101: reset\n");
-#endif // CC1101_DEBUG_INFO
-
     cc1101_chip_reset(cc1101);
     cc1101_flush_rx_fifo(cc1101);
     cc1101_rf_config(cc1101);
@@ -329,17 +334,22 @@ void cc1101_set_radio_pkt_size(CC1101* cc1101, uint8_t size)
     printf("CC1101: set packet size to %d\n", size);
 #endif // CC1101_DEBUG_INFO
     cc1101->packet_size = size;
+    cc1101_write_register(CC_PKTLEN, size);
 }
 
-void cc1101_tx(CC1101* cc1101)
+void cc1101_tx(CC1101* cc1101, uint8_t* data, unsigned int data_size)
 {
 #if (CC1101_DEBUG_INFO)
     printf("CC1101: TX\n");
 #endif // CC1101_DEBUG_INFO
-    cc1101_go_idle(cc1101);
-    cc1101_prepare_tx(cc1101, NULL, 0);
-    cc1101_start_tx(cc1101);
-    cc1101->state = CC1101_STATE_TX;
+
+//    if(cc1101->packet_size != data_size)
+//        cc1101_set_radio_pkt_size(cc1101, data_size);
+//
+//    cc1101_go_idle(cc1101);
+//    cc1101_prepare_tx(cc1101, data, data_size);
+//    cc1101_start_tx(cc1101);
+//    cc1101->state = CC1101_STATE_TX;
 }
 
 void cc1101_rx(CC1101* cc1101)

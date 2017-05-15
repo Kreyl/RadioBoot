@@ -61,7 +61,7 @@ SRC_C				       += stm32_spi.c
 #midware 
 SRC_C					   += cdc_acmd.c usbd.c
 #userspace lib
-SRC_C                      += ipc.c io.c process.c stdio.c stdlib.c systime.c time.c uart.c power.c stream.c pin.c usb.c spi.c
+SRC_C                      += ipc.c io.c process.c stdio.c stdlib.c systime.c time.c uart.c power.c stream.c pin.c usb.c spi.c htimer.c
 #app
 SRC_C                      += app.c led.c comm.c app_radio.c
 

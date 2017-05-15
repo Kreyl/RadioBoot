@@ -79,11 +79,14 @@ static inline void comm_usbd_stream_rx(APP* app, unsigned int size)
     unsigned int i;
     for (i = 0; i < size; ++i)
     {
+
         stream_read(app->comm.rx, &c, sizeof(char));
         // echo
         stream_write(app->comm.tx, &c, sizeof(char));
     }
     stream_listen(app->comm.rx_stream, 0, HAL_USBD);
+
+    led_mode(app, LED_COLOR_WHITE, LED_MODE_BLINK);
 }
 
 void comm_init(APP *app)

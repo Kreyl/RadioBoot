@@ -83,7 +83,7 @@ static inline void cc1101_prepare_tx(CC1101* cc1101, uint8_t* data, unsigned int
     spi_byte(CC1101_SPI, CC_FIFO | CC_WRITE_FLAG | CC_BURST_FLAG);
 
 #if (CC1101_DEBUG_FLOW)
-    cc1101_dump(data, data_size, "CC1101 TX");
+    cc1101_dump(data, data_size, "TX");
 #endif // CC1101_DEBUG_FLOW
 
     for(uint8_t i = 0; i < data_size; i++)
@@ -343,13 +343,13 @@ void cc1101_tx(CC1101* cc1101, uint8_t* data, unsigned int data_size)
     printf("CC1101: TX\n");
 #endif // CC1101_DEBUG_INFO
 
-//    if(cc1101->packet_size != data_size)
-//        cc1101_set_radio_pkt_size(cc1101, data_size);
-//
-//    cc1101_go_idle(cc1101);
-//    cc1101_prepare_tx(cc1101, data, data_size);
-//    cc1101_start_tx(cc1101);
-//    cc1101->state = CC1101_STATE_TX;
+    if(cc1101->packet_size != data_size)
+        cc1101_set_radio_pkt_size(cc1101, data_size);
+
+    cc1101_go_idle(cc1101);
+    cc1101_prepare_tx(cc1101, data, data_size);
+    cc1101_start_tx(cc1101);
+    cc1101->state = CC1101_STATE_TX;
 }
 
 void cc1101_rx(CC1101* cc1101)

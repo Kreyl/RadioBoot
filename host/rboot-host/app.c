@@ -62,6 +62,14 @@ static inline void app_init(APP* app)
 #endif
 }
 
+const uint8_t packets[5][5] = {
+        {0x00, 0x01, 0xFF, 0xFF, 0xFF},
+        {0x00, 0x01, 0xFF, 0x00, 0xFF},
+        {0x00, 0x01, 0xFF, 0x00, 0x00},
+        {0x00, 0x01, 0x00, 0xFF, 0x00},
+        {0x00, 0x01, 0x00, 0xFF, 0xFF}
+};
+
 void app()
 {
     APP app;
@@ -70,17 +78,14 @@ void app()
     app_init(&app);
     led_init(&app);
     app_radio_init(&app);
-    comm_init(&app);
+//    comm_init(&app);
 
     sleep_ms(200);
     process_info();
 
     app.timer = timer_create(0, HAL_APP);
-    timer_start_ms(app.timer, 10000);
-
-    uint8_t radio_packet[5] = {
-            0x00, 0x01, 0xFF, 0xFF, 0xFF
-    };
+    timer_start_ms(app.timer, 2000);
+    uint8_t pkt_id = 0;
 
     for (;;)
     {
@@ -89,8 +94,10 @@ void app()
         {
 
         case HAL_APP:
-            app_radio_tx_sync(&app, radio_packet, sizeof(radio_packet));
-            timer_start_ms(app.timer, 10000);
+            app_radio_tx_sync(&app, packets[pkt_id], 5);
+            if(pkt_id++ >= 4)
+                pkt_id = 0;
+            timer_start_ms(app.timer, 2000);
         break;
 
         case HAL_USBD:

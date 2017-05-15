@@ -34,7 +34,7 @@ void app_radio_init(APP* app)
 
     ack(app->radio, HAL_REQ(HAL_RADIO, IPC_OPEN), 0, 0, 0);
     ack(app->radio, HAL_REQ(HAL_RADIO, RADIO_RESET), 0, 0, 0);
-    ack(app->radio, HAL_REQ(HAL_RADIO, RADIO_SET_POWER), CC_PwrMinus15dBm, 0, 0);
+    ack(app->radio, HAL_REQ(HAL_RADIO, RADIO_SET_POWER), CC_PwrMinus10dBm, 0, 0);
     ack(app->radio, HAL_REQ(HAL_RADIO, RADIO_SET_CHANNEL), 0, 0, 0);
     ack(app->radio, HAL_REQ(HAL_RADIO, RADIO_SET_PACKET_SIZE), 0, 0, 0);
 

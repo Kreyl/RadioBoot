@@ -97,6 +97,15 @@
 #define CC_STB_RX_OVF                           0x60
 #define CC_STB_TX_UNDF                          0x70
 
+// CC packet status
+#define CC_STATUS_CRC_OK                           (1 << 7)
+#define CC_STATUS_CARIER_SENSE                     (1 << 6)
+#define CC_STATUS_PQT_REACHED                      (1 << 5)
+#define CC_STATUS_CHANNEL_CLEAR                    (1 << 4)
+#define CC_STATUS_SFD                              (1 << 3)
+#define CC_STATUS_GDO2                             (1 << 2)
+#define CC_STATUS_GDO0                             (1 << 0)
+
 // Config registers addresses
 #define CC_IOCFG2                               0x00
 #define CC_IOCFG1                               0x01
@@ -177,7 +186,7 @@ void cc1101_set_channel(CC1101* cc1101, uint8_t channel_num);
 void cc1101_set_tx_power(CC1101* cc1101, uint8_t power);
 void cc1101_set_radio_pkt_size(CC1101* cc1101, uint8_t size);
 void cc1101_tx(CC1101* cc1101, uint8_t* data, unsigned int data_size);
-void cc1101_rx(CC1101* cc1101);
+unsigned int cc1101_rx(CC1101* cc1101, uint8_t* data);
 
 //void cc1101_tx();
 //void cc1101_rx();

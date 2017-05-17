@@ -1,15 +1,15 @@
 /*
- * app_radio.c
+ * radio.c
  *
- *  Created on: 14 мая 2017 г.
- *      Author: RomaJam
+ *  Created on: 17 мая 2017 г.
+ *      Author: RLeonov
  */
 
 
 #include "app_private.h"
 #include "../rexos/userspace/stdio.h"
 #include "cc11xx/cc1101.h"
-#include "app_radio.h"
+#include "radio.h"
 
 void radio();
 
@@ -26,7 +26,7 @@ const REX __RADIO = {
     radio
 };
 
-void app_radio_init(APP* app)
+void radio_init(APP* app)
 {
     app->radio = process_create(&__RADIO);
     if(app->radio == INVALID_HANDLE)
@@ -41,10 +41,16 @@ void app_radio_init(APP* app)
     led_mode(app, LED_COLOR_BLUE, LED_MODE_ON);
 }
 
-void app_radio_tx_sync(APP* app, uint8_t* data, unsigned int data_size)
+void radio_tx_sync(APP* app, uint8_t* data, unsigned int data_size)
 {
     led_mode(app, LED_COLOR_BLUE, LED_MODE_BLINK);
     ack(app->radio, HAL_REQ(HAL_RADIO, RADIO_TX), (unsigned int)data, data_size, 0);
+}
+
+unsigned int radio_rx_sync(APP* app, uint8_t* data)
+{
+    led_mode(app, LED_COLOR_BLUE, LED_MODE_BLINK);
+    return get_size(app->radio, HAL_REQ(HAL_RADIO, RADIO_RX), (unsigned int)data, 0, 0);
 }
 
 // ========================== RADIO PROCESS ====================================
@@ -77,7 +83,7 @@ static void radio_request(CC1101* cc1101, IPC* ipc)
             cc1101_tx(cc1101, (uint8_t*)ipc->param1, ipc->param2);
             break;
         case RADIO_RX:
-            cc1101_rx(cc1101);
+            ipc->param3 = cc1101_rx(cc1101, (uint8_t*)ipc->param1);
             break;
         default:
             error(ERROR_NOT_SUPPORTED);

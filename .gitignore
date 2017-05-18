@@ -1,6 +1,8 @@
 flash-copy/build/
-flash-copy/output/
+flash-copy/output/flash_copy.bin
+flash-copy/ram_code/
 flash-copy/code/
 flash-copy/output/
-rboot-host/build/
-rboot-host/output/
+host/rboot-host/build/
+host/rboot-host/output/stm32_template.bin
+host/rboot-host/output/

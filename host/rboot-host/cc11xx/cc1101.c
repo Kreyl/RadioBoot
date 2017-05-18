@@ -419,5 +419,6 @@ unsigned int cc1101_rx(CC1101* cc1101, uint8_t* data)
         sleep_ms(10);
     }
     error(ERROR_TIMEOUT);
+    return 0;
 }
 

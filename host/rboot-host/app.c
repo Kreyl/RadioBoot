@@ -62,14 +62,14 @@ static inline void app_init(APP* app)
 #endif
 }
 
-const uint8_t packets[6][5] = {
-        {0x00, 0x01, 0xFF, 0x00, 0x00},
-        {0x00, 0x01, 0x00, 0x00, 0x00},
-        {0x00, 0x01, 0x00, 0xFF, 0x00},
-        {0x00, 0x01, 0x00, 0x00, 0x00},
-        {0x00, 0x01, 0x00, 0x00, 0xFF},
-        {0x00, 0x01, 0x00, 0x00, 0x00}
-};
+//const uint8_t packets[6][5] = {
+//        {0x00, 0x01, 0xFF, 0x00, 0x00},
+//        {0x00, 0x01, 0x00, 0x00, 0x00},
+//        {0x00, 0x01, 0x00, 0xFF, 0x00},
+//        {0x00, 0x01, 0x00, 0x00, 0x00},
+//        {0x00, 0x01, 0x00, 0x00, 0xFF},
+//        {0x00, 0x01, 0x00, 0x00, 0x00}
+//};
 
 void app()
 {
@@ -78,21 +78,17 @@ void app()
 
     app_init(&app);
     led_init(&app);
-    radio_init(&app);
+//    radio_init(&app);
 //    comm_init(&app);
 
     sleep_ms(200);
     process_info();
 
-//    printf("rx: %d\n", radio_rx_sync(&app, NULL));
-
-    uint8_t data[64];
-
-    int timeout = 100;
-
-    app.timer = timer_create(0, HAL_APP);
-    timer_start_ms(app.timer, timeout);
-    uint8_t pkt_id = 0;
+//    uint8_t data[64];
+//    int timeout = 100;
+//    app.timer = timer_create(0, HAL_APP);
+//    timer_start_ms(app.timer, timeout);
+//    uint8_t pkt_id = 0;
 
     for (;;)
     {
@@ -101,11 +97,11 @@ void app()
         {
 
         case HAL_APP:
-            radio_tx_sync(&app, packets[pkt_id], 5);
-            printf("rx: %d\n", radio_rx_sync(&app, data));
-            if(pkt_id++ >= 5)
-                pkt_id = 0;
-            timer_start_ms(app.timer, timeout);
+//            radio_tx_sync(&app, packets[pkt_id], 5);
+//            printf("rx: %d\n", radio_rx_sync(&app, data));
+//            if(pkt_id++ >= 5)
+//                pkt_id = 0;
+//            timer_start_ms(app.timer, timeout);
         break;
 
         case HAL_USBD:

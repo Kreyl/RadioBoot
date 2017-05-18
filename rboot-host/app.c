@@ -88,14 +88,35 @@ void app()
     process_info();
 
 
-    uint8_t ram_func[FLASH_COPY_FN_SIZE] = {0};
-    memcpy(ram_func, __FLASH_COPY_FN, FLASH_COPY_FN_SIZE);
+//    uint8_t ram_func[FLASH_COPY_FN_SIZE] = {0};
+//    memcpy(ram_func, __FLASH_COPY_FN, FLASH_COPY_FN_SIZE);
 
     //((FLASH_COPY_FN_TYPE)((unsigned int)ram_func + 1))(0x08008000, 0x08000000, 16); // doesn't work
-    ((FLASH_COPY_FN_TYPE)((unsigned int)__FLASH_COPY_FN + 1))(0x08008000, 0x08000000, 17); // work well
+    ((FLASH_COPY_FN_TYPE)((unsigned int)__FLASH_COPY_FN + 1))(0x08008000, 0x08000000, 16); // work well
 
     printf("Program complete\n");
 
+    /*
+    while ((FLASH->SR & FLASH_SR_BSY) != 0)
+    {
+        __NOP();
+        __NOP();
+    }
+
+    FLASH->PEKEYR = FLASH_PEKEY1;
+    FLASH->PEKEYR = FLASH_PEKEY2;
+    FLASH->SR = FLASH_SR_WRPERR;
+    FLASH->PECR &= ~FLASH_PECR_FTDW;
+    while((FLASH->PECR & FLASH_PECR_PELOCK) != 0);
+
+    FLASH->PRGKEYR = FLASH_PRGKEY1;
+    FLASH->PRGKEYR = FLASH_PRGKEY2;
+    while((FLASH->PECR & FLASH_PECR_PRGLOCK) != 0);
+
+    *((uint32_t*)0x08008000) = 0xA1B23D4E;
+    *((uint32_t*)0x08008004) = 0x9ABCDEF0;
+    printf("OK\n");
+    */
 
 //    uint8_t data[64];
 //    int timeout = 100;

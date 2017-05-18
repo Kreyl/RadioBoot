@@ -40,22 +40,15 @@ static void flash_cmd_unlock()
         FLASH->KEYR = FLASH_KEY2;
     }
 #elif defined(STM32L1)
-    if(FLASH->PECR & FLASH_PECR_PELOCK)
-    {
-        FLASH->PEKEYR = FLASH_PEKEY1;
-        FLASH->PEKEYR = FLASH_PEKEY2;
-        FLASH->SR = FLASH_SR_WRPERR;
-        FLASH->PECR &= ~FLASH_PECR_FTDW;
-        while((FLASH->PECR & FLASH_PECR_PELOCK) != 0);
-    }
+    FLASH->PEKEYR = FLASH_PEKEY1;
+    FLASH->PEKEYR = FLASH_PEKEY2;
+    FLASH->SR = FLASH_SR_WRPERR;
+    FLASH->PECR &= ~FLASH_PECR_FTDW;
+    while((FLASH->PECR & FLASH_PECR_PELOCK) != 0);
 
-    if(FLASH->PECR & FLASH_PECR_PRGLOCK)
-    {
-        FLASH->PRGKEYR = FLASH_PRGKEY1;
-        FLASH->PRGKEYR = FLASH_PRGKEY2;
-        while((FLASH->PECR & FLASH_PECR_PRGLOCK) != 0);
-    }
-
+    FLASH->PRGKEYR = FLASH_PRGKEY1;
+    FLASH->PRGKEYR = FLASH_PRGKEY2;
+    while((FLASH->PECR & FLASH_PECR_PRGLOCK) != 0);
 #endif
 }
 
@@ -149,20 +142,22 @@ int flash_copy(uint32_t dst_addr, uint32_t src_addr, unsigned int bytes_to_copy)
 
     flash_cmd_unlock();
 
-    for(i = start_addr; i < end_addr; i += FLASH_SECTOR_SIZE)
-        flash_cmd_erase_page(i);
+//    for(i = start_addr; i < end_addr; i += FLASH_SECTOR_SIZE)
+//        flash_cmd_erase_page(i);
 
 #if defined(STM32L1)
     // disable ERASE
-    FLASH->PECR &= ~(FLASH_PECR_ERASE);
+    //FLASH->PECR &= ~(FLASH_PECR_ERASE);
 #endif
 
-    for (i = 0; i < size; ++i)
-    {
-        flash_cmd_program_word(dst_addr, *(unsigned int*)src_addr);
-        dst_addr += sizeof(uint32_t);
-        src_addr += sizeof(uint32_t);
-    }
+    *((uint32_t*)0x08008000) = 0xA1B23D4E;
+
+//    for (i = 0; i < size; ++i)
+//    {
+//        flash_cmd_program_word(dst_addr, *(unsigned int*)src_addr);
+//        dst_addr += sizeof(uint32_t);
+//        src_addr += sizeof(uint32_t);
+//    }
 
     flash_cmd_lock();
 

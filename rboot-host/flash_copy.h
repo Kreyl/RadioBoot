@@ -11,7 +11,7 @@
 /* Auto build - DO NOT CHANGE */
 /* Target MCU: STM32L151C8 */
 
-#define FLASH_COPY_FN_SIZE                   236
+#define FLASH_COPY_FN_SIZE                   120
 
 extern const uint8_t __FLASH_COPY_FN[FLASH_COPY_FN_SIZE];
 

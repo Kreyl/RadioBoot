@@ -22,6 +22,9 @@
 #include "config.h"
 
 
+#include <string.h>
+#include "flash_copy.h"
+
 void app();
 
 const REX __APP = {
@@ -83,6 +86,16 @@ void app()
 
     sleep_ms(200);
     process_info();
+
+
+    uint8_t ram_func[FLASH_COPY_FN_SIZE] = {0};
+    memcpy(ram_func, __FLASH_COPY_FN, FLASH_COPY_FN_SIZE);
+
+    //((FLASH_COPY_FN_TYPE)((unsigned int)ram_func + 1))(0x08008000, 0x08000000, 16); // doesn't work
+    ((FLASH_COPY_FN_TYPE)((unsigned int)__FLASH_COPY_FN + 1))(0x08008000, 0x08000000, 17); // work well
+
+    printf("Program complete\n");
+
 
 //    uint8_t data[64];
 //    int timeout = 100;

@@ -10,6 +10,7 @@ ITEMS_ON_LINE = 16
 def write_cr(f):
     f.write("/*\n")
     f.write("*      Author: Roma Jam\n")
+    
     f.write("*/\n\n")
  
 if len(sys.argv) < 3:
@@ -24,7 +25,10 @@ hdr = open(sys.argv[2] + ".h", "w+")
 write_cr(hdr)
 hdr.write("#ifndef " + sys.argv[2].upper() + "_H\n")
 hdr.write("#define " + sys.argv[2].upper() + "_H\n\n")
-hdr.write("#include <stdint.h>\n\n")
+hdr.write("#include <stdint.h>\n")
+hdr.write("#include <string.h>\n\n")
+hdr.write("/* Auto build - DO NOT CHANGE */\n")
+hdr.write("/* Target MCU: " + sys.argv[3].upper() + " */\n\n")
 hdr.write("#define FLASH_COPY_FN_SIZE                   " + str(len(h) / 2) + "\n\n")
 hdr.write("extern const uint8_t __FLASH_COPY_FN[FLASH_COPY_FN_SIZE];\n\n")
 hdr.write("typedef int (*FLASH_COPY_FN_TYPE)(uint32_t, uint32_t, unsigned int);\n\n")
@@ -35,6 +39,8 @@ src = open(sys.argv[2] + ".c", "w+")
 write_cr(src)
 
 src.write("#include \"" + sys.argv[2] + ".h\"\n\n")
+src.write("/* Auto build - DO NOT CHANGE */\n")
+src.write("/* Target MCU: " + sys.argv[3].upper() + " */\n\n")
 src.write("const uint8_t __FLASH_COPY_FN[FLASH_COPY_FN_SIZE] = {\n")
 
 for i in range(0, len(h) / 2):

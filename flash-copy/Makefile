@@ -12,7 +12,8 @@ OBJDUMP                    = $(CROSS)objdump
 NM                         = $(CROSS)nm
 
 #----------------------------------------------------------
-MCU                         = STM32F072RB
+#MCU                         = STM32F072RB
+MCU							= STM32L151C8
 TARGET_NAME                 = flash_copy-core
 HEADER_TARGET               = flash_copy
 #----------------------------------------------------------
@@ -22,7 +23,8 @@ RAMCODE_DIR                 = code
 LD_SCRIPT                   = script.ld
 #----------------------------------------------------------
 CMSIS_DIR                   = ../rexos/CMSIS
-CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32F0xx
+#CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32F0xx
+CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L1xx
 #----------------------------------------------------------
 INCLUDE_FOLDERS             = $(CMSIS_DIR)/Include $(CMSIS_DEVICE_DIR)/Include
 
@@ -51,7 +53,7 @@ all: $(TARGET_NAME).elf
 	@$(NM) -n $(BUILD_DIR)/$(TARGET_NAME).elf > $(BUILD_DIR)/$(TARGET_NAME).sym
 	@mkdir -p $(OUTPUT_DIR)
 	@mv $(BUILD_DIR)/$(TARGET_NAME).bin $(OUTPUT_DIR)/$(TARGET_NAME).bin
-	@python bin2h.py $(OUTPUT_DIR)/$(TARGET_NAME).bin $(HEADER_TARGET)
+	@python bin2h.py $(OUTPUT_DIR)/$(TARGET_NAME).bin $(HEADER_TARGET) $(MCU)
 	@mkdir -p $(RAMCODE_DIR)
 	@mv $(HEADER_TARGET).* $(RAMCODE_DIR)
 

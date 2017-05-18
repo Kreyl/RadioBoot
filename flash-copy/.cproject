@@ -50,9 +50,10 @@
 									<listOptionValue builtIn="false" value="../../rexos/CMSIS"/>
 									<listOptionValue builtIn="false" value="../../rexos/CMSIS/Device/ST/STM32F0xx/Include"/>
 									<listOptionValue builtIn="false" value="../../rexos/CMSIS/Include"/>
+									<listOptionValue builtIn="false" value="../../"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.1046055609" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="STM32F072RB"/>
+									<listOptionValue builtIn="false" value="STM32L151C8"/>
 								</option>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.1153124786" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input"/>
 							</tool>

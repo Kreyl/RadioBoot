@@ -1,0 +1,39 @@
+# 1 "../rexos/kernel/arm.ld.S"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "../rexos/kernel/arm.ld.S"
+# 12 "../rexos/kernel/arm.ld.S"
+# 1 "../rexos/kernel/../userspace/core/core.h" 1
+# 14 "../rexos/kernel/../userspace/core/core.h"
+# 1 "../rexos/kernel/../userspace/core/../stm32/stm32.h" 1
+# 15 "../rexos/kernel/../userspace/core/core.h" 2
+# 1 "../rexos/kernel/../userspace/core/../lpc/lpc.h" 1
+# 16 "../rexos/kernel/../userspace/core/core.h" 2
+# 1 "../rexos/kernel/../userspace/core/../ti/ti.h" 1
+# 17 "../rexos/kernel/../userspace/core/core.h" 2
+# 13 "../rexos/kernel/arm.ld.S" 2
+
+MEMORY
+{
+ FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 0x10000000
+ RAM (rw) : ORIGIN = 0x20000000, LENGTH = 0x10000000
+}
+
+SECTIONS
+{
+ .text :
+ {
+                KEEP(*(.isr_vectors));
+                KEEP(*(.flashconfig));
+                KEEP(*(.reset));
+                *(.text .text.* .gnu.linkonce.t.*)
+  *(.glue_7t) *(.glue_7)
+  *(.rodata .rodata.* .gnu.linkonce.r.*)
+  . = ALIGN(4);
+  _etext = .;
+  PROVIDE(__ETEXT = .);
+ } > FLASH
+
+ _end = . ;
+ PROVIDE(__END = .);
+}

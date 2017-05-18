@@ -21,7 +21,7 @@ OUTPUT_DIR                  = output
 RAMCODE_DIR                 = code
 LD_SCRIPT                   = script.ld
 #----------------------------------------------------------
-CMSIS_DIR                   = ../CMSIS
+CMSIS_DIR                   = ../rexos/CMSIS
 CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32F0xx
 #----------------------------------------------------------
 INCLUDE_FOLDERS             = $(CMSIS_DIR)/Include $(CMSIS_DEVICE_DIR)/Include

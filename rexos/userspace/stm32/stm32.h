@@ -819,25 +819,41 @@
 
 
 //---------------------------------------------------------------------------- STM32 L1 ----------------------------------------------------------------------------------------------------------
-#if defined(STM32L151C6) || defined(STM32L151C8)
+#if defined(STM32L151C6) || defined(STM32L151C8) || defined(STM32L151CB)
 #define STM32L151xC
 #endif
 
-#if defined(STM32L151C8)
-// 64K
-#define FLASH_SIZE          0x10000
-// 10K
-#define SRAM_SIZE           0x2800
-// 4K
-#define EEPROM_SZIE         0x1000
+#if defined(STM32L151R6) || defined(STM32L151R8) || defined(STM32L151RB)
+#define STM32L151xR
 #endif
 
-#if defined(STM32L151xC)
+#if defined(STM32L151V8) || defined(STM32L151VB)
+#define STM32L151xV
+#endif
+
+#if defined(STM32L151C6) || defined(STM32L151R6)
+#define FLASH_SIZE          0x8000
+#elif defined(STM32L151C8) || defined(STM32L151R8)
+#define FLASH_SIZE          0x10000
+#elif defined(STM32L151CB) || defined(STM32L151RB)
+#define FLASH_SIZE          0x20000
+#endif
+
+#if defined(STM32L151C6) || defined(STM32L151C8) || defined(STM32L151V8)
+#define SRAM_SIZE           0x2800
+#elif defined(STM32L151CB) || defined(STM32L151RB) || defined(STM32L151VB)
+#define SRAM_SIZE           0x4000
+#endif
+
+
+#if defined(STM32L151xC) || defined(STM32L151xR) || defined(STM32L151xV)
 #define STM32L1
-#define GPIO_COUNT          4
-#define UARTS_COUNT         3
+#define EEPROM_SIZE         0x1000
+#define TIM_COUNT           8
 #define SPI_COUNT           2
 #define I2C_COUNT           2
+#define UARTS_COUNT         3
+#define GPIO_COUNT          4
 #define DAC_CHANNELS_COUNT  2
 #endif
 
@@ -846,8 +862,7 @@
 #endif
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#if defined(STM32F1) || defined(STM32F2) || defined(STM32F4) \
-||  defined(STM32L1)
+#if defined(STM32F1) || defined(STM32F2) || defined(STM32F4) || defined(STM32L1)
 #define STM32
 #ifndef CORTEX_M3
 #define CORTEX_M3

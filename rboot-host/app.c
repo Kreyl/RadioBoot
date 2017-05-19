@@ -23,7 +23,7 @@
 
 
 #include <string.h>
-#include "flash_copy.h"
+#include "flash_copy_int.h"
 
 void app();
 
@@ -88,11 +88,19 @@ void app()
     process_info();
 
 
+    uint8_t ram[16] =
+    {
+        0x35, 0xE0, 0xB7, 0x00, 0xBF, 0x92, 0x35, 0xFA,
+        0x76, 0xD8, 0xF6, 0x81, 0x9A, 0x1A, 0x03, 0x83
+    };
+
 //    uint8_t ram_func[FLASH_COPY_FN_SIZE] = {0};
 //    memcpy(ram_func, __FLASH_COPY_FN, FLASH_COPY_FN_SIZE);
 
-    //((FLASH_COPY_FN_TYPE)((unsigned int)ram_func + 1))(0x08008000, 0x08000000, 16); // doesn't work
-    ((FLASH_COPY_FN_TYPE)((unsigned int)__FLASH_COPY_FN + 1))(0x08008000, 0x08000000, 16); // work well
+//    ((FLASH_COPY_FN_TYPE)((unsigned int)ram_func + 1))(0x08008000, 0x08000000, 16); // doesn't work
+//    ((FLASH_COPY_FN_TYPE)((unsigned int)__FLASH_COPY_FN + 1))(0x08008000, 0x08000000, 16); // work well
+
+    flash_copy(0x08008010, (uint32_t)ram, 16);
 
     printf("Program complete\n");
 

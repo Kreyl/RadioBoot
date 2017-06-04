@@ -15,6 +15,7 @@
 #include "../rexos/userspace/power.h"
 #include "../rexos/userspace/pin.h"
 #include "../rexos/userspace/gpio.h"
+#include "../rexos/userspace/irq.h"
 #include "app_private.h"
 #include "radio.h"
 #include "comm.h"
@@ -65,14 +66,29 @@ static inline void app_init(APP* app)
 #endif
 }
 
-//const uint8_t packets[6][5] = {
-//        {0x00, 0x01, 0xFF, 0x00, 0x00},
-//        {0x00, 0x01, 0x00, 0x00, 0x00},
-//        {0x00, 0x01, 0x00, 0xFF, 0x00},
-//        {0x00, 0x01, 0x00, 0x00, 0x00},
-//        {0x00, 0x01, 0x00, 0x00, 0xFF},
-//        {0x00, 0x01, 0x00, 0x00, 0x00}
-//};
+const uint8_t packets[6][5] = {
+        {0x00, 0x01, 0xFF, 0x00, 0x00},
+        {0x00, 0x01, 0x00, 0x00, 0x00},
+        {0x00, 0x01, 0x00, 0xFF, 0x00},
+        {0x00, 0x01, 0x00, 0x00, 0x00},
+        {0x00, 0x01, 0x00, 0x00, 0xFF},
+        {0x00, 0x01, 0x00, 0x00, 0x00}
+};
+
+void rtc_wup_isr(int vector, void* param)
+{
+    iprintd("wup\n");
+
+    RTC->ISR &= ~RTC_ISR_WUTF;
+    EXTI->PR |= (1 << 20);
+}
+
+#define RTC_WakeUpClock_RTCCLK_Div16        ((uint32_t)0x00000000)
+#define RTC_WakeUpClock_RTCCLK_Div8         ((uint32_t)0x00000001)
+#define RTC_WakeUpClock_RTCCLK_Div4         ((uint32_t)0x00000002)
+#define RTC_WakeUpClock_RTCCLK_Div2         ((uint32_t)0x00000003)
+#define RTC_WakeUpClock_CK_SPRE_16bits      ((uint32_t)0x00000004)
+#define RTC_WakeUpClock_CK_SPRE_17bits      ((uint32_t)0x00000006)
 
 void app()
 {
@@ -84,53 +100,15 @@ void app()
 //    radio_init(&app);
 //    comm_init(&app);
 
+//    uint8_t pkt_id = 0;
+//    uint8_t data[64];
+
+    uint32_t timeout = 1000;
+    app.timer = timer_create(0, HAL_APP);
+    timer_start_ms(app.timer, timeout);
+
     sleep_ms(200);
     process_info();
-
-
-    uint8_t ram[16] =
-    {
-        0x35, 0xE0, 0xB7, 0x00, 0xBF, 0x92, 0x35, 0xFA,
-        0x76, 0xD8, 0xF6, 0x81, 0x9A, 0x1A, 0x03, 0x83
-    };
-
-//    uint8_t ram_func[FLASH_COPY_FN_SIZE] = {0};
-//    memcpy(ram_func, __FLASH_COPY_FN, FLASH_COPY_FN_SIZE);
-
-//    ((FLASH_COPY_FN_TYPE)((unsigned int)ram_func + 1))(0x08008000, 0x08000000, 16); // doesn't work
-//    ((FLASH_COPY_FN_TYPE)((unsigned int)__FLASH_COPY_FN + 1))(0x08008000, 0x08000000, 16); // work well
-
-    flash_copy(0x08008010, (uint32_t)ram, 16);
-
-    printf("Program complete\n");
-
-    /*
-    while ((FLASH->SR & FLASH_SR_BSY) != 0)
-    {
-        __NOP();
-        __NOP();
-    }
-
-    FLASH->PEKEYR = FLASH_PEKEY1;
-    FLASH->PEKEYR = FLASH_PEKEY2;
-    FLASH->SR = FLASH_SR_WRPERR;
-    FLASH->PECR &= ~FLASH_PECR_FTDW;
-    while((FLASH->PECR & FLASH_PECR_PELOCK) != 0);
-
-    FLASH->PRGKEYR = FLASH_PRGKEY1;
-    FLASH->PRGKEYR = FLASH_PRGKEY2;
-    while((FLASH->PECR & FLASH_PECR_PRGLOCK) != 0);
-
-    *((uint32_t*)0x08008000) = 0xA1B23D4E;
-    *((uint32_t*)0x08008004) = 0x9ABCDEF0;
-    printf("OK\n");
-    */
-
-//    uint8_t data[64];
-//    int timeout = 100;
-//    app.timer = timer_create(0, HAL_APP);
-//    timer_start_ms(app.timer, timeout);
-//    uint8_t pkt_id = 0;
 
     for (;;)
     {
@@ -143,7 +121,8 @@ void app()
 //            printf("rx: %d\n", radio_rx_sync(&app, data));
 //            if(pkt_id++ >= 5)
 //                pkt_id = 0;
-//            timer_start_ms(app.timer, timeout);
+            printf("Timer\n");
+            timer_start_ms(app.timer, timeout);
         break;
 
         case HAL_USBD:

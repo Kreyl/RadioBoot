@@ -24,13 +24,13 @@ int main(void)
     printf("CPU %d MHz\n", power_get_core_clock() / 1000000);
 #endif // DFU_DEBUG
 
-    system.reset_needed = false;
+    system.reboot = false;
 
     // Enable LED
     gpio_enable(B0, GPIO_MODE_OUT);
     pin_set(B0);
 
-    while(!system.reset_needed)
+    while(!system.reboot)
     {
 //        radio_request(system);
     }

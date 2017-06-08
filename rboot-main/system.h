@@ -14,7 +14,7 @@ typedef struct _SYSTEM {
 //    OTG otg;
 //    USBD usbd;
 //    CCIDD ccidd;
-    bool reset_needed;
+    bool reboot;
 } SYSTEM;
 
 

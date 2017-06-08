@@ -3,3 +3,7 @@ flash-copy/code/
 flash-copy/output/
 rboot-host/build/
 rboot-host/output/
+rboot-main/build/board.o
+rboot-main/output/
+rboot-main/build/rboot-main.sym
+rboot-main/build/

@@ -23,11 +23,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>rexos</name>
-			<type>2</type>
-			<locationURI>PARENT-1-PROJECT_LOC/rexos</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>

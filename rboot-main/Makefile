@@ -32,7 +32,7 @@ LINKER_SCRIPT				= core/script.ld
 #core-dependent part
 SRC_AS                      = cortexm.S
 SRC_C						+= system.c board.c
-SRC_C						+= stm32_power.c stm32_pin.c
+SRC_C						+= stm32_power.c stm32_pin.c stm32_uart.c
 SRC_C                       += main.c dbg.c printf.c
 
 

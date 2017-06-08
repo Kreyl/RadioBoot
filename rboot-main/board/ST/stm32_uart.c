@@ -40,6 +40,7 @@ static const unsigned int UART_VECTORS[UARTS_COUNT] =       {27, 28};
 static const unsigned int UART_POWER_PINS[UARTS_COUNT] =    {14, 17};
 static const USART_TypeDef_P UART_REGS[UARTS_COUNT]=        {USART1, USART2};
 #elif defined(STM32L1)
+#define BUS_CLOCK                                           32000000
 static const unsigned int UART_VECTORS[UARTS_COUNT] =       {37, 38, 39};
 static const unsigned int UART_POWER_PINS[UARTS_COUNT] =    {14, 17, 18};
 static const USART_TypeDef_P UART_REGS[UARTS_COUNT]=        {USART1, USART2, USART3};
@@ -84,7 +85,7 @@ static const USART_TypeDef_P UART_REGS[UARTS_COUNT]=        {USART1, USART2, USA
 
 void board_dbg_init()
 {
-    pin_enable(DBG_CONSOLE_TX_PIN, STM32_GPIO_MODE_AF, AF7);
+    pin_enable(UART_TX_PIN, STM32_GPIO_MODE_AF, AF7);
 
     //power up (required prior to reg work)
     if (UART == UART_1 || UART >= UART_6)
@@ -115,8 +116,17 @@ void board_dbg(const char *const buf, unsigned int size)
     int i;
     for(i = 0; i < size; ++i)
     {
+#if defined(STM32L0) || defined(STM32F0)
         while ((UART_REGS[UART]->ISR & USART_ISR_TXE) == 0) {}
         UART_REGS[UART]->TDR = buf[i];
+#else
+        while ((UART_REGS[UART]->SR & USART_SR_TXE) == 0) {}
+        UART_REGS[UART]->DR = buf[i];
+#endif
     }
+#if defined(STM32L0) || defined(STM32F0)
     while ((UART_REGS[UART]->ISR & USART_ISR_TC) == 0) {}
+#else
+    while ((UART_REGS[UART]->SR & USART_SR_TC) == 0) {}
+#endif
 }

@@ -15,19 +15,28 @@
 
 int main(void)
 {
-//    SYSTEM system;
+    SYSTEM system;
     board_init();
-
-    gpio_enable(B0, GPIO_MODE_OUT);
-    pin_reset(B0);
-
 
 #if (DFU_DEBUG)
     board_dbg_init();
-    printf("BOOT APP, v %d.%d \n", VERSION >> 8, VERSION & 0xff);
+    printf("RBOOT main, v %d.%d \n", VERSION >> 8, VERSION & 0xff);
     printf("CPU %d MHz\n", power_get_core_clock() / 1000000);
 #endif // DFU_DEBUG
 
-    for(;;) {}
+    system.reset_needed = false;
 
+    // Enable LED
+    gpio_enable(B0, GPIO_MODE_OUT);
+    pin_set(B0);
+
+    while(!system.reset_needed)
+    {
+//        radio_request(system);
+    }
+
+    /* reset system */
+    board_reset();
+
+    for(;;) {}
 }

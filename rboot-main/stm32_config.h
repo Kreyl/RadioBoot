@@ -10,11 +10,13 @@
 
 
 //------------------------------ POWER -----------------------------------------------
+//depends on hardware implementation
+#define POWER_MANAGEMENT                        0
 //save few bytes here
 #define STM32_DECODE_RESET                      0
 //0 meaning HSI. If not defined, 25MHz will be defined by default by ST lib
-#define HSE_VALUE                               12000000
-#define HSE_RTC_DIV                             16
+#define HSE_VALUE                               0
+#define HSE_RTC_DIV                             0
 #define HSE_BYPASS                              0
 //0 meaning HSE
 #define LSE_VALUE                               0

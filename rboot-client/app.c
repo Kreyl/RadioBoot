@@ -18,13 +18,8 @@
 #include "../rexos/userspace/irq.h"
 #include "app_private.h"
 #include "radio.h"
-#include "comm.h"
 #include "led.h"
 #include "config.h"
-
-
-#include <string.h>
-#include "flash_copy_int.h"
 
 void app();
 
@@ -62,18 +57,9 @@ static inline void app_init(APP* app)
     process_create(&__STM32_CORE);
 #if (APP_DEBUG)
     app_setup_dbg();
-    printf("RadioBoot Host, CPU %d MHz\n", power_get_core_clock()/1000000);
+    printf("RadioBoot Client, CPU %d MHz\n", power_get_core_clock()/1000000);
 #endif
 }
-
-const uint8_t packets[6][5] = {
-        {0x00, 0x01, 0xFF, 0x00, 0x00},
-        {0x00, 0x01, 0x00, 0x00, 0x00},
-        {0x00, 0x01, 0x00, 0xFF, 0x00},
-        {0x00, 0x01, 0x00, 0x00, 0x00},
-        {0x00, 0x01, 0x00, 0x00, 0xFF},
-        {0x00, 0x01, 0x00, 0x00, 0x00}
-};
 
 void app()
 {
@@ -81,16 +67,8 @@ void app()
     IPC ipc;
 
     app_init(&app);
-    led_init(&app);
+//    led_init(&app);
     radio_init(&app);
-//    comm_init(&app);
-
-    uint8_t pkt_id = 0;
-    uint8_t data[64];
-
-    uint32_t timeout = 1000;
-    app.timer = timer_create(0, HAL_APP);
-    timer_start_ms(app.timer, timeout);
 
     sleep_ms(200);
     process_info();
@@ -100,21 +78,9 @@ void app()
         ipc_read(&ipc);
         switch (HAL_GROUP(ipc.cmd))
         {
-
-        case HAL_APP:
-            radio_tx_sync(&app, packets[pkt_id], 5);
-            printf("rx: %d\n", radio_rx_sync(&app, data));
-            if(pkt_id++ >= 5)
-                pkt_id = 0;
-            timer_start_ms(app.timer, timeout);
-        break;
-
-        case HAL_USBD:
-            comm_request(&app, &ipc);
-            break;
-        default:
-            error(ERROR_NOT_SUPPORTED);
-            break;
+            default:
+                error(ERROR_NOT_SUPPORTED);
+                break;
         }
         ipc_write(&ipc);
     }

@@ -19,7 +19,8 @@ typedef enum {
     RADIO_SET_POWER,
     RADIO_SET_PACKET_SIZE,
     RADIO_TX,
-    RADIO_RX
+    RADIO_RX,
+    RADIO_RX_ASYNC,
 } RADIO_IPCS;
 
 void radio_init(APP* app);

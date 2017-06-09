@@ -43,10 +43,10 @@ static inline bool cc1101_busy()
     return gpio_get_pin(CC1101_MISO_PIN);
 }
 
-//static inline bool cc1101_gdo0_pin()
-//{
-//    return gpio_get_pin(CC1101_GDO0_PIN);
-//}
+static inline bool cc1101_gdo0_pin()
+{
+    return gpio_get_pin(CC1101_GDO0_PIN);
+}
 
 // Return RSSI in dBm
 static inline int8_t RSSI_dBm(uint8_t raw)
@@ -287,7 +287,7 @@ void cc1101_hw_init(CC1101* cc1101)
     pin_enable(CC1101_MISO_PIN, STM32_GPIO_MODE_AF, AF5);
     pin_enable(CC1101_MOSI_PIN, STM32_GPIO_MODE_AF, AF5);
     gpio_enable_pin(CC1101_CS_PIN, GPIO_MODE_OUT);
-    gpio_enable_pin(CC1101_GDO0_PIN, GPIO_MODE_IN_PULLDOWN);
+    gpio_enable_pin(CC1101_GDO0_PIN, GPIO_MODE_IN_FLOAT);
     gpio_enable_pin(CC1101_GDO2_PIN, GPIO_MODE_IN_FLOAT);
 
 //    pin_enable_exti(CC1101_GDO0_PIN, EXTI_FLAGS_FALLING);
@@ -416,7 +416,7 @@ unsigned int cc1101_rx(CC1101* cc1101, uint8_t* data)
         if(!(cc1101->status & CC_STB_RX))
             return cc1101_receive_packet(cc1101, data);
 
-        sleep_ms(10);
+        sleep_ms(2);
     }
     error(ERROR_TIMEOUT);
     return 0;

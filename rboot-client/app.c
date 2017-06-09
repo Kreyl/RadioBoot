@@ -70,14 +70,25 @@ void app()
 //    led_init(&app);
     radio_init(&app);
 
+    uint32_t timeout = 99;
+    app.timer = timer_create(0, HAL_APP);
+    timer_start_ms(app.timer, timeout);
+
     sleep_ms(200);
     process_info();
+
+    uint8_t data[100];
 
     for (;;)
     {
         ipc_read(&ipc);
         switch (HAL_GROUP(ipc.cmd))
         {
+            case HAL_APP:
+                radio_rx_sync(&app, data);
+                timer_start_ms(app.timer, timeout);
+            break;
+
             default:
                 error(ERROR_NOT_SUPPORTED);
                 break;

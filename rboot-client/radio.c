@@ -85,6 +85,8 @@ static void radio_request(CC1101* cc1101, IPC* ipc)
         case RADIO_RX:
             ipc->param3 = cc1101_rx(cc1101, (uint8_t*)ipc->param1);
             break;
+        case RADIO_RX_ASYNC:
+            break;
         default:
             error(ERROR_NOT_SUPPORTED);
             break;

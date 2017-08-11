@@ -27,8 +27,8 @@ int main(void)
     system.reboot = false;
 
     // Enable LED
-    gpio_enable(B0, GPIO_MODE_OUT);
-    pin_set(B0);
+    gpio_enable(B1, GPIO_MODE_OUT);
+    pin_set(B1);
 
     while(!system.reboot)
     {

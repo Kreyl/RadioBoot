@@ -13,6 +13,7 @@ NM                         = $(CROSS)nm
 
 #----------------------------------------------------------
 MCU 						= STM32L151C8
+#MCU                         = STM32F072RB
 TARGET_NAME                 = rboot-main
 #----------------------------------------------------------
 BUILD_DIR                   = build
@@ -21,6 +22,7 @@ OUTPUT_DIR                  = output
 #----------------------------------------------------------
 CMSIS_DIR                   = CMSIS
 CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L1xx
+#CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32F0xx
 #----------------------------------------------------------
 INCLUDE_FOLDERS 			= ./ core board board/ST 
 INCLUDE_FOLDERS             += $(CMSIS_DIR)/Include $(CMSIS_DEVICE_DIR)/Include

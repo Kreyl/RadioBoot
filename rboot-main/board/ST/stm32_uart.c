@@ -8,6 +8,7 @@
 #include "stm32.h"
 #include "stm32_uart.h"
 #include "stm32_pin.h"
+#include "stm32_power.h"
 
 typedef USART_TypeDef* USART_TypeDef_P;
 
@@ -40,12 +41,10 @@ static const unsigned int UART_VECTORS[UARTS_COUNT] =       {27, 28};
 static const unsigned int UART_POWER_PINS[UARTS_COUNT] =    {14, 17};
 static const USART_TypeDef_P UART_REGS[UARTS_COUNT]=        {USART1, USART2};
 #elif defined(STM32L1)
-#define BUS_CLOCK                                           32000000
 static const unsigned int UART_VECTORS[UARTS_COUNT] =       {37, 38, 39};
 static const unsigned int UART_POWER_PINS[UARTS_COUNT] =    {14, 17, 18};
 static const USART_TypeDef_P UART_REGS[UARTS_COUNT]=        {USART1, USART2, USART3};
 #elif defined(STM32F0)
-#define BUS_CLOCK                                           32000000
 #if ((UARTS_COUNT)== 1)
 static const unsigned int UART_VECTORS[UARTS_COUNT] =       {27};
 static const unsigned int UART_POWER_PINS[UARTS_COUNT] =    {14};
@@ -102,7 +101,7 @@ void board_dbg_init()
     UART_REGS[UART]->CR3 = 0;
 
     unsigned int mantissa, fraction;
-    mantissa = (25 * BUS_CLOCK) / (4 * (UART_BAUD));
+    mantissa = (25 * power_get_core_clock()) / (4 * (UART_BAUD));
     fraction = ((mantissa % 100) * 8 + 25)  / 50;
     mantissa = mantissa / 100;
     UART_REGS[UART]->BRR = (mantissa << 4) | fraction;

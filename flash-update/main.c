@@ -111,6 +111,8 @@ static inline void flash_cmd_disable_erase()
 // FLASH memory must be already unlocked.
 static inline int flash_cmd_erase_page(uint32_t addr)
 {
+    unsigned int aligned_addr = addr & ~(FLASH_PAGE_SIZE - 1);
+
 #if defined(STM32F0)
     FLASH->CR |= FLASH_CR_PER;                      /* (1) Set the PER bit in the FLASH_CR register to enable page erasing */
     FLASH->AR = addr;                          /* (2) Program the FLASH_AR register to select a page to erase */
@@ -131,7 +133,7 @@ static inline int flash_cmd_erase_page(uint32_t addr)
     if(!(FLASH->PECR & FLASH_PECR_PROG))
         FLASH->PECR |= FLASH_PECR_PROG;             /* (2) Set the PROG bit in the FLASH_PECR register to choose program page */
     while ((FLASH->SR & FLASH_SR_BSY) != 0);        /* (3) Wait for the BSY bit to be cleared */
-    *(uint32_t*)addr = 0x00000000;                  /* (4) Write 0x0000 0000 to the first word of the program page to erase */
+    *(uint32_t*)aligned_addr = 0x00000000;                  /* (4) Write 0x0000 0000 to the first word of the program page to erase */
 
     flash_cmd_disable_erase();
 #endif
@@ -179,26 +181,19 @@ static inline void flash_program_page(uint32_t dst, uint32_t src, int size)
 // bytes_to_copy - in bytes
 int flash_update(unsigned int dst_addr, unsigned int src_addr, int bytes_to_copy)
 {
-    unsigned int start_addr = dst_addr & ~(FLASH_PAGE_SIZE - 1);
-
     __DSB();
     __ISB();
 
     flash_cmd_unlock(); /* unlock flash */
 
     // program first total pages
-    while(bytes_to_copy > FLASH_PAGE_SIZE)
+    for(; bytes_to_copy > FLASH_PAGE_SIZE; dst_addr += FLASH_PAGE_SIZE, src_addr += FLASH_PAGE_SIZE, bytes_to_copy -= FLASH_PAGE_SIZE)
     {
-        flash_cmd_erase_page(start_addr);
-        start_addr += FLASH_PAGE_SIZE;
-
+        flash_cmd_erase_page(dst_addr);
         flash_program_page(dst_addr, src_addr, FLASH_PAGE_SIZE);
-        dst_addr += FLASH_PAGE_SIZE;
-        src_addr += FLASH_PAGE_SIZE;
-        bytes_to_copy -= FLASH_PAGE_SIZE;
     }
     // program last page
-    flash_cmd_erase_page(start_addr);
+    flash_cmd_erase_page(dst_addr);
     flash_program_page(dst_addr, src_addr, bytes_to_copy);
 
     flash_cmd_lock(); /* lock flash */

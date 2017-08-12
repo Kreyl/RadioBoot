@@ -9,3 +9,5 @@ rboot-main/build/rboot-main.sym
 rboot-main/build/
 rboot-client/build/
 rboot-client/.settings/
+flash-update/build/
+flash-update/output/flash_update-core.bin

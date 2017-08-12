@@ -11,3 +11,4 @@ rboot-client/build/
 rboot-client/.settings/
 flash-update/build/
 flash-update/output/flash_update-core.bin
+rboot-client/output/rboot-client.bin

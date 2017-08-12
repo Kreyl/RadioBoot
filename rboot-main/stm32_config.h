@@ -21,7 +21,7 @@
 //0 meaning HSE
 #define LSE_VALUE                               0
 //STM32L0 || STM32L
-#define MSI_RANGE                               6
+#define MSI_RANGE                               0
 
 #define PLL_MUL                                 8
 #define PLL_DIV                                 4

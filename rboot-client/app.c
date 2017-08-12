@@ -85,7 +85,7 @@ void app()
         switch (HAL_GROUP(ipc.cmd))
         {
             case HAL_APP:
-                radio_rx_sync(&app, data);
+                //radio_rx_sync(&app, data);
                 timer_start_ms(app.timer, timeout);
             break;
 

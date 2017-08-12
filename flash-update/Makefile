@@ -56,6 +56,7 @@ all: $(TARGET_NAME).elf
 	@python bin2h.py $(OUTPUT_DIR)/$(TARGET_NAME).bin $(HEADER_TARGET) $(MCU)
 	@mkdir -p $(RAMCODE_DIR)
 	@mv $(HEADER_TARGET).* $(RAMCODE_DIR)
+	@cp -vf $(RAMCODE_DIR)/$(HEADER_TARGET).* ../rboot-main
 
 .c.o:
 	@-mkdir -p $(BUILD_DIR)

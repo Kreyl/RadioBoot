@@ -30,6 +30,8 @@ int main(void)
     printf("CPU %d MHz\n", power_get_core_clock() / 1000000);
 #endif // DFU_DEBUG
 
+    delay_ms(999);
+
     system.reboot = false;
 
     // Enable LED
@@ -38,21 +40,21 @@ int main(void)
 
     uint8_t ram[FLASH_UPD_SIZE] = { 0 };
     memcpy(ram, __FLASH_UPD, FLASH_UPD_SIZE);
+
+//    __disable_irq();
+//    flash_upd_sram(ram, 0x08006000, 0x08000000, 2048 + 100);
+//    __enable_irq();
+
 #if (DFU_DEBUG)
     printf("Update firmware...\n");
 #endif
-
     __disable_irq();
     flash_upd_sram(ram, FLASH_BASE, 0x08001000, 27444);
-
 
     while(!system.reboot)
     {
 //        radio_request(system);
     }
-
-    /* reset system */
-    board_reset();
 
     for(;;) {}
 }

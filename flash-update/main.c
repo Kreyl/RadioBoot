@@ -18,12 +18,7 @@
 #define HALT()                                 for(;;)
 
 #define RELEASE                                1
-
-#if (RELEASE)
 #define DEBUG                                  0
-#else
-#define DEBUG                                  1
-#endif
 
 #if (DEBUG)
 #include "dbg.h"

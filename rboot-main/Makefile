@@ -36,6 +36,8 @@ SRC_AS                      = cortexm.S
 SRC_C						+= system.c board.c
 SRC_C						+= stm32_power.c stm32_pin.c stm32_uart.c
 SRC_C                       += main.c dbg.c printf.c
+#SRC_C						+= f_upd_test.c 
+SRC_C						+= flash_update.c test.c
 
 
 OBJ                         = $(SRC_AS:%.S=%.o) $(SRC_C:%.c=%.o)

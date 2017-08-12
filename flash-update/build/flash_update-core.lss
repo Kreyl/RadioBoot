@@ -3,125 +3,173 @@ build/flash_update-core.elf:     file format elf32-littlearm
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000114  20000000  20000000  00008000  2**2
+  0 .text         00000190  20000000  20000000  00008000  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .comment      00000070  00000000  00000000  00008114  2**0
+  1 .comment      00000070  00000000  00000000  00008190  2**0
                   CONTENTS, READONLY
-  2 .ARM.attributes 00000029  00000000  00000000  00008184  2**0
+  2 .ARM.attributes 00000029  00000000  00000000  00008200  2**0
                   CONTENTS, READONLY
 
 Disassembly of section .text:
 
 20000000 <flash_update>:
-20000000:	3203      	adds	r2, #3
-20000002:	b5f0      	push	{r4, r5, r6, r7, lr}
-20000004:	0892      	lsrs	r2, r2, #2
-20000006:	f500 7480 	add.w	r4, r0, #256	; 0x100
-2000000a:	4414      	add	r4, r2
-2000000c:	f020 05ff 	bic.w	r5, r0, #255	; 0xff
-20000010:	f024 04ff 	bic.w	r4, r4, #255	; 0xff
-20000014:	f3bf 8f4f 	dsb	sy
-20000018:	f3bf 8f6f 	isb	sy
-2000001c:	4b39      	ldr	r3, [pc, #228]	; (20000104 <flash_update+0x104>)
-2000001e:	699e      	ldr	r6, [r3, #24]
-20000020:	07f7      	lsls	r7, r6, #31
-20000022:	d502      	bpl.n	2000002a <flash_update+0x2a>
-20000024:	bf00      	nop
-20000026:	bf00      	nop
-20000028:	e7f8      	b.n	2000001c <flash_update+0x1c>
-2000002a:	685e      	ldr	r6, [r3, #4]
-2000002c:	07f6      	lsls	r6, r6, #31
-2000002e:	d404      	bmi.n	2000003a <flash_update+0x3a>
-20000030:	685f      	ldr	r7, [r3, #4]
-20000032:	4e34      	ldr	r6, [pc, #208]	; (20000104 <flash_update+0x104>)
-20000034:	07bf      	lsls	r7, r7, #30
-20000036:	d40f      	bmi.n	20000058 <flash_update+0x58>
-20000038:	e01a      	b.n	20000070 <flash_update+0x70>
-2000003a:	4e33      	ldr	r6, [pc, #204]	; (20000108 <flash_update+0x108>)
-2000003c:	60de      	str	r6, [r3, #12]
-2000003e:	4e33      	ldr	r6, [pc, #204]	; (2000010c <flash_update+0x10c>)
-20000040:	60de      	str	r6, [r3, #12]
-20000042:	f44f 7680 	mov.w	r6, #256	; 0x100
-20000046:	619e      	str	r6, [r3, #24]
-20000048:	685e      	ldr	r6, [r3, #4]
-2000004a:	f426 7680 	bic.w	r6, r6, #256	; 0x100
-2000004e:	605e      	str	r6, [r3, #4]
-20000050:	685e      	ldr	r6, [r3, #4]
-20000052:	07f7      	lsls	r7, r6, #31
-20000054:	d4fc      	bmi.n	20000050 <flash_update+0x50>
-20000056:	e7eb      	b.n	20000030 <flash_update+0x30>
-20000058:	4f2d      	ldr	r7, [pc, #180]	; (20000110 <flash_update+0x110>)
-2000005a:	6137      	str	r7, [r6, #16]
-2000005c:	f1a7 47f3 	sub.w	r7, r7, #2038431744	; 0x79800000
-20000060:	f5a7 2719 	sub.w	r7, r7, #626688	; 0x99000
-20000064:	f6a7 17a9 	subw	r7, r7, #2473	; 0x9a9
-20000068:	6137      	str	r7, [r6, #16]
-2000006a:	685e      	ldr	r6, [r3, #4]
-2000006c:	07b7      	lsls	r7, r6, #30
-2000006e:	d4fc      	bmi.n	2000006a <flash_update+0x6a>
-20000070:	685e      	ldr	r6, [r3, #4]
-20000072:	4f24      	ldr	r7, [pc, #144]	; (20000104 <flash_update+0x104>)
-20000074:	05b6      	lsls	r6, r6, #22
-20000076:	d403      	bmi.n	20000080 <flash_update+0x80>
-20000078:	687e      	ldr	r6, [r7, #4]
-2000007a:	f446 7600 	orr.w	r6, r6, #512	; 0x200
-2000007e:	607e      	str	r6, [r7, #4]
-20000080:	685e      	ldr	r6, [r3, #4]
-20000082:	4f20      	ldr	r7, [pc, #128]	; (20000104 <flash_update+0x104>)
-20000084:	0736      	lsls	r6, r6, #28
-20000086:	bf5e      	ittt	pl
-20000088:	687e      	ldrpl	r6, [r7, #4]
-2000008a:	f046 0608 	orrpl.w	r6, r6, #8
-2000008e:	607e      	strpl	r6, [r7, #4]
-20000090:	699e      	ldr	r6, [r3, #24]
-20000092:	07f7      	lsls	r7, r6, #31
-20000094:	d4fc      	bmi.n	20000090 <flash_update+0x90>
-20000096:	42a5      	cmp	r5, r4
-20000098:	d217      	bcs.n	200000ca <flash_update+0xca>
-2000009a:	685e      	ldr	r6, [r3, #4]
-2000009c:	4f19      	ldr	r7, [pc, #100]	; (20000104 <flash_update+0x104>)
-2000009e:	05b6      	lsls	r6, r6, #22
-200000a0:	bf5e      	ittt	pl
-200000a2:	687e      	ldrpl	r6, [r7, #4]
-200000a4:	f446 7600 	orrpl.w	r6, r6, #512	; 0x200
-200000a8:	607e      	strpl	r6, [r7, #4]
-200000aa:	685e      	ldr	r6, [r3, #4]
-200000ac:	4f15      	ldr	r7, [pc, #84]	; (20000104 <flash_update+0x104>)
-200000ae:	0736      	lsls	r6, r6, #28
-200000b0:	bf5e      	ittt	pl
-200000b2:	687e      	ldrpl	r6, [r7, #4]
-200000b4:	f046 0608 	orrpl.w	r6, r6, #8
-200000b8:	607e      	strpl	r6, [r7, #4]
-200000ba:	699e      	ldr	r6, [r3, #24]
-200000bc:	f016 0601 	ands.w	r6, r6, #1
-200000c0:	d1fb      	bne.n	200000ba <flash_update+0xba>
-200000c2:	602e      	str	r6, [r5, #0]
-200000c4:	f505 7580 	add.w	r5, r5, #256	; 0x100
-200000c8:	e7e5      	b.n	20000096 <flash_update+0x96>
-200000ca:	685c      	ldr	r4, [r3, #4]
-200000cc:	eb00 0282 	add.w	r2, r0, r2, lsl #2
-200000d0:	f424 7400 	bic.w	r4, r4, #512	; 0x200
-200000d4:	605c      	str	r4, [r3, #4]
-200000d6:	685c      	ldr	r4, [r3, #4]
-200000d8:	f024 0408 	bic.w	r4, r4, #8
-200000dc:	605c      	str	r4, [r3, #4]
-200000de:	4604      	mov	r4, r0
-200000e0:	4294      	cmp	r4, r2
-200000e2:	d004      	beq.n	200000ee <flash_update+0xee>
-200000e4:	1a0d      	subs	r5, r1, r0
-200000e6:	592d      	ldr	r5, [r5, r4]
-200000e8:	f844 5b04 	str.w	r5, [r4], #4
-200000ec:	e7f8      	b.n	200000e0 <flash_update+0xe0>
-200000ee:	685a      	ldr	r2, [r3, #4]
-200000f0:	2000      	movs	r0, #0
-200000f2:	f042 0201 	orr.w	r2, r2, #1
-200000f6:	605a      	str	r2, [r3, #4]
-200000f8:	685a      	ldr	r2, [r3, #4]
-200000fa:	f042 0202 	orr.w	r2, r2, #2
-200000fe:	605a      	str	r2, [r3, #4]
-20000100:	bdf0      	pop	{r4, r5, r6, r7, pc}
-20000102:	bf00      	nop
-20000104:	40023c00 	.word	0x40023c00
-20000108:	89abcdef 	.word	0x89abcdef
-2000010c:	02030405 	.word	0x02030405
-20000110:	8c9daebf 	.word	0x8c9daebf
+20000000:	e92d 47f0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
+20000004:	4680      	mov	r8, r0
+20000006:	4689      	mov	r9, r1
+20000008:	4616      	mov	r6, r2
+2000000a:	f020 0aff 	bic.w	sl, r0, #255	; 0xff
+2000000e:	f3bf 8f4f 	dsb	sy
+20000012:	f3bf 8f6f 	isb	sy
+20000016:	4c2e      	ldr	r4, [pc, #184]	; (200000d0 <flash_update+0xd0>)
+20000018:	69a3      	ldr	r3, [r4, #24]
+2000001a:	07dd      	lsls	r5, r3, #31
+2000001c:	d502      	bpl.n	20000024 <flash_update+0x24>
+2000001e:	bf00      	nop
+20000020:	bf00      	nop
+20000022:	e7f8      	b.n	20000016 <flash_update+0x16>
+20000024:	6863      	ldr	r3, [r4, #4]
+20000026:	07d8      	lsls	r0, r3, #31
+20000028:	d404      	bmi.n	20000034 <flash_update+0x34>
+2000002a:	6862      	ldr	r2, [r4, #4]
+2000002c:	4b28      	ldr	r3, [pc, #160]	; (200000d0 <flash_update+0xd0>)
+2000002e:	0791      	lsls	r1, r2, #30
+20000030:	d40f      	bmi.n	20000052 <flash_update+0x52>
+20000032:	e01a      	b.n	2000006a <flash_update+0x6a>
+20000034:	4b27      	ldr	r3, [pc, #156]	; (200000d4 <flash_update+0xd4>)
+20000036:	60e3      	str	r3, [r4, #12]
+20000038:	4b27      	ldr	r3, [pc, #156]	; (200000d8 <flash_update+0xd8>)
+2000003a:	60e3      	str	r3, [r4, #12]
+2000003c:	f44f 7380 	mov.w	r3, #256	; 0x100
+20000040:	61a3      	str	r3, [r4, #24]
+20000042:	6863      	ldr	r3, [r4, #4]
+20000044:	f423 7380 	bic.w	r3, r3, #256	; 0x100
+20000048:	6063      	str	r3, [r4, #4]
+2000004a:	6863      	ldr	r3, [r4, #4]
+2000004c:	07da      	lsls	r2, r3, #31
+2000004e:	d4fc      	bmi.n	2000004a <flash_update+0x4a>
+20000050:	e7eb      	b.n	2000002a <flash_update+0x2a>
+20000052:	4a22      	ldr	r2, [pc, #136]	; (200000dc <flash_update+0xdc>)
+20000054:	611a      	str	r2, [r3, #16]
+20000056:	f1a2 42f3 	sub.w	r2, r2, #2038431744	; 0x79800000
+2000005a:	f5a2 2219 	sub.w	r2, r2, #626688	; 0x99000
+2000005e:	f6a2 12a9 	subw	r2, r2, #2473	; 0x9a9
+20000062:	611a      	str	r2, [r3, #16]
+20000064:	6863      	ldr	r3, [r4, #4]
+20000066:	079b      	lsls	r3, r3, #30
+20000068:	d4fc      	bmi.n	20000064 <flash_update+0x64>
+2000006a:	4645      	mov	r5, r8
+2000006c:	ebc8 000a 	rsb	r0, r8, sl
+20000070:	ebc8 0709 	rsb	r7, r8, r9
+20000074:	f5b6 7f80 	cmp.w	r6, #256	; 0x100
+20000078:	4428      	add	r0, r5
+2000007a:	442f      	add	r7, r5
+2000007c:	dd0c      	ble.n	20000098 <flash_update+0x98>
+2000007e:	f000 f833 	bl	200000e8 <flash_cmd_erase_page>
+20000082:	4628      	mov	r0, r5
+20000084:	4639      	mov	r1, r7
+20000086:	f44f 7280 	mov.w	r2, #256	; 0x100
+2000008a:	f000 f863 	bl	20000154 <flash_program_page>
+2000008e:	f505 7580 	add.w	r5, r5, #256	; 0x100
+20000092:	f5a6 7680 	sub.w	r6, r6, #256	; 0x100
+20000096:	e7e9      	b.n	2000006c <flash_update+0x6c>
+20000098:	f000 f826 	bl	200000e8 <flash_cmd_erase_page>
+2000009c:	4628      	mov	r0, r5
+2000009e:	4639      	mov	r1, r7
+200000a0:	4632      	mov	r2, r6
+200000a2:	f000 f857 	bl	20000154 <flash_program_page>
+200000a6:	6863      	ldr	r3, [r4, #4]
+200000a8:	f043 0301 	orr.w	r3, r3, #1
+200000ac:	6063      	str	r3, [r4, #4]
+200000ae:	6863      	ldr	r3, [r4, #4]
+200000b0:	f043 0302 	orr.w	r3, r3, #2
+200000b4:	6063      	str	r3, [r4, #4]
+200000b6:	f3bf 8f4f 	dsb	sy
+200000ba:	4909      	ldr	r1, [pc, #36]	; (200000e0 <flash_update+0xe0>)
+200000bc:	4b09      	ldr	r3, [pc, #36]	; (200000e4 <flash_update+0xe4>)
+200000be:	68ca      	ldr	r2, [r1, #12]
+200000c0:	f402 62e0 	and.w	r2, r2, #1792	; 0x700
+200000c4:	4313      	orrs	r3, r2
+200000c6:	60cb      	str	r3, [r1, #12]
+200000c8:	f3bf 8f4f 	dsb	sy
+200000cc:	e7fe      	b.n	200000cc <flash_update+0xcc>
+200000ce:	bf00      	nop
+200000d0:	40023c00 	.word	0x40023c00
+200000d4:	89abcdef 	.word	0x89abcdef
+200000d8:	02030405 	.word	0x02030405
+200000dc:	8c9daebf 	.word	0x8c9daebf
+200000e0:	e000ed00 	.word	0xe000ed00
+200000e4:	05fa0004 	.word	0x05fa0004
+
+200000e8 <flash_cmd_erase_page>:
+200000e8:	4b19      	ldr	r3, [pc, #100]	; (20000150 <flash_cmd_erase_page+0x68>)
+200000ea:	685a      	ldr	r2, [r3, #4]
+200000ec:	0591      	lsls	r1, r2, #22
+200000ee:	bf58      	it	pl
+200000f0:	685a      	ldrpl	r2, [r3, #4]
+200000f2:	4917      	ldr	r1, [pc, #92]	; (20000150 <flash_cmd_erase_page+0x68>)
+200000f4:	bf5c      	itt	pl
+200000f6:	f442 7200 	orrpl.w	r2, r2, #512	; 0x200
+200000fa:	605a      	strpl	r2, [r3, #4]
+200000fc:	685a      	ldr	r2, [r3, #4]
+200000fe:	0712      	lsls	r2, r2, #28
+20000100:	bf5e      	ittt	pl
+20000102:	684a      	ldrpl	r2, [r1, #4]
+20000104:	f042 0208 	orrpl.w	r2, r2, #8
+20000108:	604a      	strpl	r2, [r1, #4]
+2000010a:	6999      	ldr	r1, [r3, #24]
+2000010c:	4a10      	ldr	r2, [pc, #64]	; (20000150 <flash_cmd_erase_page+0x68>)
+2000010e:	07c9      	lsls	r1, r1, #31
+20000110:	d4fb      	bmi.n	2000010a <flash_cmd_erase_page+0x22>
+20000112:	6851      	ldr	r1, [r2, #4]
+20000114:	0589      	lsls	r1, r1, #22
+20000116:	bf5e      	ittt	pl
+20000118:	6851      	ldrpl	r1, [r2, #4]
+2000011a:	f441 7100 	orrpl.w	r1, r1, #512	; 0x200
+2000011e:	6051      	strpl	r1, [r2, #4]
+20000120:	685a      	ldr	r2, [r3, #4]
+20000122:	490b      	ldr	r1, [pc, #44]	; (20000150 <flash_cmd_erase_page+0x68>)
+20000124:	0712      	lsls	r2, r2, #28
+20000126:	bf5e      	ittt	pl
+20000128:	684a      	ldrpl	r2, [r1, #4]
+2000012a:	f042 0208 	orrpl.w	r2, r2, #8
+2000012e:	604a      	strpl	r2, [r1, #4]
+20000130:	699a      	ldr	r2, [r3, #24]
+20000132:	4907      	ldr	r1, [pc, #28]	; (20000150 <flash_cmd_erase_page+0x68>)
+20000134:	f012 0201 	ands.w	r2, r2, #1
+20000138:	d1fa      	bne.n	20000130 <flash_cmd_erase_page+0x48>
+2000013a:	6002      	str	r2, [r0, #0]
+2000013c:	684b      	ldr	r3, [r1, #4]
+2000013e:	4610      	mov	r0, r2
+20000140:	f423 7300 	bic.w	r3, r3, #512	; 0x200
+20000144:	604b      	str	r3, [r1, #4]
+20000146:	684b      	ldr	r3, [r1, #4]
+20000148:	f023 0308 	bic.w	r3, r3, #8
+2000014c:	604b      	str	r3, [r1, #4]
+2000014e:	4770      	bx	lr
+20000150:	40023c00 	.word	0x40023c00
+
+20000154 <flash_program_page>:
+20000154:	b5f0      	push	{r4, r5, r6, r7, lr}
+20000156:	0894      	lsrs	r4, r2, #2
+20000158:	1f0b      	subs	r3, r1, #4
+2000015a:	00a6      	lsls	r6, r4, #2
+2000015c:	199f      	adds	r7, r3, r6
+2000015e:	42bb      	cmp	r3, r7
+20000160:	d005      	beq.n	2000016e <flash_program_page+0x1a>
+20000162:	f853 ef04 	ldr.w	lr, [r3, #4]!
+20000166:	1a45      	subs	r5, r0, r1
+20000168:	f845 e003 	str.w	lr, [r5, r3]
+2000016c:	e7f7      	b.n	2000015e <flash_program_page+0xa>
+2000016e:	ebb2 0284 	subs.w	r2, r2, r4, lsl #2
+20000172:	4431      	add	r1, r6
+20000174:	d00b      	beq.n	2000018e <flash_program_page+0x3a>
+20000176:	440a      	add	r2, r1
+20000178:	2300      	movs	r3, #0
+2000017a:	1a55      	subs	r5, r2, r1
+2000017c:	2d00      	cmp	r5, #0
+2000017e:	dd04      	ble.n	2000018a <flash_program_page+0x36>
+20000180:	f812 5d01 	ldrb.w	r5, [r2, #-1]!
+20000184:	ea45 2303 	orr.w	r3, r5, r3, lsl #8
+20000188:	e7f7      	b.n	2000017a <flash_program_page+0x26>
+2000018a:	f840 3024 	str.w	r3, [r0, r4, lsl #2]
+2000018e:	bdf0      	pop	{r4, r5, r6, r7, pc}

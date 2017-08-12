@@ -22,10 +22,6 @@
 #include "led.h"
 #include "config.h"
 
-
-#include <string.h>
-#include "flash_copy_int.h"
-
 void app();
 
 const REX __APP = {
@@ -102,7 +98,7 @@ void app()
         {
 
         case HAL_APP:
-            radio_tx_sync(&app, packets[pkt_id], 5);
+            radio_tx_sync(&app, (uint8_t*)packets[pkt_id], 5);
             printf("rx: %d\n", radio_rx_sync(&app, data));
             if(pkt_id++ >= 5)
                 pkt_id = 0;

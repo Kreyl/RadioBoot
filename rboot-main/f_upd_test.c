@@ -1,22 +1,32 @@
 /*
- * flash_copy_int.c
+ * f_upd_test.c
  *
- *  Created on: 19 לאÿ 2017 ד.
- *      Author: RLeonov
+ *  Created on: 12 אגד. 2017 ד.
+ *      Author: RomaJam
  */
-
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "flash_copy_int.h"
-#include "../rexos/userspace/stdio.h"
-#include "../rexos/userspace/stm32/stm32.h"
-
+#include "board/ST/stm32.h"
 
 #if defined(STM32F0)
 #define FLASH_PAGE_SIZE                       1024
 #elif defined(STM32L1)
 #define FLASH_PAGE_SIZE                       256
+#endif
+
+#define HALT()                                 for(;;)
+
+#define RELEASE                                0
+
+#if (RELEASE)
+#define DEBUG                                  0
+#else
+#define DEBUG                                  1
+#endif
+
+#if (DEBUG)
+#include "dbg.h"
 #endif
 
 static void flash_cmd_unlock()
@@ -90,7 +100,7 @@ static int flash_cmd_program_execute()
     }
     FLASH->CR &= ~FLASH_CR_PG;                      /* (6) Reset the PG Bit to disable programming */
 #endif
-    return OK;
+    return 0;
 }
 
 #if defined(STM32L1)
@@ -126,15 +136,19 @@ static inline int flash_cmd_erase_page(uint32_t addr)
     }
     FLASH->CR &= ~FLASH_CR_PER;                     /* (7) Reset the PER Bit to disable the page erase */
 #elif defined(STM32L1)
+    flash_cmd_enable_erase();
+
     if(!(FLASH->PECR & FLASH_PECR_ERASE))
         FLASH->PECR |= FLASH_PECR_ERASE;            /* (1) Set the ERASE bit in the FLASH_PECR register */
     if(!(FLASH->PECR & FLASH_PECR_PROG))
         FLASH->PECR |= FLASH_PECR_PROG;             /* (2) Set the PROG bit in the FLASH_PECR register to choose program page */
     while ((FLASH->SR & FLASH_SR_BSY) != 0);        /* (3) Wait for the BSY bit to be cleared */
     *(uint32_t*)addr = 0x00000000;                  /* (4) Write 0x0000 0000 to the first word of the program page to erase */
+
+    flash_cmd_disable_erase();
 #endif
 
-    return OK;
+    return 0;
 }
 
 static inline int flash_cmd_program_word(unsigned int addr, unsigned int data)
@@ -149,42 +163,93 @@ static inline int flash_cmd_program_word(unsigned int addr, unsigned int data)
     return flash_cmd_program_execute();
 }
 
+static inline void flash_program_page(uint32_t dst, uint32_t src, int size)
+{
+    unsigned int last_word = 0;
+    /* program full words of source */
+    for (; size >= sizeof(uint32_t); size -= sizeof(uint32_t))
+    {
+#if (DEBUG)
+        printf("Program addr %X from %X\n", dst, src);
+#endif // DEBUG
+#if (RELEASE)
+        flash_cmd_program_word(dst_addr, *(unsigned int*)src_addr);
+#endif // RELEASE
+        dst += sizeof(uint32_t);
+        src += sizeof(uint32_t);
+    }
+
+    if(size)
+    {
+        /* program last word. If word is not full - other bytes will be 0x00 */
+        while(size-- > 0)
+        {
+            last_word <<= 8;
+            last_word |= *(uint8_t*)(src + size);
+        }
+    #if (DEBUG)
+        printf("Program last addr %X from %X\n", dst, src);
+    #endif // DEBUG
+    #if (RELEASE)
+        flash_cmd_program_word(dst_addr, last_word);
+    #endif // RELEASE
+    }
+}
+
 // IRQ should be disabled
 // addr and size also checked
 // size -  in bytes
-int flash_copy(uint32_t dst_addr, uint32_t src_addr, unsigned int bytes_to_copy)
+int flash_update(unsigned int dst_addr, unsigned int src_addr, int bytes_to_copy)
 {
-//    int res;
-    unsigned int i;
-    // trim values
     unsigned int start_addr = dst_addr & ~(FLASH_PAGE_SIZE - 1);
-    unsigned int word_to_copy = (bytes_to_copy + 3) >> 2;
-    unsigned int end_addr = (dst_addr + word_to_copy + FLASH_PAGE_SIZE) & ~(FLASH_PAGE_SIZE - 1);
+    unsigned int end_addr = (dst_addr + bytes_to_copy + FLASH_PAGE_SIZE) & ~(FLASH_PAGE_SIZE - 1);
 
     __DSB();
     __ISB();
 
-    flash_cmd_unlock();
+#if (DEBUG)
+    printf("flash update\n");
+    printf("start_addr %X\n", start_addr);
+    printf("end_addr %X\n", end_addr);
+    printf("size: %d\n\n", bytes_to_copy);
+#endif // DEBUG
 
-#if defined(STM32L1)
-    flash_cmd_enable_erase();
-#endif  // STM32L1
+#if(RELEASE)
+    flash_cmd_unlock(); /* unlock flash */
+#endif // RELEASE
 
-    for(i = start_addr; i < end_addr; i += FLASH_PAGE_SIZE)
-        flash_cmd_erase_page(i);
-
-#if defined(STM32L1)
-    flash_cmd_disable_erase();
-#endif  // STM32L1
-
-    for (i = 0; i < word_to_copy; ++i)
+    // program first total pages
+    while(bytes_to_copy > FLASH_PAGE_SIZE)
     {
-        flash_cmd_program_word(dst_addr, *(unsigned int*)src_addr);
-        dst_addr += sizeof(uint32_t);
-        src_addr += sizeof(uint32_t);
+#if (RELEASE)
+        flash_cmd_erase_page(start_addr);
+#endif // RELEASE
+#if (DEBUG)
+        printf("Erase page addr: %X\n", start_addr);
+#endif // DEBUG
+        start_addr += FLASH_PAGE_SIZE;
+
+        flash_program_page(dst_addr, src_addr, FLASH_PAGE_SIZE);
+        dst_addr += FLASH_PAGE_SIZE;
+        src_addr += FLASH_PAGE_SIZE;
+        bytes_to_copy -= FLASH_PAGE_SIZE;
     }
 
-    flash_cmd_lock();
+    // program last page
+#if (DEBUG)
+    printf("Erase page addr: %X\n", start_addr);
+#endif // DEBUG
+#if (RELEASE)
+    flash_cmd_erase_page(start_addr);
+#endif // RELEASE
+
+    flash_program_page(dst_addr, src_addr, bytes_to_copy);
+
+#if (RELEASE)
+    flash_cmd_lock(); /* lock flash */
+    /* Reset core */
+    NVIC_SystemReset();
+#endif // RELEASE
 
     return 0;
 }

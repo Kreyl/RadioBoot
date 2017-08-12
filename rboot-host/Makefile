@@ -63,7 +63,7 @@ SRC_C					   += cdc_acmd.c usbd.c
 #userspace lib
 SRC_C                      += ipc.c io.c process.c stdio.c stdlib.c systime.c time.c uart.c power.c stream.c pin.c usb.c spi.c htimer.c
 #app
-SRC_C                      += app.c led.c comm.c radio.c flash_copy_int.c
+SRC_C                      += app.c led.c comm.c radio.c
 
 SRC_C					   += cc1101.c
 
@@ -105,7 +105,7 @@ all: $(TARGET_NAME).elf
 program:
 #	@st-flash write $(OUTPUT_DIR)/$(TARGET_NAME).bin 0x8000000
 #	@openocd -f stm32f1.cfg -c "program $(OUTPUT_DIR)/$(TARGET_NAME).bin 0x08000000 reset exit"
-	ST-LINK_CLI -c SWD -P $(OUTPUT_DIR)/$(TARGET_NAME).bin 0x08000000 -Rst
+	ST-LINK_CLI -c SWD -P $(OUTPUT_DIR)/$(TARGET_NAME).bin 0x08001000 -Rst
 
 clean:
 	@echo '-----------------------------------------------------------'

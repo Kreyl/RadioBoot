@@ -18,5 +18,7 @@
          U malloc
          U software_init_hook
 20000000 T flash_update
-20000114 t _end
-20000114 T _etext
+200000e8 t flash_cmd_erase_page
+20000154 t flash_program_page
+20000190 t _end
+20000190 T _etext

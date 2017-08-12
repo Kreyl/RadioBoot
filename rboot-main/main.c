@@ -36,10 +36,6 @@ int main(void)
     gpio_enable(B1, GPIO_MODE_OUT);
     pin_set(B1);
 
-    //flash_update(FLASH_BASE, 0x08001000, 2048 + 102);
-
-    //flash_update(FLASH_BASE, 0x08001000, 27444);
-
     uint8_t ram[FLASH_UPD_SIZE] = { 0 };
     memcpy(ram, __FLASH_UPD, FLASH_UPD_SIZE);
 #if (DFU_DEBUG)

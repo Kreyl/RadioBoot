@@ -17,13 +17,6 @@
 
 #define HALT()                                 for(;;)
 
-#define RELEASE                                1
-#define DEBUG                                  0
-
-#if (DEBUG)
-#include "dbg.h"
-#endif
-
 static void flash_cmd_unlock()
 {
     /* (1) Wait till no operation is on going */
@@ -164,12 +157,7 @@ static inline void flash_program_page(uint32_t dst, uint32_t src, int size)
     /* program full words of source */
     for (; size >= sizeof(uint32_t); size -= sizeof(uint32_t))
     {
-#if (DEBUG)
-        printf("Program addr %X from %X\n", dst, src);
-#endif // DEBUG
-#if (RELEASE)
         flash_cmd_program_word(dst, *(unsigned int*)src);
-#endif // RELEASE
         dst += sizeof(uint32_t);
         src += sizeof(uint32_t);
     }
@@ -182,18 +170,13 @@ static inline void flash_program_page(uint32_t dst, uint32_t src, int size)
             last_word <<= 8;
             last_word |= *(uint8_t*)(src + size);
         }
-    #if (DEBUG)
-        printf("Program last addr %X from %X\n", dst, src);
-    #endif // DEBUG
-    #if (RELEASE)
         flash_cmd_program_word(dst, last_word);
-    #endif // RELEASE
     }
 }
 
 // IRQ should be disabled
-// addr and size also checked
-// size -  in bytes
+// addresses and bytes_to_copy also had checked
+// bytes_to_copy - in bytes
 int flash_update(unsigned int dst_addr, unsigned int src_addr, int bytes_to_copy)
 {
     unsigned int start_addr = dst_addr & ~(FLASH_PAGE_SIZE - 1);
@@ -201,26 +184,12 @@ int flash_update(unsigned int dst_addr, unsigned int src_addr, int bytes_to_copy
     __DSB();
     __ISB();
 
-#if (DEBUG)
-    printf("flash update\n");
-    printf("start_addr %X\n", start_addr);
-    printf("end_addr %X\n", end_addr);
-    printf("size: %d\n\n", bytes_to_copy);
-#endif // DEBUG
-
-#if(RELEASE)
     flash_cmd_unlock(); /* unlock flash */
-#endif // RELEASE
 
     // program first total pages
     while(bytes_to_copy > FLASH_PAGE_SIZE)
     {
-#if (RELEASE)
         flash_cmd_erase_page(start_addr);
-#endif // RELEASE
-#if (DEBUG)
-        printf("Erase page addr: %X\n", start_addr);
-#endif // DEBUG
         start_addr += FLASH_PAGE_SIZE;
 
         flash_program_page(dst_addr, src_addr, FLASH_PAGE_SIZE);
@@ -228,23 +197,13 @@ int flash_update(unsigned int dst_addr, unsigned int src_addr, int bytes_to_copy
         src_addr += FLASH_PAGE_SIZE;
         bytes_to_copy -= FLASH_PAGE_SIZE;
     }
-
     // program last page
-#if (DEBUG)
-    printf("Erase page addr: %X\n", start_addr);
-#endif // DEBUG
-#if (RELEASE)
     flash_cmd_erase_page(start_addr);
-#endif // RELEASE
-
     flash_program_page(dst_addr, src_addr, bytes_to_copy);
 
-#if (RELEASE)
     flash_cmd_lock(); /* lock flash */
     /* Reset core */
     NVIC_SystemReset();
-#endif // RELEASE
-
     return 0;
 }
 

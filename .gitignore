@@ -12,3 +12,5 @@ rboot-client/.settings/
 flash-update/build/
 flash-update/output/flash_update-core.bin
 rboot-client/output/rboot-client.bin
+rboot-host/.settings/language.settings.xml
+rboot-main/.settings/language.settings.xml

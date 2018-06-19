@@ -43,7 +43,7 @@ INCLUDE_FOLDERS            += $(USERSPACE) $(USERSPACE)/core $(USERSPACE)/stm32
 #sys
 INCLUDE_FOLDERS            += $(REXOS)/drv $(REXOS)/drv/stm32 $(REXOS)/midware $(REXOS)/midware/usbd $(REXOS)/midware/tcpips
 
-INCLUDE_FOLDERS			   += cc11xx
+INCLUDE_FOLDERS			   += cc1101
 
 INCLUDES                    = $(INCLUDE_FOLDERS:%=-I%)
 VPATH                      += $(INCLUDE_FOLDERS)
@@ -63,9 +63,9 @@ SRC_C					   += cdc_acmd.c usbd.c
 #userspace lib
 SRC_C                      += ipc.c io.c process.c stdio.c stdlib.c systime.c time.c uart.c power.c stream.c pin.c usb.c spi.c htimer.c
 #app
-SRC_C                      += app.c led.c comm.c radio.c
+SRC_C                      += app.c led.c comm.c
 
-SRC_C					   += cc1101.c
+SRC_C					   += cc1101.c cc1101_hw.c
 
  
 OBJ                         = $(SRC_AS:%.S=%.o) $(SRC_C:%.c=%.o)

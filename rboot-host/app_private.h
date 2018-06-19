@@ -14,13 +14,13 @@
 
 
 typedef enum {
-    HAL_RADIO = HAL_APP
+    HAL_CC1101 = HAL_APP,
 } HAL_APP_GROUPS;
 
 typedef struct _APP {
     HANDLE timer;
     HANDLE usbd;
-    HANDLE radio;
+    HANDLE cc1101;
 
     COMM comm;
     LEDS leds;

@@ -1,16 +1,12 @@
 /*
- * cc1101.h
+ * cc1101_defines.h
  *
- *  Created on: 2 ΰοπ. 2017 γ.
- *      Author: RomaJam
+ *  Created on: 19 θώνÿ 2018 γ.
+ *      Author: RLeonov
  */
 
-#ifndef CC1101_H_
-#define CC1101_H_
-
-#include "app.h"
-#include "../rexos/userspace/io.h"
-#include "cc1101_config.h"
+#ifndef _CC1101_DEFINES_H_
+#define _CC1101_DEFINES_H_
 
 // =================================== Power ===================================
 #define CC_PwrMinus30dBm                        0x03
@@ -161,40 +157,4 @@
 #define CC_FIFO                                 0x3F
 
 
-typedef enum {
-    CC1101_STATE_OFF = 0,
-    CC1101_STATE_IDLE,
-    CC1101_STATE_SLEEP,
-    CC1101_STATE_RX,
-    CC1101_STATE_TX
-} CC1101_STATE;
-
-typedef struct {
-    CC1101_STATE state;
-    HANDLE handle, user;
-    uint8_t status;
-    uint8_t channel;
-    uint8_t packet_size;
-} CC1101;
-
-void cc1101_hw_init(CC1101* cc1101);
-void cc1101_hw_deinit(CC1101* cc1101);
-
-void cc1101_reset(CC1101* cc1101);
-void cc1101_calibrate(CC1101* cc1101);
-void cc1101_set_channel(CC1101* cc1101, uint8_t channel_num);
-void cc1101_set_tx_power(CC1101* cc1101, uint8_t power);
-void cc1101_set_radio_pkt_size(CC1101* cc1101, uint8_t size);
-void cc1101_tx(CC1101* cc1101, uint8_t* data, unsigned int data_size);
-unsigned int cc1101_rx(CC1101* cc1101, uint8_t* data);
-
-//void cc1101_tx();
-//void cc1101_rx();
-//void cc1101_idle();
-//void cc1101_sleep();
-//void cc1101_calibrate();
-
-
-
-
-#endif /* CC1101_H_ */
+#endif /* _CC1101_DEFINES_H_ */

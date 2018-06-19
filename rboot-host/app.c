@@ -17,7 +17,7 @@
 #include "../rexos/userspace/gpio.h"
 #include "../rexos/userspace/irq.h"
 #include "app_private.h"
-#include "radio.h"
+#include "cc1101/cc1101.h"
 #include "comm.h"
 #include "led.h"
 #include "config.h"
@@ -78,11 +78,15 @@ void app()
 
     app_init(&app);
     led_init(&app);
-    radio_init(&app);
+
+    app.cc1101 = cc1101_open();
+
+    printf("cc1101 handle: %X\n", app.cc1101);
+
 //    comm_init(&app);
 
     uint8_t pkt_id = 0;
-    uint8_t data[64];
+//    uint8_t data[64];
 
     uint32_t timeout = 1000;
     app.timer = timer_create(0, HAL_APP);
@@ -91,6 +95,9 @@ void app()
     sleep_ms(200);
     process_info();
 
+    IO* io = io_create(5);
+
+
     for (;;)
     {
         ipc_read(&ipc);
@@ -98,10 +105,18 @@ void app()
         {
 
         case HAL_APP:
-            radio_tx_sync(&app, (uint8_t*)packets[pkt_id], 5);
-            printf("rx: %d\n", radio_rx_sync(&app, data));
+            printf("TO\n");
+            io_reset(io);
+            io_data_append(io, (uint8_t*)packets[pkt_id], 5);
+
+            if(!cc1101_transmit(app.cc1101, (uint8_t*)packets[pkt_id], 5))
+                printf("TX failure\n");
+
+            //printf("rx: %d\n", radio_rx_sync(&app, data));
+
             if(pkt_id++ >= 5)
                 pkt_id = 0;
+
             timer_start_ms(app.timer, timeout);
         break;
 

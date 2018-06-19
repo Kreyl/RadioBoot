@@ -11,23 +11,29 @@
 #include "config.h"
 #include "../rexos/userspace/stm32/stm32_driver.h"
 
+// DEBUG
+#define CC1101_DEBUG                            1
+#define CC1101_DEBUG_REQUESTS                   1
+#define CC1101_DEBUG_ERRORS                     1
+#define CC1101_DEBUG_FLOW                       1
+#define CC1101_DEBUG_INFO                       1
+
+
+// CONFIGURATION
 #define CC1101_SPI                              SPI_1
 
 #define CC1101_CS_PIN                           A4
 #define CC1101_CLK_PIN                          A5
 #define CC1101_MISO_PIN                         A6
 #define CC1101_MOSI_PIN                         A7
-#define CC1101_GDO0_PIN                         A2
-#define CC1101_GDO2_PIN                         A3
+#define CC1101_GDO0_PIN                         A3
+#define CC1101_GDO2_PIN                         A2
 
-#define CC1101_GDO0_EXTI_IRQ                    EXTI2_IRQn
+#define CC1101_GDO0_EXTI_IRQ                    EXTI3_IRQn
 
 #define CC1101_IO_SIZE                          64
-
-#define CC1101_DEBUG                            1
-#define CC1101_DEBUG_INFO                       1
-#define CC1101_DEBUG_ERRORS                     1
-#define CC1101_DEBUG_FLOW                       1
+#define CC1101_PROCESS_SIZE                     600
+#define CC1101_PROCESS_PRIORITY                 201
 
 // Bitrate
 //#define CC1101_BITRATE_10K

@@ -18,6 +18,7 @@
 #include "../rexos/userspace/irq.h"
 #include "app_private.h"
 #include "cc1101/cc1101.h"
+#include "cc1101/cc1101_defines.h"
 #include "comm.h"
 #include "led.h"
 #include "config.h"
@@ -86,7 +87,7 @@ void app()
     uint8_t pkt_id = 0;
 //    uint8_t data[64];
 
-    uint32_t timeout = 1000;
+    uint32_t timeout = 3000;
     app.timer = timer_create(0, HAL_APP);
     timer_start_ms(app.timer, timeout);
 
@@ -95,6 +96,9 @@ void app()
 
     IO* io = io_create(5);
 
+    cc1101_set_channel(app.cc1101, 0);
+    cc1101_set_power(app.cc1101, CC_PwrMinus10dBm);
+
     for (;;)
     {
         ipc_read(&ipc);
@@ -102,11 +106,10 @@ void app()
         {
 
         case HAL_APP:
-            printf("TO\n");
             io_reset(io);
             io_data_append(io, (uint8_t*)packets[pkt_id], 5);
 
-//            led_mode(&app, LED_COLOR_BLUE, LED_MODE_BLINK);
+            led_mode(&app, LED_COLOR_BLUE, LED_MODE_BLINK);
             if(!cc1101_transmit(app.cc1101, (uint8_t*)packets[pkt_id], 5))
                 printf("TX failure\n");
 

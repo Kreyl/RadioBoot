@@ -17,7 +17,8 @@
 #include "../rexos/userspace/gpio.h"
 #include "../rexos/userspace/irq.h"
 #include "app_private.h"
-#include "radio.h"
+#include "cc1101/cc1101.h"
+#include "cc1101/cc1101_defines.h"
 #include "led.h"
 #include "config.h"
 
@@ -68,7 +69,8 @@ void app()
 
     app_init(&app);
     led_init(&app);
-    radio_init(&app);
+
+    app.cc1101 = cc1101_open();
 
     uint32_t timeout = 1000;
     app.timer = timer_create(0, HAL_APP);
@@ -79,7 +81,13 @@ void app()
 
     uint8_t data[100];
 
-    radio_rx_sync(&app, data, 6);
+    cc1101_set_packet_size(app.cc1101, 5);
+    cc1101_set_channel(app.cc1101, 0);
+    cc1101_set_power(app.cc1101, CC_PwrMinus10dBm);
+
+    int res = cc1101_receive(app.cc1101, data, 5, CC1101_FLAGS_NO_TIMEOUT);
+
+    printf("res %d\n", res);
 
     for (;;)
     {

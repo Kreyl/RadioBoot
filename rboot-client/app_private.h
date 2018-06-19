@@ -13,12 +13,12 @@
 #include <stdint.h>
 
 typedef enum {
-    HAL_RADIO = HAL_APP
+    HAL_CC1101 = HAL_APP
 } HAL_APP_GROUPS;
 
 typedef struct _APP {
     HANDLE timer;
-    HANDLE radio;
+    HANDLE cc1101;
     LEDS leds;
 } APP;
 

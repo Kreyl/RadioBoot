@@ -12,8 +12,6 @@
 #include "../../userspace/spi.h"
 #include "../../userspace/irq.h"
 #include "../../userspace/stm32/stm32_driver.h"
-#include "../kstdlib.h"
-
 
 typedef SPI_TypeDef* SPI_TypeDef_P;
 #if (SPI_COUNT > 1)
@@ -140,7 +138,7 @@ void stm32_spi_open(CORE* core, SPI_PORT port, unsigned int settings)
         error(ERROR_ALREADY_CONFIGURED);
         return;
     }
-    spi = kmalloc(sizeof(SPI));
+    spi = malloc(sizeof(SPI));
     if (spi == NULL)
     {
         error(ERROR_OUT_OF_MEMORY);

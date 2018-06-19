@@ -20,13 +20,12 @@ typedef enum {
     RADIO_SET_PACKET_SIZE,
     RADIO_TX,
     RADIO_RX,
-    RADIO_RX_ASYNC,
+    RADIO_GET_PACKET,
 } RADIO_IPCS;
 
 void radio_init(APP* app);
-
 void radio_tx_sync(APP* app, uint8_t* data, unsigned int data_size);
-unsigned int radio_rx_sync(APP* app, uint8_t* data);
+bool radio_rx_sync(APP* app, uint8_t* data, uint8_t data_size);
 
 
 #endif /* RADIO_H_ */

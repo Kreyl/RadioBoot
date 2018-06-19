@@ -5,7 +5,7 @@
  *      Author: RLeonov
  */
 
-
+#include <string.h>
 #include "app_private.h"
 #include "../rexos/userspace/stdio.h"
 #include "cc11xx/cc1101.h"
@@ -36,7 +36,7 @@ void radio_init(APP* app)
     ack(app->radio, HAL_REQ(HAL_RADIO, RADIO_RESET), 0, 0, 0);
     ack(app->radio, HAL_REQ(HAL_RADIO, RADIO_SET_POWER), CC_PwrMinus10dBm, 0, 0);
     ack(app->radio, HAL_REQ(HAL_RADIO, RADIO_SET_CHANNEL), 0, 0, 0);
-    ack(app->radio, HAL_REQ(HAL_RADIO, RADIO_SET_PACKET_SIZE), 0, 0, 0);
+    ack(app->radio, HAL_REQ(HAL_RADIO, RADIO_SET_PACKET_SIZE), 5, 0, 0);
 
     led_mode(app, LED_COLOR_BLUE, LED_MODE_ON);
 }
@@ -47,10 +47,20 @@ void radio_tx_sync(APP* app, uint8_t* data, unsigned int data_size)
     ack(app->radio, HAL_REQ(HAL_RADIO, RADIO_TX), (unsigned int)data, data_size, 0);
 }
 
-unsigned int radio_rx_sync(APP* app, uint8_t* data)
+bool radio_rx_sync(APP* app, uint8_t* data, uint8_t data_size)
 {
-    led_mode(app, LED_COLOR_BLUE, LED_MODE_BLINK);
-    return get_size(app->radio, HAL_REQ(HAL_RADIO, RADIO_RX), (unsigned int)data, 0, 0);
+    IO* io = io_create(data_size);
+    if(io == NULL)
+    {
+        error(ERROR_OUT_OF_MEMORY);
+        return false;
+    }
+
+    if(data_size == io_read_sync(app->radio, HAL_IO_REQ(HAL_RADIO, RADIO_RX), 0, io, data_size))
+        memcpy(data, io_data(io), io->data_size);
+
+    io_destroy(io);
+    return true;
 }
 
 // ========================== RADIO PROCESS ====================================
@@ -83,9 +93,10 @@ static void radio_request(CC1101* cc1101, IPC* ipc)
             cc1101_tx(cc1101, (uint8_t*)ipc->param1, ipc->param2);
             break;
         case RADIO_RX:
-            ipc->param3 = cc1101_rx(cc1101, (uint8_t*)ipc->param1);
+            cc1101_rx(cc1101, (IO*)ipc->param2);
             break;
-        case RADIO_RX_ASYNC:
+        case RADIO_GET_PACKET:
+            cc1101_receive_packet(cc1101, (IO*)ipc->param2);
             break;
         default:
             error(ERROR_NOT_SUPPORTED);

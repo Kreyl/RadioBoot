@@ -15,6 +15,7 @@
 #include "../rexos/userspace/gpio.h"
 #include "../rexos/userspace/systime.h"
 #include "app_private.h"
+#include "radio.h"
 #include "cc11xx/cc1101.h"
 
 #if (CC1101_DEBUG_FLOW)
@@ -106,57 +107,6 @@ static inline void cc1101_prepare_tx(CC1101* cc1101, uint8_t* data, unsigned int
         spi_byte(CC1101_SPI, data[i]);
 
     cc1101_cs_hi();
-}
-
-static inline unsigned int cc1101_receive_packet(CC1101* cc1101, uint8_t* data)
-{
-    unsigned int res = 0;
-    uint8_t status = cc1101_read_register(CC_PKTSTATUS);
-
-    if(status & CC_STATUS_CRC_OK)
-    {
-        cc1101_cs_lo();
-        while(cc1101_busy());
-        spi_byte(CC1101_SPI, CC_FIFO | CC_READ_FLAG | CC_BURST_FLAG);
-        for(uint8_t i = 0; i < cc1101->packet_size; i++)
-             data[res++] = spi_byte(CC1101_SPI, 0);
-
-        // RSSI
-        data[res++] = spi_byte(CC1101_SPI, 0);
-        // LQI
-        data[res++] = spi_byte(CC1101_SPI, 0);
-        cc1101_cs_hi();
-
-        // TODO: RSSI transform
-        int Rssi = RSSI_dBm(data[cc1101->packet_size]);
-
-#if (CC1101_DEBUG_FLOW)
-    cc1101_dump(data, cc1101->packet_size, "RX PACKET");
-    printf("RSSI: %d\n", Rssi);
-#endif // CC1101_DEBUG_FLOW
-        return res;
-    }
-    else
-    {
-#if (CC1101_DEBUG_ERRORS)
-        printf("CC1101: status: %X\n", status);
-        if(status & CC_STATUS_CARIER_SENSE)
-            printf("Carrier sense\n");
-        if(status & CC_STATUS_PQT_REACHED)
-            printf("PQT reached\n");
-        if(status & CC_STATUS_CHANNEL_CLEAR)
-            printf("Channel clear\n");
-        if(status & CC_STATUS_SFD)
-            printf("Sync word has been reveived\n");
-
-        //Note: the reading gives the non-inverted value irrespective of what IOCFG0.GDO0_INV is programmed to.
-        if(status & CC_STATUS_GDO2)
-            printf("GDO2 low value\n");
-        if(status & CC_STATUS_GDO0)
-            printf("GDO0 low value\n");
-#endif // CC1101_DEBUG_ERRORS
-        return res;
-    }
 }
 
 static inline void cc1101_chip_reset(CC1101* cc1101)
@@ -272,12 +222,32 @@ void cc1101_info(CC1101* cc1101)
 }
 #endif // CC1101_DEBUG_INFO
 
-//static inline void cc1101_gdo0_irq(int vector, void* param)
-//{
-//    CC1101* cc1101 = (CC1101*)param;
-//    iprintd("CC1101: exti irq\n");
-////    EXTI->PR = 1ul << GPIO_PIN(CC1101_GDO0_PIN);
-//}
+static inline void cc1101_gdo0_irq(int vector, void* param)
+{
+    CC1101* cc1101 = (CC1101*)param;
+    EXTI->PR = 1ul << GPIO_PIN(CC1101_GDO0_PIN);
+    NVIC_DisableIRQ(CC1101_GDO0_EXTI_IRQ);
+
+    iprintd("CC1101: exti irq, state: %d\n", cc1101->state);
+    switch(cc1101->state)
+    {
+        case CC1101_STATE_RX:
+            /* go to process for read FIFO */
+            ipc_ipost_inline(cc1101->user, HAL_CMD(HAL_RADIO, RADIO_GET_PACKET), (unsigned int)cc1101->io, 0, 0);
+            cc1101->state = CC1101_STATE_IDLE;
+            cc1101->user = INVALID_HANDLE;
+            break;
+        case CC1101_STATE_TX:
+            break;
+        case CC1101_STATE_OFF:
+            break;
+        case CC1101_STATE_IDLE:
+            break;
+        case CC1101_STATE_SLEEP:
+            break;
+    }
+
+}
 
 void cc1101_hw_init(CC1101* cc1101)
 {
@@ -290,11 +260,9 @@ void cc1101_hw_init(CC1101* cc1101)
     gpio_enable_pin(CC1101_GDO0_PIN, GPIO_MODE_IN_FLOAT);
     gpio_enable_pin(CC1101_GDO2_PIN, GPIO_MODE_IN_FLOAT);
 
-//    pin_enable_exti(CC1101_GDO0_PIN, EXTI_FLAGS_FALLING);
-
-//    irq_register(CC1101_GDO0_EXTI_IRQ, cc1101_gdo0_irq, (void*)cc1101);
-//    NVIC_SetPriority(CC1101_GDO0_EXTI_IRQ, 14);
-//    NVIC_EnableIRQ(CC1101_GDO0_EXTI_IRQ);
+    pin_enable_exti(CC1101_GDO0_PIN, EXTI_FLAGS_FALLING);
+    irq_register(CC1101_GDO0_EXTI_IRQ, cc1101_gdo0_irq, (void*)cc1101);
+    NVIC_SetPriority(CC1101_GDO0_EXTI_IRQ, 14);
 
     cc1101_cs_hi();
 
@@ -306,6 +274,7 @@ void cc1101_hw_init(CC1101* cc1101)
         return;
     }
 
+    cc1101->user = INVALID_HANDLE;
     cc1101->state = CC1101_STATE_IDLE;
 
 #if (CC1101_DEBUG)
@@ -387,38 +356,72 @@ void cc1101_tx(CC1101* cc1101, uint8_t* data, unsigned int data_size)
     cc1101_prepare_tx(cc1101, data, data_size);
     cc1101_start_tx(cc1101);
     cc1101->state = CC1101_STATE_TX;
-//    for(int i = 0; i < 50; i++)
-//    {
-//        printf("GDO ");
-//        if(cc1101_gdo0_pin())
-//            printf("HIGH\n");
-//        else
-//            printf("LOW\n");
-//
-//        sleep_ms(10);
-//    }
 }
 
-unsigned int cc1101_rx(CC1101* cc1101, uint8_t* data)
+void cc1101_rx(CC1101* cc1101, IO* io)
 {
 #if (CC1101_DEBUG)
-    printf("CC1101: RX\n");
+    printf("CC1101: start RX\n");
 #endif // CC1101_DEBUG_INFO
+    cc1101->user = process_get_current();
     cc1101_go_idle(cc1101);
     cc1101_flush_rx_fifo(cc1101);
     cc1101_start_rx(cc1101);
     cc1101->state = CC1101_STATE_RX;
-
-    // wait to CC1101 get packet
-    for(int i = 0; i < 50; i++)
-    {
-        cc1101_write_strobe(cc1101, CC_SNOP);
-        if(!(cc1101->status & CC_STB_RX))
-            return cc1101_receive_packet(cc1101, data);
-
-        sleep_ms(2);
-    }
-    error(ERROR_TIMEOUT);
-    return 0;
+    cc1101->io = io;
+    NVIC_EnableIRQ(CC1101_GDO0_EXTI_IRQ);
 }
 
+int cc1101_receive_packet(CC1101* cc1101, IO* io)
+{
+    unsigned int res = 0;
+    uint8_t status = cc1101_read_register(CC_PKTSTATUS);
+    uint8_t* data = io_data(io);
+
+    if(status & CC_STATUS_CRC_OK)
+    {
+        cc1101_cs_lo();
+        while(cc1101_busy());
+
+        spi_byte(CC1101_SPI, CC_FIFO | CC_READ_FLAG | CC_BURST_FLAG);
+
+        for(uint8_t i = 0; i < cc1101->packet_size; i++)
+             data[res++] = spi_byte(CC1101_SPI, 0);
+
+        // RSSI
+        data[res++] = spi_byte(CC1101_SPI, 0);
+        // LQI
+        data[res++] = spi_byte(CC1101_SPI, 0);
+        cc1101_cs_hi();
+
+        // TODO: RSSI transform
+        int Rssi = RSSI_dBm(data[cc1101->packet_size]);
+
+#if (CC1101_DEBUG_FLOW)
+    cc1101_dump(data, cc1101->packet_size, "RX PACKET");
+    printf("RSSI: %d\n", Rssi);
+#endif // CC1101_DEBUG_FLOW
+        return res;
+    }
+    else
+    {
+#if (CC1101_DEBUG_ERRORS)
+        printf("CC1101: status: %X\n", status);
+        if(status & CC_STATUS_CARIER_SENSE)
+            printf("Carrier sense\n");
+        if(status & CC_STATUS_PQT_REACHED)
+            printf("PQT reached\n");
+        if(status & CC_STATUS_CHANNEL_CLEAR)
+            printf("Channel clear\n");
+        if(status & CC_STATUS_SFD)
+            printf("Sync word has been reveived\n");
+
+        //Note: the reading gives the non-inverted value irrespective of what IOCFG0.GDO0_INV is programmed to.
+        if(status & CC_STATUS_GDO2)
+            printf("GDO2 low value\n");
+        if(status & CC_STATUS_GDO0)
+            printf("GDO0 low value\n");
+#endif // CC1101_DEBUG_ERRORS
+        return res;
+    }
+}

@@ -81,8 +81,6 @@ void app()
 
     app.cc1101 = cc1101_open();
 
-    printf("cc1101 handle: %X\n", app.cc1101);
-
 //    comm_init(&app);
 
     uint8_t pkt_id = 0;
@@ -97,7 +95,6 @@ void app()
 
     IO* io = io_create(5);
 
-
     for (;;)
     {
         ipc_read(&ipc);
@@ -109,6 +106,7 @@ void app()
             io_reset(io);
             io_data_append(io, (uint8_t*)packets[pkt_id], 5);
 
+//            led_mode(&app, LED_COLOR_BLUE, LED_MODE_BLINK);
             if(!cc1101_transmit(app.cc1101, (uint8_t*)packets[pkt_id], 5))
                 printf("TX failure\n");
 

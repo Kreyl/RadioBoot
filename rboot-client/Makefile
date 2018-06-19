@@ -103,7 +103,7 @@ all: $(TARGET_NAME).elf
 program:
 #	@st-flash write $(OUTPUT_DIR)/$(TARGET_NAME).bin 0x8000000
 #	@openocd -f stm32f1.cfg -c "program $(OUTPUT_DIR)/$(TARGET_NAME).bin 0x08000000 reset exit"
-	ST-LINK_CLI -c SWD -P $(OUTPUT_DIR)/$(TARGET_NAME).bin 0x08001000 -Rst
+	ST-LINK_CLI -c SWD -P $(OUTPUT_DIR)/$(TARGET_NAME).bin 0x08000000 -Rst
 
 clean:
 	@echo '-----------------------------------------------------------'

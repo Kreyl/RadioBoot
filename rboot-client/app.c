@@ -67,17 +67,19 @@ void app()
     IPC ipc;
 
     app_init(&app);
-//    led_init(&app);
+    led_init(&app);
     radio_init(&app);
 
-    uint32_t timeout = 99;
+    uint32_t timeout = 1000;
     app.timer = timer_create(0, HAL_APP);
-    timer_start_ms(app.timer, timeout);
+//    timer_start_ms(app.timer, timeout);
 
     sleep_ms(200);
     process_info();
 
     uint8_t data[100];
+
+    radio_rx_sync(&app, data, 6);
 
     for (;;)
     {
@@ -85,7 +87,6 @@ void app()
         switch (HAL_GROUP(ipc.cmd))
         {
             case HAL_APP:
-                //radio_rx_sync(&app, data);
                 timer_start_ms(app.timer, timeout);
             break;
 

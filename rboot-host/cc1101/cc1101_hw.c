@@ -71,8 +71,25 @@ static inline void cc1101_write_strobe(CC1101_HW* cc1101, uint8_t strobe)
     while(cc1101_busy());
     cc1101->status = (uint8_t)spi_byte(CC1101_SPI, strobe);
     cc1101->status &= 0b11110000;
-    sleep_us(18);
     gpio_set_pin(CC1101_CS_PIN);
+
+#if (CC1101_DEBUG_FLOW)
+    printf("CC1101 status: %X\n", cc1101->status);
+    if(cc1101->status & CC_STATUS_CARIER_SENSE)
+        printf("Carrier sense\n");
+    if(cc1101->status & CC_STATUS_PQT_REACHED)
+        printf("PQT reached\n");
+    if(cc1101->status & CC_STATUS_CHANNEL_CLEAR)
+        printf("Channel clear\n");
+    if(cc1101->status & CC_STATUS_SFD)
+        printf("Sync word has been reveived\n");
+
+    //Note: the reading gives the non-inverted value irrespective of what IOCFG0.GDO0_INV is programmed to.
+    if(cc1101->status & CC_STATUS_GDO2)
+        printf("GDO2 low value\n");
+    if(cc1101->status & CC_STATUS_GDO0)
+        printf("GDO0 low value\n");
+#endif // CC1101_DEBUG_FLOW
 }
 
 static inline void cc1101_prepare_tx(CC1101_HW* cc1101, uint8_t* data, unsigned int data_size)
@@ -133,7 +150,8 @@ static inline void cc1101_go_idle(CC1101_HW* cc1101)
     while(cc1101->status != CC_STB_IDLE)
     {
         cc1101_write_strobe(cc1101, CC_SIDLE);
-        sleep_ms(21);
+        sleep_ms(121);
+        printf("a\n");
     }
 
     cc1101->state = CC1101_STATE_IDLE;
@@ -351,14 +369,21 @@ void cc1101_hw_tx(CC1101_HW* cc1101, HANDLE process, IO* io, unsigned int size)
     cc1101->process = process;
     cc1101->io = io;
 
+    printf("1\n");
+
     cc1101_go_idle(cc1101);
+    printf("2\n");
+
     cc1101_prepare_tx(cc1101, io_data(io), io->data_size);
+    printf("3\n");
     cc1101_start_tx(cc1101);
 
     if(stack->flags & CC1101_FLAGS_TRANSMIT_ACK)
         cc1101->state = CC1101_STATE_TX_ACK;
     else
         cc1101->state = CC1101_STATE_TX;
+
+    printf("2\n");
 
     NVIC_EnableIRQ(CC1101_GDO0_EXTI_IRQ);
     error(ERROR_SYNC);

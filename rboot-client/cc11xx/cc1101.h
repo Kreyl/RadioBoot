@@ -171,7 +171,8 @@ typedef enum {
 
 typedef struct {
     CC1101_STATE state;
-    HANDLE handle, user;
+    HANDLE user;
+    IO* io;
     uint8_t status;
     uint8_t channel;
     uint8_t packet_size;
@@ -186,7 +187,9 @@ void cc1101_set_channel(CC1101* cc1101, uint8_t channel_num);
 void cc1101_set_tx_power(CC1101* cc1101, uint8_t power);
 void cc1101_set_radio_pkt_size(CC1101* cc1101, uint8_t size);
 void cc1101_tx(CC1101* cc1101, uint8_t* data, unsigned int data_size);
-unsigned int cc1101_rx(CC1101* cc1101, uint8_t* data);
+void cc1101_rx(CC1101* cc1101, IO* io);
+
+int cc1101_receive_packet(CC1101* cc1101, IO* io);
 
 //void cc1101_tx();
 //void cc1101_rx();

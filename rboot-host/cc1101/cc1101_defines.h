@@ -44,6 +44,7 @@
 #define CC_SNOP                                 0x3D
 
 // Status registers
+#define CC_PARTNUM                              (0x30 | CC_BURST_FLAG)
 #define CC_VERSION                              (0x31 | CC_BURST_FLAG)
 #define CC_FREQEST                              (0x32 | CC_BURST_FLAG)
 #define CC_LQI                                  (0x33 | CC_BURST_FLAG)

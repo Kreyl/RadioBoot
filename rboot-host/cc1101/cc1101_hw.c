@@ -50,7 +50,6 @@ static inline bool cc1101_write_register(uint8_t addr, uint8_t data)
     while(cc1101_busy());
     spi_byte(CC1101_SPI, addr);
     spi_byte(CC1101_SPI, data);
-    sleep_ms(1);
     gpio_set_pin(CC1101_CS_PIN);
     return true;
 }
@@ -59,11 +58,9 @@ static inline uint8_t cc1101_read_register(uint8_t addr)
 {
     uint8_t res = 0;
     gpio_reset_pin(CC1101_CS_PIN);
-    sleep_ms(2);
     while(cc1101_busy());
     spi_byte(CC1101_SPI, addr | CC_READ_FLAG);
     res = spi_byte(CC1101_SPI, 0);
-    sleep_ms(2);
     gpio_set_pin(CC1101_CS_PIN);
     return res;
 }
@@ -73,9 +70,8 @@ static inline void cc1101_write_strobe(CC1101_HW* cc1101, uint8_t strobe)
     gpio_reset_pin(CC1101_CS_PIN);
     while(cc1101_busy());
     cc1101->status = (uint8_t)spi_byte(CC1101_SPI, strobe);
-    cc1101->status &= 0b01110000; // Mask needed bits
-    sleep_ms(2);
     gpio_set_pin(CC1101_CS_PIN);
+    cc1101->status &= 0b01110000; // Mask needed bits
 
 #if (CC1101_DEBUG_FLOW)
     printf("CC1101 status: %X\n", cc1101->status);
@@ -225,8 +221,11 @@ static inline void cc1101_rf_config(CC1101_HW* cc1101)
 void cc1101_info(CC1101_HW* cc1101)
 {
     printf("CC1101:\n");
-    printf("Version %X\n", cc1101_read_register(CC_VERSION));
-    printf("Patable %X\n", cc1101_read_register(CC_PATABLE));
+    printf("ver: %X\n", cc1101_read_register(CC_VERSION));
+    printf("rev: %X\n", cc1101_read_register(CC_PARTNUM));
+    printf("pkt: %X\n", cc1101_read_register(CC_PKTLEN));
+    printf("pwr: %X\n", cc1101_read_register(CC_PATABLE));
+
 }
 #endif // CC1101_DEBUG_INFO
 
@@ -284,7 +283,6 @@ void cc1101_hw_init(CC1101_HW* cc1101)
     gpio_enable_pin(CC1101_GDO0_PIN, GPIO_MODE_IN_FLOAT);
     gpio_enable_pin(CC1101_GDO2_PIN, GPIO_MODE_IN_FLOAT);
 
-
     pin_enable_exti(CC1101_GDO0_PIN, EXTI_FLAGS_FALLING);
     pin_enable_exti(CC1101_GDO2_PIN, EXTI_FLAGS_FALLING);
     irq_register(CC1101_GDO0_EXTI_IRQ, cc1101_gdo0_irq, (void*)cc1101);
@@ -295,7 +293,13 @@ void cc1101_hw_init(CC1101_HW* cc1101)
 
     gpio_set_pin(CC1101_CS_PIN);
 
-    if(!spi_open(CC1101_SPI, SPI_MODE_MASTER | SPI_DATA_BO_MSB | SPI_NSS_SOFTWARE | SPI_SSI_ON | SPI_DATA_CK_IDLE_LOW | SPI_DATA_FIRST_EDGE | SPI_BAUDRATE_DIV256))
+    if(!spi_open(CC1101_SPI, SPI_MODE_MASTER |
+                                 SPI_DATA_BO_MSB |
+                                 SPI_NSS_SOFTWARE |
+                                 SPI_SSI_ON |
+                                 SPI_DATA_CK_IDLE_LOW |
+                                 SPI_DATA_FIRST_EDGE |
+                                 SPI_BAUDRATE_DIV4))
     {
 #if (CC1101_DEBUG_ERRORS)
         printf("CC1101: spi open failure\n");
@@ -303,11 +307,13 @@ void cc1101_hw_init(CC1101_HW* cc1101)
         return;
     }
 
+    cc1101_hw_reset(cc1101);
+
     cc1101->process = INVALID_HANDLE;
     cc1101->state = CC1101_STATE_IDLE;
 
 #if (CC1101_DEBUG)
-    printf("CC1101: init\n");
+    printf("CC1101: idle\n");
 #endif // CC1101_DEBUG_INFO
 }
 

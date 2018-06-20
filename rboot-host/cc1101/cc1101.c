@@ -41,8 +41,6 @@ HANDLE cc1101_open()
         return INVALID_HANDLE;
 
     ack(process, HAL_REQ(HAL_CC1101, IPC_OPEN), 0, 0, 0);
-    ack(process, HAL_REQ(HAL_CC1101, CC1101_RESET), 0, 0, 0);
-//    ack(process, HAL_REQ(HAL_CC1101, CC1101_CALIBRATE), 0, 0, 0);
 
     return process;
 }

@@ -80,14 +80,12 @@ void app()
     process_info();
 
     uint8_t data[100];
-
+    int RSSI;
     cc1101_set_packet_size(app.cc1101, 5);
     cc1101_set_channel(app.cc1101, 0);
-    cc1101_set_power(app.cc1101, CC_PwrMinus10dBm);
+//    cc1101_set_power(app.cc1101, CC_PwrMinus10dBm);
 
-    int res = cc1101_receive(app.cc1101, data, 5, CC1101_FLAGS_NO_TIMEOUT);
-
-    printf("res %d\n", res);
+    int res = 0;
 
     for (;;)
     {
@@ -95,6 +93,10 @@ void app()
         switch (HAL_GROUP(ipc.cmd))
         {
             case HAL_APP:
+                res = cc1101_receive(app.cc1101, data, 5, CC1101_FLAGS_NO_TIMEOUT, &RSSI);
+
+                printf("res %d, RSSI %d\n", res, RSSI);
+
                 timer_start_ms(app.timer, timeout);
             break;
 

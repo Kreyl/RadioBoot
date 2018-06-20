@@ -35,15 +35,6 @@ static inline bool cc1101_busy()
     return gpio_get_pin(CC1101_MISO_PIN);
 }
 
-// Return RSSI in dBm
-static inline int8_t RSSI_dBm(uint8_t raw)
-{
-    int16_t RSSI = raw;
-    if (RSSI >= 128) RSSI -= 256;
-    RSSI = (RSSI / 2) - 74;    // now it is in dBm
-    return RSSI;
-}
-
 static inline bool cc1101_write_register(uint8_t addr, uint8_t data)
 {
     gpio_reset_pin(CC1101_CS_PIN);
@@ -70,8 +61,8 @@ static inline void cc1101_write_strobe(CC1101_HW* cc1101, uint8_t strobe)
     gpio_reset_pin(CC1101_CS_PIN);
     while(cc1101_busy());
     cc1101->status = (uint8_t)spi_byte(CC1101_SPI, strobe);
-    cc1101->status &= 0b11110000;
     gpio_set_pin(CC1101_CS_PIN);
+    cc1101->status &= 0b01110000; // Mask needed bits
 
 #if (CC1101_DEBUG_FLOW)
     printf("CC1101 status: %X\n", cc1101->status);
@@ -80,14 +71,15 @@ static inline void cc1101_write_strobe(CC1101_HW* cc1101, uint8_t strobe)
 
 static inline void cc1101_prepare_tx(CC1101_HW* cc1101, uint8_t* data, unsigned int data_size)
 {
-    gpio_reset_pin(CC1101_CS_PIN);
-    while(cc1101_busy());
-    spi_byte(CC1101_SPI, CC_FIFO | CC_WRITE_FLAG | CC_BURST_FLAG);
 
 #if (CC1101_DEBUG_FLOW)
     cc1101_dump(data, data_size, "TX PACKET");
     sleep_ms(20);
 #endif // CC1101_DEBUG_FLOW
+
+    gpio_reset_pin(CC1101_CS_PIN);
+    while(cc1101_busy());
+    spi_byte(CC1101_SPI, CC_FIFO | CC_WRITE_FLAG | CC_BURST_FLAG);
 
     for(uint8_t i = 0; i < data_size; i++)
         spi_byte(CC1101_SPI, data[i]);
@@ -136,7 +128,24 @@ static inline void cc1101_go_idle(CC1101_HW* cc1101)
     while(cc1101->status != CC_STB_IDLE)
     {
         cc1101_write_strobe(cc1101, CC_SIDLE);
-        sleep_ms(900);
+        sleep_ms(1000);
+#if (CC1101_DEBUG_ERRORS)
+        printf("CC1101: status: %X\n", cc1101->status);
+        if(cc1101->status & CC_STATUS_CARIER_SENSE)
+            printf("Carrier sense\n");
+        if(cc1101->status & CC_STATUS_PQT_REACHED)
+            printf("PQT reached\n");
+        if(cc1101->status & CC_STATUS_CHANNEL_CLEAR)
+            printf("Channel clear\n");
+        if(cc1101->status & CC_STATUS_SFD)
+            printf("Sync word has been reveived\n");
+
+        //Note: the reading gives the non-inverted value irrespective of what IOCFG0.GDO0_INV is programmed to.
+        if(cc1101->status & CC_STATUS_GDO2)
+            printf("GDO2 low value\n");
+        if(cc1101->status & CC_STATUS_GDO0)
+            printf("GDO0 low value\n");
+#endif // CC1101_DEBUG_ERRORS
     }
 
     cc1101->state = CC1101_STATE_IDLE;
@@ -187,8 +196,7 @@ static inline void cc1101_rf_config(CC1101_HW* cc1101)
     cc1101_write_register(CC_TEST1,    CC_TEST1_VALUE);      // Various test settings.
     cc1101_write_register(CC_TEST0,    CC_TEST0_VALUE);      // Various test settings.
     cc1101_write_register(CC_FIFOTHR,  CC_FIFOTHR_VALUE);    // fifo threshold
-//    cc1101_write_register(CC_IOCFG2,   CC_IOCFG2_VALUE);     // GDO2 output pin configuration.
-//    cc1101_write_register(CC_IOCFG2,   0x35);
+    cc1101_write_register(CC_IOCFG2,   CC_IOCFG2_VALUE);     // GDO2 output pin configuration.
     cc1101_write_register(CC_IOCFG0,   CC_IOCFG0_VALUE);     // GDO0 output pin configuration.
 
     cc1101_write_register(CC_PKTCTRL1, CC_PKTCTRL1_VALUE);   // Packet automation control.
@@ -203,8 +211,12 @@ static inline void cc1101_rf_config(CC1101_HW* cc1101)
 #if (CC1101_DEBUG_INFO)
 void cc1101_info(CC1101_HW* cc1101)
 {
-    printf("CC1101: version %X, ", cc1101_read_register(CC_VERSION));
-    printf("RSSI %X\n", cc1101_read_register(CC_RSSI));
+    printf("CC1101:\n");
+    printf("ver: %X\n", cc1101_read_register(CC_VERSION));
+    printf("rev: %X\n", cc1101_read_register(CC_PARTNUM));
+    printf("pkt: %X\n", cc1101_read_register(CC_PKTLEN));
+    printf("pwr: %X\n", cc1101_read_register(CC_PATABLE));
+
 }
 #endif // CC1101_DEBUG_INFO
 
@@ -219,8 +231,8 @@ static inline void cc1101_gdo0_irq(int vector, void* param)
     {
         case CC1101_STATE_RX:
             /* go to process for read FIFO */
-            ipc_ipost_inline(cc1101->process, HAL_CMD(HAL_CC1101, CC1101_GET_PACKET), (unsigned int)cc1101->io, 0, 0);
-            cc1101->state = CC1101_STATE_BUSY;
+            iio_complete(cc1101->process, HAL_IO_CMD(HAL_CC1101, IPC_READ), 0, cc1101->io);
+            cc1101->state = CC1101_STATE_IDLE;
             cc1101->process = INVALID_HANDLE;
             cc1101->io = NULL;
             break;
@@ -236,10 +248,19 @@ static inline void cc1101_gdo0_irq(int vector, void* param)
             cc1101->state = CC1101_STATE_IDLE;
             break;
 
-        default:
+        case CC1101_STATE_OFF:
+        case CC1101_STATE_IDLE:
+        case CC1101_STATE_SLEEP:
             break;
     }
+}
 
+static inline void cc1101_gdo2_irq(int vector, void* param)
+{
+    CC1101_HW* cc1101 = (CC1101_HW*)param;
+    EXTI->PR = 1ul << GPIO_PIN(CC1101_GDO2_PIN);
+    iprintd("CC1101: exti irq gdo2, state: %d\n", cc1101->state);
+//    NVIC_DisableIRQ(CC1101_GDO2_EXTI_IRQ);
 }
 
 void cc1101_hw_init(CC1101_HW* cc1101)
@@ -259,7 +280,13 @@ void cc1101_hw_init(CC1101_HW* cc1101)
 
     gpio_set_pin(CC1101_CS_PIN);
 
-    if(!spi_open(CC1101_SPI, SPI_MODE_MASTER | SPI_DATA_BO_MSB | SPI_NSS_SOFTWARE | SPI_SSI_ON | SPI_DATA_CK_IDLE_LOW | SPI_DATA_FIRST_EDGE | SPI_BAUDRATE_DIV256))
+    if(!spi_open(CC1101_SPI, SPI_MODE_MASTER |
+                                 SPI_DATA_BO_MSB |
+                                 SPI_NSS_SOFTWARE |
+                                 SPI_SSI_ON |
+                                 SPI_DATA_CK_IDLE_LOW |
+                                 SPI_DATA_FIRST_EDGE |
+                                 SPI_BAUDRATE_DIV4))
     {
 #if (CC1101_DEBUG_ERRORS)
         printf("CC1101: spi open failure\n");
@@ -267,11 +294,13 @@ void cc1101_hw_init(CC1101_HW* cc1101)
         return;
     }
 
+    cc1101_hw_reset(cc1101);
+
     cc1101->process = INVALID_HANDLE;
     cc1101->state = CC1101_STATE_IDLE;
 
 #if (CC1101_DEBUG)
-    printf("CC1101: init\n");
+    printf("CC1101: idle\n");
 #endif // CC1101_DEBUG_INFO
 }
 
@@ -325,6 +354,8 @@ void cc1101_hw_set_tx_power(CC1101_HW* cc1101, uint8_t power)
     printf("CC1101: set tx power %X\n", power);
 #endif // CC1101_DEBUG_INFO
     cc1101_write_register(CC_PATABLE, power);
+
+    printf("tx power %X\n", cc1101_read_register(CC_PATABLE));
 }
 
 void cc1101_hw_set_radio_pkt_size(CC1101_HW* cc1101, uint8_t size)
@@ -371,9 +402,6 @@ void cc1101_hw_rx(CC1101_HW* cc1101, HANDLE process, IO* io, unsigned int size)
     CC1101_STACK* stack = io_stack(io);
     io_pop(io, sizeof(CC1101_STACK));
 
-    cc1101_go_idle(cc1101);
-    cc1101_flush_rx_fifo(cc1101);
-    cc1101_start_rx(cc1101);
     cc1101->state = CC1101_STATE_RX;
     cc1101->process = process;
     cc1101->io = io;
@@ -381,18 +409,20 @@ void cc1101_hw_rx(CC1101_HW* cc1101, HANDLE process, IO* io, unsigned int size)
     if(stack->flags & CC1101_FLAGS_NO_TIMEOUT)
         printf("without timeout\n");
     else
-        // TODO: start timer
+        printf("TODO: timeout\n");
+
+    cc1101_flush_rx_fifo(cc1101);
+    cc1101_start_rx(cc1101);
 
     NVIC_EnableIRQ(CC1101_GDO0_EXTI_IRQ);
     error(ERROR_SYNC);
 }
 
-int cc1101_hw_receive_packet(CC1101_HW* cc1101, IO* io)
+int cc1101_hw_read_fifo(CC1101_HW* cc1101, IO* io)
 {
 #if (CC1101_DEBUG)
-    printf("CC1101: receive packet\n");
+    printf("CC1101: read FIFO\n");
 #endif // CC1101_DEBUG_INFO
-
     unsigned int res = 0;
     uint8_t status = cc1101_read_register(CC_PKTSTATUS);
     uint8_t* data = io_data(io);
@@ -409,22 +439,21 @@ int cc1101_hw_receive_packet(CC1101_HW* cc1101, IO* io)
 
         // RSSI
         data[res++] = spi_byte(CC1101_SPI, 0);
-        // LQI
+        // dummy LQI
         data[res++] = spi_byte(CC1101_SPI, 0);
+
         gpio_set_pin(CC1101_CS_PIN);
 
-        // TODO: RSSI transform
-        int Rssi = RSSI_dBm(data[cc1101->packet_size]);
-
+        io->data_size = res;
 #if (CC1101_DEBUG_REQUESTS)
-    cc1101_dump(data, cc1101->packet_size, "RX PACKET");
-    printf("RSSI: %d\n", Rssi);
+        cc1101_dump(data, cc1101->packet_size, "RX PACKET");
+        int Rssi = RSSI_dBm(data[cc1101->packet_size]);
+        printf("RSSI: %d\n", Rssi);
 #endif // CC1101_DEBUG_REQUESTS
-        return res;
     }
+#if (CC1101_DEBUG_ERRORS)
     else
     {
-#if (CC1101_DEBUG_ERRORS)
         printf("CC1101: status: %X\n", status);
         if(status & CC_STATUS_CARIER_SENSE)
             printf("Carrier sense\n");
@@ -440,7 +469,7 @@ int cc1101_hw_receive_packet(CC1101_HW* cc1101, IO* io)
             printf("GDO2 low value\n");
         if(status & CC_STATUS_GDO0)
             printf("GDO0 low value\n");
-#endif // CC1101_DEBUG_ERRORS
-        return res;
     }
+#endif // CC1101_DEBUG_ERRORS
+    return res;
 }

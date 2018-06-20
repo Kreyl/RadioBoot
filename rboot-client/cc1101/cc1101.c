@@ -41,9 +41,6 @@ HANDLE cc1101_open()
         return INVALID_HANDLE;
 
     ack(process, HAL_REQ(HAL_CC1101, IPC_OPEN), 0, 0, 0);
-    ack(process, HAL_REQ(HAL_CC1101, CC1101_RESET), 0, 0, 0);
-//    ack(process, HAL_REQ(HAL_CC1101, CC1101_CALIBRATE), 0, 0, 0);
-
     return process;
 }
 
@@ -75,7 +72,8 @@ static int cc1101_receive_internal(HANDLE process, IO* io, unsigned int size, un
     CC1101_STACK* stack = io_push(io, sizeof(CC1101_STACK));
     stack->size = size;
     stack->flags = flags;
-    return io_read_sync(process, HAL_IO_REQ(HAL_CC1101, IPC_READ), 0, io, size);
+    int res = io_write_sync(process, HAL_IO_REQ(HAL_CC1101, IPC_READ), 0, io);
+    return io_read_sync(process, HAL_IO_REQ(HAL_CC1101, CC1101_READ_FIFO), 0, io, res);
 }
 
 bool cc1101_transmit(HANDLE process, uint8_t* data, unsigned int data_size)
@@ -98,9 +96,9 @@ bool cc1101_transmit(HANDLE process, uint8_t* data, unsigned int data_size)
 //    cc1101_transmit_sync_internal(process, io, io->data_size, CC1101_FLAGS_TRANSMIT_ACK);
 //}
 
-int cc1101_receive(HANDLE process, uint8_t* data, unsigned int data_size, unsigned int flags)
+int cc1101_receive(HANDLE process, uint8_t* data, unsigned int data_size, unsigned int flags, int* RSSI)
 {
-    IO* io = io_create(data_size + sizeof(CC1101_STACK));
+    IO* io = io_create(sizeof(CC1101_STACK) + data_size + sizeof(CC1101_PKT_STATUS));
     int res = false;
     if(io == NULL)
     {
@@ -109,8 +107,27 @@ int cc1101_receive(HANDLE process, uint8_t* data, unsigned int data_size, unsign
     }
 
     res = cc1101_receive_internal(process, io, data_size, flags);
+
+    if(res < sizeof(CC1101_PKT_STATUS))
+    {
+        io_destroy(io);
+        return res;
+    }
+
+    memcpy(data, io_data(io), data_size);
+    *RSSI = RSSI_dBm(*(uint8_t*)(io_data(io) + data_size));
+
     io_destroy(io);
-    return res;
+    return res - sizeof(CC1101_PKT_STATUS);
+}
+
+// Return RSSI in dBm
+int8_t RSSI_dBm(uint8_t raw)
+{
+    int16_t RSSI = raw;
+    if (RSSI >= 128) RSSI -= 256;
+    RSSI = (RSSI / 2) - 74;    // now it is in dBm
+    return RSSI;
 }
 
 // ========================== CC1101 PROCESS ====================================
@@ -146,8 +163,8 @@ static void cc1101_request(CC1101_HW* cc1101, IPC* ipc)
             cc1101_hw_set_radio_pkt_size(cc1101, ipc->param1);
             break;
 //            cc1101_rx(cc1101, (IO*)ipc->param2);
-        case CC1101_GET_PACKET:
-            cc1101_hw_receive_packet(cc1101, (IO*)ipc->param2);
+        case CC1101_READ_FIFO:
+            ipc->param3 = cc1101_hw_read_fifo(cc1101, (IO*)ipc->param2);
             break;
         default:
             error(ERROR_NOT_SUPPORTED);

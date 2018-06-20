@@ -18,7 +18,6 @@ typedef enum {
     CC1101_STATE_OFF = 0,
     CC1101_STATE_SLEEP,
     CC1101_STATE_IDLE,
-    CC1101_STATE_BUSY,
     CC1101_STATE_TX,
     CC1101_STATE_TX_ACK,
     CC1101_STATE_RX,
@@ -44,6 +43,6 @@ void cc1101_hw_set_radio_pkt_size(CC1101_HW* cc1101, uint8_t size);
 void cc1101_hw_tx(CC1101_HW* cc1101, HANDLE process, IO* io, unsigned int size);
 void cc1101_hw_rx(CC1101_HW* cc1101, HANDLE process, IO* io, unsigned int size);
 
-int cc1101_hw_receive_packet(CC1101_HW* cc1101, IO* io);
+int cc1101_hw_read_fifo(CC1101_HW* cc1101, IO* io);
 
 #endif /* CC1101_CC1101_HW_H_ */

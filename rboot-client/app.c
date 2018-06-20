@@ -95,7 +95,15 @@ void app()
             case HAL_APP:
                 res = cc1101_receive(app.cc1101, data, 5, CC1101_FLAGS_NO_TIMEOUT, &RSSI);
 
-                printf("res %d, RSSI %d\n", res, RSSI);
+                if(res > 0)
+                {
+                    printf("RX: ");
+                    for(int i = 0; i < res; i++)
+                        printf("%02X ", data[i]);
+                    printf(", RSSI %d\n", res, RSSI);
+                }
+                else
+                    printf("RX failure\n");
 
                 timer_start_ms(app.timer, timeout);
             break;

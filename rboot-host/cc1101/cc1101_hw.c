@@ -35,15 +35,6 @@ static inline bool cc1101_busy()
     return gpio_get_pin(CC1101_MISO_PIN);
 }
 
-// Return RSSI in dBm
-static inline int8_t RSSI_dBm(uint8_t raw)
-{
-    int16_t RSSI = raw;
-    if (RSSI >= 128) RSSI -= 256;
-    RSSI = (RSSI / 2) - 74;    // now it is in dBm
-    return RSSI;
-}
-
 static inline bool cc1101_write_register(uint8_t addr, uint8_t data)
 {
     gpio_reset_pin(CC1101_CS_PIN);
@@ -98,9 +89,9 @@ static inline void cc1101_prepare_tx(CC1101_HW* cc1101, uint8_t* data, unsigned 
 
 static inline void cc1101_chip_reset(CC1101_HW* cc1101)
 {
-#if (CC1101_DEBUG)
+#if (CC1101_DEBUG_REQUESTS)
     printf("CC1101: reset\n");
-#endif // CC1101_DEBUG_INFO
+#endif // CC1101_DEBUG_REQUESTS
     cc1101_write_strobe(cc1101, CC_SRES);
 }
 
@@ -111,9 +102,9 @@ static inline void cc1101_flush_tx_fifo(CC1101_HW* cc1101)
 
 static inline void cc1101_flush_rx_fifo(CC1101_HW* cc1101)
 {
-#if (CC1101_DEBUG)
+#if (CC1101_DEBUG_REQUESTS)
     printf("CC1101: flush RX\n");
-#endif // CC1101_DEBUG_INFO
+#endif // CC1101_DEBUG_REQUESTS
     cc1101_write_strobe(cc1101, CC_SFRX);
 }
 
@@ -173,9 +164,9 @@ static inline void cc1101_go_sleep(CC1101_HW* cc1101)
 
 static inline void cc1101_rf_config(CC1101_HW* cc1101)
 {
-#if (CC1101_DEBUG)
+#if (CC1101_DEBUG_REQUESTS)
     printf("CC1101: RF config\n");
-#endif // CC1101_DEBUG_INFO
+#endif // CC1101_DEBUG_REQUESTS
 
     cc1101_write_register(CC_FSCTRL1,  CC_FSCTRL1_VALUE);    // Frequency synthesizer control.
     cc1101_write_register(CC_FSCTRL0,  CC_FSCTRL0_VALUE);    // Frequency synthesizer control.
@@ -235,12 +226,14 @@ static inline void cc1101_gdo0_irq(int vector, void* param)
     EXTI->PR = 1ul << GPIO_PIN(CC1101_GDO0_PIN);
     NVIC_DisableIRQ(CC1101_GDO0_EXTI_IRQ);
 
-//    iprintd("CC1101: exti irq, state: %d\n", cc1101->state);
+#if (CC1101_DEBUG_FLOW)
+    iprintd("CC1101: exti irq, state: %d\n", cc1101->state);
+#endif // CC1101_DEBUG_FLOW
     switch(cc1101->state)
     {
         case CC1101_STATE_RX:
             /* go to process for read FIFO */
-//            ipc_ipost_inline(cc1101->user, HAL_CMD(HAL_RADIO, RADIO_GET_PACKET), (unsigned int)cc1101->io, 0, 0);
+            iio_complete(cc1101->process, HAL_IO_CMD(HAL_CC1101, IPC_READ), 0, cc1101->io);
             cc1101->state = CC1101_STATE_IDLE;
             cc1101->process = INVALID_HANDLE;
             cc1101->io = NULL;
@@ -264,14 +257,6 @@ static inline void cc1101_gdo0_irq(int vector, void* param)
     }
 }
 
-static inline void cc1101_gdo2_irq(int vector, void* param)
-{
-    CC1101_HW* cc1101 = (CC1101_HW*)param;
-    EXTI->PR = 1ul << GPIO_PIN(CC1101_GDO2_PIN);
-    iprintd("CC1101: exti irq gdo2, state: %d\n", cc1101->state);
-    NVIC_DisableIRQ(CC1101_GDO2_EXTI_IRQ);
-}
-
 void cc1101_hw_init(CC1101_HW* cc1101)
 {
     cc1101->state = CC1101_STATE_OFF;
@@ -284,12 +269,8 @@ void cc1101_hw_init(CC1101_HW* cc1101)
     gpio_enable_pin(CC1101_GDO2_PIN, GPIO_MODE_IN_FLOAT);
 
     pin_enable_exti(CC1101_GDO0_PIN, EXTI_FLAGS_FALLING);
-    pin_enable_exti(CC1101_GDO2_PIN, EXTI_FLAGS_FALLING);
     irq_register(CC1101_GDO0_EXTI_IRQ, cc1101_gdo0_irq, (void*)cc1101);
-    irq_register(CC1101_GDO2_EXTI_IRQ, cc1101_gdo2_irq, (void*)cc1101);
-
     NVIC_SetPriority(CC1101_GDO0_EXTI_IRQ, 14);
-    NVIC_SetPriority(CC1101_GDO2_EXTI_IRQ, 15);
 
     gpio_set_pin(CC1101_CS_PIN);
 
@@ -312,16 +293,16 @@ void cc1101_hw_init(CC1101_HW* cc1101)
     cc1101->process = INVALID_HANDLE;
     cc1101->state = CC1101_STATE_IDLE;
 
-#if (CC1101_DEBUG)
+#if (CC1101_DEBUG_REQUESTS)
     printf("CC1101: idle\n");
-#endif // CC1101_DEBUG_INFO
+#endif // CC1101_DEBUG_REQUESTS
 }
 
 void cc1101_hw_deinit(CC1101_HW* cc1101)
 {
-#if (CC1101_DEBUG)
+#if (CC1101_DEBUG_REQUESTS)
     printf("CC1101: deinit\n");
-#endif // CC1101_DEBUG_INFO
+#endif // CC1101_DEBUG_REQUESTS
     cc1101->state = CC1101_STATE_OFF;
     spi_close(CC1101_SPI);
     pin_disable(CC1101_CS_PIN);
@@ -346,16 +327,16 @@ void cc1101_hw_reset(CC1101_HW* cc1101)
 
 void cc1101_hw_calibrate(CC1101_HW* cc1101)
 {
-#if (CC1101_DEBUG)
+#if (CC1101_DEBUG_REQUESTS)
     printf("CC1101: calibrate\n");
-#endif // CC1101_DEBUG_INFO
+#endif // CC1101_DEBUG_REQUESTS
 }
 
 void cc1101_hw_set_channel(CC1101_HW* cc1101, uint8_t channel_num)
 {
-#if (CC1101_DEBUG)
+#if (CC1101_DEBUG_REQUESTS)
     printf("CC1101: set channel %u\n", channel_num);
-#endif // CC1101_DEBUG_INFO
+#endif // CC1101_DEBUG_REQUESTS
     cc1101->channel = channel_num;
     cc1101_go_idle(cc1101);
     cc1101_write_register(CC_CHANNR, cc1101->channel);
@@ -363,28 +344,26 @@ void cc1101_hw_set_channel(CC1101_HW* cc1101, uint8_t channel_num)
 
 void cc1101_hw_set_tx_power(CC1101_HW* cc1101, uint8_t power)
 {
-#if (CC1101_DEBUG)
+#if (CC1101_DEBUG_REQUESTS)
     printf("CC1101: set tx power %X\n", power);
-#endif // CC1101_DEBUG_INFO
+#endif // CC1101_DEBUG_REQUESTS
     cc1101_write_register(CC_PATABLE, power);
-
-    printf("tx power %X\n", cc1101_read_register(CC_PATABLE));
 }
 
 void cc1101_hw_set_radio_pkt_size(CC1101_HW* cc1101, uint8_t size)
 {
-#if (CC1101_DEBUG)
+#if (CC1101_DEBUG_REQUESTS)
     printf("CC1101: set packet size to %d\n", size);
-#endif // CC1101_DEBUG_INFO
+#endif // CC1101_DEBUG_REQUESTS
     cc1101->packet_size = size;
     cc1101_write_register(CC_PKTLEN, size);
 }
 
 void cc1101_hw_tx(CC1101_HW* cc1101, HANDLE process, IO* io, unsigned int size)
 {
-#if (CC1101_DEBUG)
+#if (CC1101_DEBUG_REQUESTS)
     printf("CC1101: TX\n");
-#endif // CC1101_DEBUG_INFO
+#endif // CC1101_DEBUG_REQUESTS
     CC1101_STACK* stack = io_stack(io);
     io_pop(io, sizeof(CC1101_STACK));
 
@@ -407,21 +386,35 @@ void cc1101_hw_tx(CC1101_HW* cc1101, HANDLE process, IO* io, unsigned int size)
     error(ERROR_SYNC);
 }
 
-void cc1101_hw_rx(CC1101_HW* cc1101, IO* io)
+void cc1101_hw_rx(CC1101_HW* cc1101, HANDLE process, IO* io, unsigned int size)
 {
-#if (CC1101_DEBUG)
+#if (CC1101_DEBUG_REQUESTS)
     printf("CC1101: start RX\n");
-#endif // CC1101_DEBUG_INFO
-    cc1101_go_idle(cc1101);
+#endif // CC1101_DEBUG_REQUESTS
+    CC1101_STACK* stack = io_stack(io);
+    io_pop(io, sizeof(CC1101_STACK));
+
+    cc1101->state = CC1101_STATE_RX;
+    cc1101->process = process;
+    cc1101->io = io;
+
+    if(!(stack->flags & CC1101_FLAGS_NO_TIMEOUT))
+    {
+        printf("TODO: timeout\n");
+    }
+
     cc1101_flush_rx_fifo(cc1101);
     cc1101_start_rx(cc1101);
-    cc1101->state = CC1101_STATE_RX;
-    cc1101->io = io;
-    NVIC_EnableIRQ(CC1101_GDO2_EXTI_IRQ);
+
+    NVIC_EnableIRQ(CC1101_GDO0_EXTI_IRQ);
+    error(ERROR_SYNC);
 }
 
-int cc1101_hw_receive_packet(CC1101_HW* cc1101, IO* io)
+int cc1101_hw_read_fifo(CC1101_HW* cc1101, IO* io)
 {
+#if (CC1101_DEBUG_REQUESTS)
+    printf("CC1101: read FIFO\n");
+#endif // CC1101_DEBUG_REQUESTS
     unsigned int res = 0;
     uint8_t status = cc1101_read_register(CC_PKTSTATUS);
     uint8_t* data = io_data(io);
@@ -438,22 +431,21 @@ int cc1101_hw_receive_packet(CC1101_HW* cc1101, IO* io)
 
         // RSSI
         data[res++] = spi_byte(CC1101_SPI, 0);
-        // LQI
+        // dummy LQI
         data[res++] = spi_byte(CC1101_SPI, 0);
+
         gpio_set_pin(CC1101_CS_PIN);
 
-        // TODO: RSSI transform
+        io->data_size = res;
+#if (CC1101_DEBUG_FLOW)
+        cc1101_dump(data, cc1101->packet_size, "RX PACKET");
         int Rssi = RSSI_dBm(data[cc1101->packet_size]);
-
-#if (CC1101_DEBUG_REQUESTS)
-    cc1101_dump(data, cc1101->packet_size, "RX PACKET");
-    printf("RSSI: %d\n", Rssi);
-#endif // CC1101_DEBUG_REQUESTS
-        return res;
+        printf("RSSI: %d\n", Rssi);
+#endif // CC1101_DEBUG_FLOW
     }
+#if (CC1101_DEBUG_ERRORS)
     else
     {
-#if (CC1101_DEBUG_ERRORS)
         printf("CC1101: status: %X\n", status);
         if(status & CC_STATUS_CARIER_SENSE)
             printf("Carrier sense\n");
@@ -469,7 +461,7 @@ int cc1101_hw_receive_packet(CC1101_HW* cc1101, IO* io)
             printf("GDO2 low value\n");
         if(status & CC_STATUS_GDO0)
             printf("GDO0 low value\n");
-#endif // CC1101_DEBUG_ERRORS
-        return res;
     }
+#endif // CC1101_DEBUG_ERRORS
+    return res;
 }

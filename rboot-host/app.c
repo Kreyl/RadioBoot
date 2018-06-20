@@ -85,12 +85,9 @@ void app()
 //    comm_init(&app);
 
     uint8_t pkt_id = 0;
-//    uint8_t data[64];
 
     sleep_ms(200);
     process_info();
-
-    IO* io = io_create(5);
 
     cc1101_set_channel(app.cc1101, 0);
     cc1101_set_power(app.cc1101, CC_PwrMinus10dBm);
@@ -98,7 +95,6 @@ void app()
     uint32_t timeout = 5000;
     app.timer = timer_create(0, HAL_APP);
     timer_start_ms(app.timer, timeout);
-
     for (;;)
     {
         ipc_read(&ipc);
@@ -108,18 +104,25 @@ void app()
         case HAL_APP:
             if(HAL_ITEM(ipc.cmd) == IPC_TIMEOUT)
             {
-                io_reset(io);
-                io_data_append(io, (uint8_t*)packets[pkt_id], 5);
-
                 led_mode(&app, LED_COLOR_BLUE, LED_MODE_BLINK);
-                if(!cc1101_transmit(app.cc1101, (uint8_t*)packets[pkt_id], 5))
-                    printf("TX failure\n");
+                if(cc1101_transmit(app.cc1101, packets[pkt_id], 5))
+                {
+                    printf("TX ok\n");
 
-                //printf("rx: %d\n", radio_rx_sync(&app, data));
+                    for(int i = 0; i < 5; i++)
+                        printf("%02X ", packets[pkt_id][i]);
+                    printf("\n");
+
+                }
+                else
+                {
+                    printf("TX failure\n");
+                }
 
                 if(pkt_id++ >= 5)
                     pkt_id = 0;
 
+                //printf("rx: %d\n", radio_rx_sync(&app, data));
                 timer_start_ms(app.timer, timeout);
             }
         break;

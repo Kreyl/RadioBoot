@@ -13,10 +13,10 @@
 
 // DEBUG
 #define CC1101_DEBUG                            1
-#define CC1101_DEBUG_REQUESTS                   1
+#define CC1101_DEBUG_REQUESTS                   0
 #define CC1101_DEBUG_ERRORS                     1
-#define CC1101_DEBUG_FLOW                       1
-#define CC1101_DEBUG_INFO                       1
+#define CC1101_DEBUG_FLOW                       0
+#define CC1101_DEBUG_INFO                       0
 
 
 // CONFIGURATION

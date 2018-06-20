@@ -41,8 +41,8 @@ void cc1101_hw_set_channel(CC1101_HW* cc1101, uint8_t channel_num);
 void cc1101_hw_set_tx_power(CC1101_HW* cc1101, uint8_t power);
 void cc1101_hw_set_radio_pkt_size(CC1101_HW* cc1101, uint8_t size);
 void cc1101_hw_tx(CC1101_HW* cc1101, HANDLE process, IO* io, unsigned int size);
-void cc1101_hw_rx(CC1101_HW* cc1101, IO* io);
+void cc1101_hw_rx(CC1101_HW* cc1101, HANDLE process, IO* io, unsigned int size);
 
-int cc1101_hw_receive_packet(CC1101_HW* cc1101, IO* io);
+int cc1101_hw_read_fifo(CC1101_HW* cc1101, IO* io);
 
 #endif /* CC1101_CC1101_HW_H_ */

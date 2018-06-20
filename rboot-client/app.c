@@ -100,7 +100,7 @@ void app()
                     printf("RX: ");
                     for(int i = 0; i < res; i++)
                         printf("%02X ", data[i]);
-                    printf(", RSSI %d\n", res, RSSI);
+                    printf(", RSSI %d\n", RSSI);
                 }
                 else
                     printf("RX failure\n");

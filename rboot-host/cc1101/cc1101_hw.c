@@ -50,6 +50,7 @@ static inline bool cc1101_write_register(uint8_t addr, uint8_t data)
     while(cc1101_busy());
     spi_byte(CC1101_SPI, addr);
     spi_byte(CC1101_SPI, data);
+    sleep_ms(1);
     gpio_set_pin(CC1101_CS_PIN);
     return true;
 }
@@ -58,9 +59,11 @@ static inline uint8_t cc1101_read_register(uint8_t addr)
 {
     uint8_t res = 0;
     gpio_reset_pin(CC1101_CS_PIN);
+    sleep_ms(2);
     while(cc1101_busy());
     spi_byte(CC1101_SPI, addr | CC_READ_FLAG);
     res = spi_byte(CC1101_SPI, 0);
+    sleep_ms(2);
     gpio_set_pin(CC1101_CS_PIN);
     return res;
 }
@@ -70,7 +73,8 @@ static inline void cc1101_write_strobe(CC1101_HW* cc1101, uint8_t strobe)
     gpio_reset_pin(CC1101_CS_PIN);
     while(cc1101_busy());
     cc1101->status = (uint8_t)spi_byte(CC1101_SPI, strobe);
-    cc1101->status &= 0b11110000;
+    cc1101->status &= 0b01110000; // Mask needed bits
+    sleep_ms(2);
     gpio_set_pin(CC1101_CS_PIN);
 
 #if (CC1101_DEBUG_FLOW)
@@ -80,14 +84,15 @@ static inline void cc1101_write_strobe(CC1101_HW* cc1101, uint8_t strobe)
 
 static inline void cc1101_prepare_tx(CC1101_HW* cc1101, uint8_t* data, unsigned int data_size)
 {
-    gpio_reset_pin(CC1101_CS_PIN);
-    while(cc1101_busy());
-    spi_byte(CC1101_SPI, CC_FIFO | CC_WRITE_FLAG | CC_BURST_FLAG);
 
 #if (CC1101_DEBUG_FLOW)
     cc1101_dump(data, data_size, "TX PACKET");
     sleep_ms(20);
 #endif // CC1101_DEBUG_FLOW
+
+    gpio_reset_pin(CC1101_CS_PIN);
+    while(cc1101_busy());
+    spi_byte(CC1101_SPI, CC_FIFO | CC_WRITE_FLAG | CC_BURST_FLAG);
 
     for(uint8_t i = 0; i < data_size; i++)
         spi_byte(CC1101_SPI, data[i]);
@@ -136,7 +141,24 @@ static inline void cc1101_go_idle(CC1101_HW* cc1101)
     while(cc1101->status != CC_STB_IDLE)
     {
         cc1101_write_strobe(cc1101, CC_SIDLE);
-        sleep_ms(900);
+        sleep_ms(1000);
+#if (CC1101_DEBUG_ERRORS)
+        printf("CC1101: status: %X\n", cc1101->status);
+        if(cc1101->status & CC_STATUS_CARIER_SENSE)
+            printf("Carrier sense\n");
+        if(cc1101->status & CC_STATUS_PQT_REACHED)
+            printf("PQT reached\n");
+        if(cc1101->status & CC_STATUS_CHANNEL_CLEAR)
+            printf("Channel clear\n");
+        if(cc1101->status & CC_STATUS_SFD)
+            printf("Sync word has been reveived\n");
+
+        //Note: the reading gives the non-inverted value irrespective of what IOCFG0.GDO0_INV is programmed to.
+        if(cc1101->status & CC_STATUS_GDO2)
+            printf("GDO2 low value\n");
+        if(cc1101->status & CC_STATUS_GDO0)
+            printf("GDO0 low value\n");
+#endif // CC1101_DEBUG_ERRORS
     }
 
     cc1101->state = CC1101_STATE_IDLE;
@@ -187,8 +209,7 @@ static inline void cc1101_rf_config(CC1101_HW* cc1101)
     cc1101_write_register(CC_TEST1,    CC_TEST1_VALUE);      // Various test settings.
     cc1101_write_register(CC_TEST0,    CC_TEST0_VALUE);      // Various test settings.
     cc1101_write_register(CC_FIFOTHR,  CC_FIFOTHR_VALUE);    // fifo threshold
-//    cc1101_write_register(CC_IOCFG2,   CC_IOCFG2_VALUE);     // GDO2 output pin configuration.
-//    cc1101_write_register(CC_IOCFG2,   0x35);
+    cc1101_write_register(CC_IOCFG2,   CC_IOCFG2_VALUE);     // GDO2 output pin configuration.
     cc1101_write_register(CC_IOCFG0,   CC_IOCFG0_VALUE);     // GDO0 output pin configuration.
 
     cc1101_write_register(CC_PKTCTRL1, CC_PKTCTRL1_VALUE);   // Packet automation control.
@@ -203,8 +224,9 @@ static inline void cc1101_rf_config(CC1101_HW* cc1101)
 #if (CC1101_DEBUG_INFO)
 void cc1101_info(CC1101_HW* cc1101)
 {
-    printf("CC1101: version %X, ", cc1101_read_register(CC_VERSION));
-    printf("RSSI %X\n", cc1101_read_register(CC_RSSI));
+    printf("CC1101:\n");
+    printf("Version %X\n", cc1101_read_register(CC_VERSION));
+    printf("Patable %X\n", cc1101_read_register(CC_PATABLE));
 }
 #endif // CC1101_DEBUG_INFO
 
@@ -241,7 +263,14 @@ static inline void cc1101_gdo0_irq(int vector, void* param)
         case CC1101_STATE_SLEEP:
             break;
     }
+}
 
+static inline void cc1101_gdo2_irq(int vector, void* param)
+{
+    CC1101_HW* cc1101 = (CC1101_HW*)param;
+    EXTI->PR = 1ul << GPIO_PIN(CC1101_GDO2_PIN);
+    iprintd("CC1101: exti irq gdo2, state: %d\n", cc1101->state);
+    NVIC_DisableIRQ(CC1101_GDO2_EXTI_IRQ);
 }
 
 void cc1101_hw_init(CC1101_HW* cc1101)
@@ -255,9 +284,14 @@ void cc1101_hw_init(CC1101_HW* cc1101)
     gpio_enable_pin(CC1101_GDO0_PIN, GPIO_MODE_IN_FLOAT);
     gpio_enable_pin(CC1101_GDO2_PIN, GPIO_MODE_IN_FLOAT);
 
+
     pin_enable_exti(CC1101_GDO0_PIN, EXTI_FLAGS_FALLING);
+    pin_enable_exti(CC1101_GDO2_PIN, EXTI_FLAGS_FALLING);
     irq_register(CC1101_GDO0_EXTI_IRQ, cc1101_gdo0_irq, (void*)cc1101);
+    irq_register(CC1101_GDO2_EXTI_IRQ, cc1101_gdo2_irq, (void*)cc1101);
+
     NVIC_SetPriority(CC1101_GDO0_EXTI_IRQ, 14);
+    NVIC_SetPriority(CC1101_GDO2_EXTI_IRQ, 15);
 
     gpio_set_pin(CC1101_CS_PIN);
 
@@ -327,6 +361,8 @@ void cc1101_hw_set_tx_power(CC1101_HW* cc1101, uint8_t power)
     printf("CC1101: set tx power %X\n", power);
 #endif // CC1101_DEBUG_INFO
     cc1101_write_register(CC_PATABLE, power);
+
+    printf("tx power %X\n", cc1101_read_register(CC_PATABLE));
 }
 
 void cc1101_hw_set_radio_pkt_size(CC1101_HW* cc1101, uint8_t size)
@@ -375,7 +411,7 @@ void cc1101_hw_rx(CC1101_HW* cc1101, IO* io)
     cc1101_start_rx(cc1101);
     cc1101->state = CC1101_STATE_RX;
     cc1101->io = io;
-    NVIC_EnableIRQ(CC1101_GDO0_EXTI_IRQ);
+    NVIC_EnableIRQ(CC1101_GDO2_EXTI_IRQ);
 }
 
 int cc1101_hw_receive_packet(CC1101_HW* cc1101, IO* io)

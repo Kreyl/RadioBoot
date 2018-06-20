@@ -87,10 +87,6 @@ void app()
     uint8_t pkt_id = 0;
 //    uint8_t data[64];
 
-    uint32_t timeout = 3000;
-    app.timer = timer_create(0, HAL_APP);
-    timer_start_ms(app.timer, timeout);
-
     sleep_ms(200);
     process_info();
 
@@ -99,6 +95,10 @@ void app()
     cc1101_set_channel(app.cc1101, 0);
     cc1101_set_power(app.cc1101, CC_PwrMinus10dBm);
 
+    uint32_t timeout = 5000;
+    app.timer = timer_create(0, HAL_APP);
+    timer_start_ms(app.timer, timeout);
+
     for (;;)
     {
         ipc_read(&ipc);
@@ -106,25 +106,29 @@ void app()
         {
 
         case HAL_APP:
-            io_reset(io);
-            io_data_append(io, (uint8_t*)packets[pkt_id], 5);
+            if(HAL_ITEM(ipc.cmd) == IPC_TIMEOUT)
+            {
+                io_reset(io);
+                io_data_append(io, (uint8_t*)packets[pkt_id], 5);
 
-            led_mode(&app, LED_COLOR_BLUE, LED_MODE_BLINK);
-            if(!cc1101_transmit(app.cc1101, (uint8_t*)packets[pkt_id], 5))
-                printf("TX failure\n");
+                led_mode(&app, LED_COLOR_BLUE, LED_MODE_BLINK);
+                if(!cc1101_transmit(app.cc1101, (uint8_t*)packets[pkt_id], 5))
+                    printf("TX failure\n");
 
-            //printf("rx: %d\n", radio_rx_sync(&app, data));
+                //printf("rx: %d\n", radio_rx_sync(&app, data));
 
-            if(pkt_id++ >= 5)
-                pkt_id = 0;
+                if(pkt_id++ >= 5)
+                    pkt_id = 0;
 
-            timer_start_ms(app.timer, timeout);
+                timer_start_ms(app.timer, timeout);
+            }
         break;
 
         case HAL_USBD:
             comm_request(&app, &ipc);
             break;
         default:
+            printf("APP: Unhandled IPC\n");
             error(ERROR_NOT_SUPPORTED);
             break;
         }

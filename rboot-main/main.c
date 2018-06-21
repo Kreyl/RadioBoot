@@ -10,14 +10,20 @@
 #include "system.h"
 #include "config.h"
 
-//#include "f_upd_test.h"
+
+#define RAM
+
+#ifdef RAM
+#include "flash_update.h"
+#else
+#include "f_upd_test.h"
+#endif
 
 //#include "test.h"
-#include "flash_update.h"
-
 #if (DFU_DEBUG)
 #include "dbg.h"
 #endif
+#define FLASH_TARGET
 
 int main(void)
 {
@@ -38,18 +44,25 @@ int main(void)
     gpio_enable(B1, GPIO_MODE_OUT);
     pin_set(B1);
 
+#ifdef RAM
     uint8_t ram[FLASH_UPD_SIZE] = { 0 };
     memcpy(ram, __FLASH_UPD, FLASH_UPD_SIZE);
-
-//    __disable_irq();
-//    flash_upd_sram(ram, 0x08006000, 0x08000000, 2048 + 100);
-//    __enable_irq();
+#endif
 
 #if (DFU_DEBUG)
     printf("Update firmware...\n");
 #endif
     __disable_irq();
-    flash_upd_sram(ram, FLASH_BASE, 0x08001000, 27444);
+
+#ifdef RAM
+    flash_upd_sram(ram, 0x08007000, 0x08000000, 4096);
+#else
+    flash_update(0x08007000, 0x08000000, 2048);
+#endif
+
+#if (DFU_DEBUG)
+    printf("OK\n");
+#endif
 
     while(!system.reboot)
     {

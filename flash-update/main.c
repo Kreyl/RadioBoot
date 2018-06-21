@@ -20,11 +20,8 @@
 
 static void flash_cmd_unlock()
 {
-    /* (1) Wait till no operation is on going */
-    /* (2) Check that the Flash is unlocked */
-    /* (3) Perform unlock sequence */
 #if defined(STM32F0) || defined(STM32L1)
-    /* (1) */
+    /* (1) Wait till no operation is on going */
     while ((FLASH->SR & FLASH_SR_BSY) != 0)
     {
         __NOP();
@@ -33,15 +30,20 @@ static void flash_cmd_unlock()
 #endif
 
 #if defined(STM32F0)
-    if ((FLASH->CR & FLASH_CR_LOCK) != 0)                           /* (2) */
+    /* (2) Check that the Flash is unlocked */
+    if ((FLASH->CR & FLASH_CR_LOCK) != 0)
     {
-        FLASH->KEYR = FLASH_KEY1;                                   /* (3) */
+    /* (3) Perform unlock sequence */
+        FLASH->KEYR = FLASH_KEY1;
         FLASH->KEYR = FLASH_KEY2;
     }
 #elif defined(STM32L1)
-    if((FLASH->PECR & FLASH_PECR_PELOCK) != 0)                      /* (2) */
+
+    /* (2) Check that the Flash is unlocked */
+    if((FLASH->PECR & FLASH_PECR_PELOCK) != 0)
     {
-        FLASH->PEKEYR = FLASH_PEKEY1;                               /* (3) */
+        /* (3) Perform unlock sequence */
+        FLASH->PEKEYR = FLASH_PEKEY1;
         FLASH->PEKEYR = FLASH_PEKEY2;
         FLASH->SR = FLASH_SR_WRPERR;
         FLASH->PECR &= ~FLASH_PECR_FTDW;
@@ -157,27 +159,26 @@ static inline int flash_cmd_erase(uint32_t addr)
 #if defined(STM32L1)
 static inline int flash_cmd_program_half_page(unsigned int addr, unsigned int data)
 {
-    int i = 0;
+    uint32_t *src = (uint32_t*)data;
+    uint32_t *dst = (uint32_t*)addr;
     /* Directly write half a page with 32 different words to the program memory address
     space. The words must be written sequentially starting from word 0 and ending with
     word 31 */
-
-    /* Write one half page address doesn't need to be increased */
-    /*
-     * The answer is that I need to cope data to temporal buffer first,
-     * because while writing to flash, reading operation is stalled,
-     * so there is no way to read from different page
-     */
     flash_cmd_enable_half_page_write();
-    for(i = 0; i < 2; i++)
+
+
+    for(int i = 0; i < (FLASH_HALF_PAGE_SIZE >> 2); i++)
+        dst[i] = src[i];
+
+    /* wait last operation */
+    while ((FLASH->SR & FLASH_SR_BSY) != 0)
     {
-        *(uint32_t*)addr = *(uint32_t*)data;
-        addr += sizeof(uint32_t);
-        data += sizeof(uint32_t);
+        __NOP();
+        __NOP();
     }
 
-    while ((FLASH->SR & FLASH_SR_BSY) != 0);
     flash_cmd_disable_half_page_write();
+
     return 0;
 }
 #endif //STM32L1
@@ -192,7 +193,7 @@ static inline int flash_cmd_program_word(unsigned int addr, unsigned int data)
 #endif // STM32F0
 
 #if defined(STM32L1)
-    *(uint32_t*)addr = data;
+    *((uint32_t*)addr) = data;
     return 0;
 #endif // STM32L1
 }
@@ -202,8 +203,8 @@ static inline void flash_cmd_program(uint32_t dst, uint32_t src, int size)
     unsigned int last_word = 0;
 #if defined(STM32L1)
     /* program half pages of source */
-//    for(; size >= FLASH_HALF_PAGE_SIZE; size -= FLASH_HALF_PAGE_SIZE, dst += FLASH_HALF_PAGE_SIZE, src += FLASH_HALF_PAGE_SIZE)
-//        flash_cmd_program_half_page(dst, src);
+    for(; size >= FLASH_HALF_PAGE_SIZE; size -= FLASH_HALF_PAGE_SIZE, dst += FLASH_HALF_PAGE_SIZE, src += FLASH_HALF_PAGE_SIZE)
+        flash_cmd_program_half_page(dst, src);
 #endif // STM32L1
 
     /* program full words of source */

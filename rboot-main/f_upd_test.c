@@ -21,11 +21,8 @@
 
 static void flash_cmd_unlock()
 {
-    /* (1) Wait till no operation is on going */
-    /* (2) Check that the Flash is unlocked */
-    /* (3) Perform unlock sequence */
 #if defined(STM32F0) || defined(STM32L1)
-    /* (1) */
+    /* (1) Wait till no operation is on going */
     while ((FLASH->SR & FLASH_SR_BSY) != 0)
     {
         __NOP();
@@ -34,15 +31,20 @@ static void flash_cmd_unlock()
 #endif
 
 #if defined(STM32F0)
-    if ((FLASH->CR & FLASH_CR_LOCK) != 0)                           /* (2) */
+    /* (2) Check that the Flash is unlocked */
+    if ((FLASH->CR & FLASH_CR_LOCK) != 0)
     {
-        FLASH->KEYR = FLASH_KEY1;                                   /* (3) */
+    /* (3) Perform unlock sequence */
+        FLASH->KEYR = FLASH_KEY1;
         FLASH->KEYR = FLASH_KEY2;
     }
 #elif defined(STM32L1)
-    if((FLASH->PECR & FLASH_PECR_PELOCK) != 0)                      /* (2) */
+
+    /* (2) Check that the Flash is unlocked */
+    if((FLASH->PECR & FLASH_PECR_PELOCK) != 0)
     {
-        FLASH->PEKEYR = FLASH_PEKEY1;                               /* (3) */
+        /* (3) Perform unlock sequence */
+        FLASH->PEKEYR = FLASH_PEKEY1;
         FLASH->PEKEYR = FLASH_PEKEY2;
         FLASH->SR = FLASH_SR_WRPERR;
         FLASH->PECR &= ~FLASH_PECR_FTDW;
@@ -160,14 +162,25 @@ static inline int flash_cmd_program_half_page(unsigned int addr, unsigned int da
 {
     uint32_t *src = (uint32_t*)data;
     uint32_t *dst = (uint32_t*)addr;
-    flash_cmd_enable_half_page_write();
     /* Directly write half a page with 32 different words to the program memory address
     space. The words must be written sequentially starting from word 0 and ending with
     word 31 */
-    for(int i = 0; i < (FLASH_HALF_PAGE_SIZE >> 2); i++)
+    flash_cmd_enable_half_page_write();
+
+    dst[0] = src[0];
+
+    for(int i = 1; i < (FLASH_HALF_PAGE_SIZE >> 2); i++)
         dst[i] = src[i];
 
+    /* wait last operation */
+    while ((FLASH->SR & FLASH_SR_BSY) != 0)
+    {
+        __NOP();
+        __NOP();
+    }
+
     flash_cmd_disable_half_page_write();
+
     return 0;
 }
 #endif //STM32L1

@@ -168,17 +168,28 @@ static inline void cc1101_rf_config(CC1101_HW* cc1101)
     printf("CC1101: RF config\n");
 #endif // CC1101_DEBUG_REQUESTS
 
-    cc1101_write_register(CC_FSCTRL1,  CC_FSCTRL1_VALUE);    // Frequency synthesizer control.
-    cc1101_write_register(CC_FSCTRL0,  CC_FSCTRL0_VALUE);    // Frequency synthesizer control.
+    /* Frequensy control */
     cc1101_write_register(CC_FREQ2,    CC_FREQ2_VALUE);      // Frequency control word, high byte.
     cc1101_write_register(CC_FREQ1,    CC_FREQ1_VALUE);      // Frequency control word, middle byte.
     cc1101_write_register(CC_FREQ0,    CC_FREQ0_VALUE);      // Frequency control word, low byte.
-    cc1101_write_register(CC_MDMCFG4,  CC_MDMCFG4_VALUE);    // Modem configuration.
-    cc1101_write_register(CC_MDMCFG3,  CC_MDMCFG3_VALUE);    // Modem configuration.
-    cc1101_write_register(CC_MDMCFG2,  CC_MDMCFG2_VALUE);    // Modem configuration.
-    cc1101_write_register(CC_MDMCFG1,  CC_MDMCFG1_VALUE);    // Modem configuration.
-    cc1101_write_register(CC_MDMCFG0,  CC_MDMCFG0_VALUE);    // Modem configuration.
-    cc1101_write_register(CC_CHANNR,   CC_CHANNR_VALUE);     // Channel number.
+
+    cc1101_write_register(CC_FSCTRL1,  CC_FSCTRL1_VALUE);    // Frequency synthesizer control.
+    cc1101_write_register(CC_FSCTRL0,  CC_FSCTRL0_VALUE);    // Frequency synthesizer control.
+
+    /* Modem configuration */
+    cc1101_write_register(CC_MDMCFG4,  CC_MDMCFG4_VALUE);
+    cc1101_write_register(CC_MDMCFG3,  CC_MDMCFG3_VALUE);
+    cc1101_write_register(CC_MDMCFG2,  CC_MDMCFG2_VALUE);
+
+    cc1101_write_register(CC_MDMCFG1,  CC_DMDCFG1_FEC_DISABLE |
+                                        CC_MDMCFG1_PREAMBLE_BYTES_4 |
+                                        CC_MDMCFG1_CHANSPC_E);
+
+    cc1101_write_register(CC_MDMCFG0,  CC_MDMCFG0_VALUE);
+
+    /* Channel number */
+    cc1101_write_register(CC_CHANNR,   CC_CHANNR_VALUE);
+
     cc1101_write_register(CC_DEVIATN,  CC_DEVIATN_VALUE);    // Modem deviation setting (when FSK modulation is enabled).
     cc1101_write_register(CC_FREND1,   CC_FREND1_VALUE);     // Front end RX configuration.
     cc1101_write_register(CC_FREND0,   CC_FREND0_VALUE);     // Front end RX configuration.
@@ -196,12 +207,23 @@ static inline void cc1101_rf_config(CC1101_HW* cc1101)
     cc1101_write_register(CC_TEST1,    CC_TEST1_VALUE);      // Various test settings.
     cc1101_write_register(CC_TEST0,    CC_TEST0_VALUE);      // Various test settings.
     cc1101_write_register(CC_FIFOTHR,  CC_FIFOTHR_VALUE);    // fifo threshold
-    cc1101_write_register(CC_IOCFG2,   CC_IOCFG2_VALUE);     // GDO2 output pin configuration.
-    cc1101_write_register(CC_IOCFG0,   CC_IOCFG0_VALUE);     // GDO0 output pin configuration.
 
-    cc1101_write_register(CC_PKTCTRL1, CC_PKTCTRL1_VALUE);   // Packet automation control.
-    cc1101_write_register(CC_PKTCTRL0, CC_PKTCTRL0_VALUE);   // Packet automation control.
+    /* GDOs CFG */
+    cc1101_write_register(CC_IOCFG2,   CC_GDO_CFG_RX_CRC_OK);
+    cc1101_write_register(CC_IOCFG0,   CC_GDO_CFG_TX_UNDERFLOW_RX_OVERFLOW);
 
+    /* Packet automation control */
+    cc1101_write_register(CC_PKTCTRL1, CC_PKTCTRL1_PQT_SYNC_WORD |
+                                        CC_PKTCTRL1_CRC_AUTOFLUSH |
+                                        CC_PKTCTRL1_APPEND_STATUS |
+                                        CC_PKTCTRL1_ADDR_NOT_CHECK);
+
+    cc1101_write_register(CC_PKTCTRL0, CC_PKTCTRL0_WHITE_DATA |
+                                        CC_PKTCTRL0_PKT_FORMAT_NORMAL |
+                                        CC_PKTCTRL0_CRC_ENABLE |
+                                        CC_PKTCTRL0_LENGTH_FIXED);
+
+    /* Default output power */
     cc1101_write_register(CC_PATABLE, CC_Pwr0dBm);
 
     cc1101_write_register(CC_MCSM2, CC_MCSM2_VALUE);

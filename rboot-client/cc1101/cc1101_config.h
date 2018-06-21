@@ -9,6 +9,7 @@
 #define CC1101_CONFIG_H
 
 #include "config.h"
+#include "cc1101_defines.h"
 #include "../rexos/userspace/stm32/stm32_driver.h"
 
 // DEBUG
@@ -46,20 +47,18 @@
 // ================================== RF CONFIG ==================================
 // All this is for 27.0 MHz crystal, and for 868 MHz carrier
 // ============================ Common use values ==============================
-#define CC_TX_FIFO_SIZE     33
-#define CC_RX_FIFO_SIZE     32
+#define CC_TX_FIFO_SIZE                         33
+#define CC_RX_FIFO_SIZE                         32
 
 // ===================== Frequency 868 MHz: RF Studio ==========================
-#define CC_FREQ2_VALUE      0x20        // Frequency control word, high byte.
-#define CC_FREQ1_VALUE      0x25        // Frequency control word, middle byte.
-#define CC_FREQ0_VALUE      0xED        // Frequency control word, low byte.
+#define CC_FREQ2_VALUE                          0x20        // Frequency control word, high byte.
+#define CC_FREQ1_VALUE                          0x25        // Frequency control word, middle byte.
+#define CC_FREQ0_VALUE                          0xED        // Frequency control word, low byte.
 
 // =================================== Common ==================================
-#define CC_MDMCFG1_CHANSPC_E    0x03    // Exponent of Channel Spacing
-//#define CC_MDMCFG1_VALUE    (0b10100000 | CC_MDMCFG1_CHANSPC_E)  // FEC=1, Preamble length=010 => 4bytes
-#define CC_MDMCFG1_VALUE    (0b00100000 | CC_MDMCFG1_CHANSPC_E)  // FEC=0, Preamble length=010 => 4bytes
-//#define CC_MDMCFG1_VALUE    (0b10000000 | CC_MDMCFG1_CHANSPC_E)  // FEC=1, Preamble length=000 => 2bytes
-//#define CC_MDMCFG1_VALUE    (0b11000000 | CC_MDMCFG1_CHANSPC_E)  // FEC=1, Preamble length=100 => 8bytes
+
+// Exponent of Channel Spacing
+#define CC_MDMCFG1_CHANSPC_E    0x03
 
 #define CC_MCSM0_VALUE      0x18        // Calibrate at IDLE->RX,TX
 //#define CC_MCSM0_VALUE      0x08        // Never calibrate
@@ -80,12 +79,11 @@
 #define CC_IOCFG0_VALUE     0x06        // GDO0 - Asserts when sync word has been sent / received, and de-asserts at the end of the packet.
                                         // In RX, the pin will also deassert when a packet is discarded due to address or maximum length filtering
 
-//#define CC_PKTCTRL1_VALUE   0b00001110  // PQT=0, CRC autoflush=1, Append=1, Address check = 10 (check, 0 is broadcast)
-#define CC_PKTCTRL1_VALUE   0b00001100  // PQT=0, CRC autoflush=1, Append=1, Address check = 00 (no check)
-#define CC_PKTCTRL0_VALUE   0b01000100  // WhiteData=1, PKTFormat=normal, CRC enabled, Fixed Length
-//#define CC_PKTCTRL0_VALUE   0b00000100  // WhiteData=0, PKTFormat=normal, CRC enabled, Fixed Length
-//#define CC_PKTCTRL0_VALUE   0b00000000  // WhiteData=0, PKTFormat=normal, CRC disabled, Fixed Length
-#define CC_ADDR_VALUE       0x01        // Device address.
+#define CC_PKTCTRL1_VALUE       (CC_PKTCTRL1_PQT_SYNC_WORD | CC_PKTCTRL1_CRC_AUTOFLUSH | CC_PKTCTRL1_APPEND_STATUS | CC_PKTCTRL1_ADDR_NOT_CHECK)
+#define CC_PKTCTRL0_VALUE       (CC_PKTCTRL0_WHITE_DATA | CC_PKTCTRL0_PKT_FORMAT_NORMAL | CC_PKTCTRL0_CRC_ENABLE | CC_PKTCTRL0_LENGTH_FIXED)
+
+// Device address.
+#define CC_ADDR_VALUE           0x01
 
 // ========================= Bitrate-specific ==================================
 #ifdef CC1101_BITRATE_10K

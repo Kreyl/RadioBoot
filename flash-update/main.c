@@ -248,5 +248,7 @@ int flash_update(unsigned int dst_addr, unsigned int src_addr, int bytes_to_copy
     flash_cmd_lock(); /* lock flash */
     /* Reset core */
     NVIC_SystemReset();
+    /* never return */
+    while(1);
     return 0;
 }

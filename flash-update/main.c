@@ -166,7 +166,6 @@ static inline int flash_cmd_program_half_page(unsigned int addr, unsigned int da
     word 31 */
     flash_cmd_enable_half_page_write();
 
-
     for(int i = 0; i < (FLASH_HALF_PAGE_SIZE >> 2); i++)
         dst[i] = src[i];
 
@@ -200,11 +199,17 @@ static inline int flash_cmd_program_word(unsigned int addr, unsigned int data)
 
 static inline void flash_cmd_program(uint32_t dst, uint32_t src, int size)
 {
+    uint8_t buffer[FLASH_HALF_PAGE_SIZE] = {0};
     unsigned int last_word = 0;
 #if defined(STM32L1)
+
     /* program half pages of source */
     for(; size >= FLASH_HALF_PAGE_SIZE; size -= FLASH_HALF_PAGE_SIZE, dst += FLASH_HALF_PAGE_SIZE, src += FLASH_HALF_PAGE_SIZE)
-        flash_cmd_program_half_page(dst, src);
+    {
+        for(int i = 0; i < FLASH_HALF_PAGE_SIZE; i++)
+            buffer[i] = ((uint8_t*)src)[i];
+        flash_cmd_program_half_page(dst, (unsigned int)buffer);
+    }
 #endif // STM32L1
 
     /* program full words of source */
@@ -242,6 +247,6 @@ int flash_update(unsigned int dst_addr, unsigned int src_addr, int bytes_to_copy
 
     flash_cmd_lock(); /* lock flash */
     /* Reset core */
-//    NVIC_SystemReset();
+    NVIC_SystemReset();
     return 0;
 }

@@ -55,7 +55,7 @@ int main(void)
     __disable_irq();
 
 #ifdef RAM
-    flash_upd_sram(ram, 0x08007000, 0x08000000, 4096);
+    flash_upd_sram(ram, 0x08000000, 0x08002000, 27908);
 #else
     flash_update(0x08007000, 0x08000000, 2048);
 #endif

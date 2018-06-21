@@ -19,7 +19,7 @@
 #define flash_upd(dst, src, size)                   ((FLASH_UPD_TYPE)((unsigned int)__FLASH_UPD + 1))(dst, src, size)
 #define flash_upd_sram(sram_func, dst, src, size)   ((FLASH_UPD_TYPE)((unsigned int)sram_func + 1))(dst, src, size)
 
-#define FLASH_UPD_SIZE                   344
+#define FLASH_UPD_SIZE                   724
 
 extern const uint8_t __FLASH_UPD[FLASH_UPD_SIZE];
 

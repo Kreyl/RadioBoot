@@ -128,7 +128,6 @@ static inline void cc1101_go_idle(CC1101_HW* cc1101)
     while(cc1101->status != CC_STB_IDLE)
     {
         cc1101_write_strobe(cc1101, CC_SIDLE);
-        sleep_ms(1000);
 #if (CC1101_DEBUG_ERRORS)
         printf("CC1101: status: %X\n", cc1101->status);
         if(cc1101->status & CC_STATUS_CARIER_SENSE)
@@ -151,15 +150,15 @@ static inline void cc1101_go_idle(CC1101_HW* cc1101)
     cc1101->state = CC1101_STATE_IDLE;
 }
 
-static inline void cc1101_go_sleep(CC1101_HW* cc1101)
-{
-    while(cc1101->state != CC_STB_IDLE)
-    {
-        cc1101_write_strobe(cc1101, CC_SIDLE);
-    }
-
-    cc1101->state = CC1101_STATE_IDLE;
-}
+//static inline void cc1101_go_sleep(CC1101_HW* cc1101)
+//{
+//    while(cc1101->state != CC_STB_IDLE)
+//    {
+//        cc1101_write_strobe(cc1101, CC_SIDLE);
+//    }
+//
+//    cc1101->state = CC1101_STATE_IDLE;
+//}
 
 
 static inline void cc1101_rf_config(CC1101_HW* cc1101)

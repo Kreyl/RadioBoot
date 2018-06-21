@@ -92,7 +92,7 @@ void app()
     cc1101_set_channel(app.cc1101, 0);
     cc1101_set_power(app.cc1101, CC_PwrMinus10dBm);
 
-    uint32_t timeout = 5000;
+    uint32_t timeout = 100;
     app.timer = timer_create(0, HAL_APP);
     timer_start_ms(app.timer, timeout);
     for (;;)
@@ -108,7 +108,6 @@ void app()
                 if(cc1101_transmit(app.cc1101, packets[pkt_id], 5))
                 {
                     printf("TX ok\n");
-
                     for(int i = 0; i < 5; i++)
                         printf("%02X ", packets[pkt_id][i]);
                     printf("\n");

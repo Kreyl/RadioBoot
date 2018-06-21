@@ -72,7 +72,7 @@ void app()
 
     app.cc1101 = cc1101_open();
 
-    uint32_t timeout = 1000;
+    uint32_t timeout = 20;
     app.timer = timer_create(0, HAL_APP);
 //    timer_start_ms(app.timer, timeout);
 

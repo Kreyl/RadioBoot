@@ -80,21 +80,20 @@ void app()
     app_init(&app);
     led_init(&app);
 
-    app.cc1101 = cc1101_open();
+//    uint8_t pkt_id = 0;
+//    app.cc1101 = cc1101_open();
+//    cc1101_set_channel(app.cc1101, 0);
+//    cc1101_set_power(app.cc1101, CC_PwrMinus10dBm);
+//    uint32_t timeout = 100;
+//    app.timer = timer_create(0, HAL_APP);
+//    timer_start_ms(app.timer, timeout);
 
-//    comm_init(&app);
+    comm_init(&app);
 
-    uint8_t pkt_id = 0;
 
-    sleep_ms(200);
+    sleep_ms(20);
     process_info();
 
-    cc1101_set_channel(app.cc1101, 0);
-    cc1101_set_power(app.cc1101, CC_PwrMinus10dBm);
-
-    uint32_t timeout = 100;
-    app.timer = timer_create(0, HAL_APP);
-    timer_start_ms(app.timer, timeout);
     for (;;)
     {
         ipc_read(&ipc);
@@ -105,32 +104,35 @@ void app()
             if(HAL_ITEM(ipc.cmd) == IPC_TIMEOUT)
             {
                 led_mode(&app, LED_COLOR_BLUE, LED_MODE_BLINK);
-                if(cc1101_transmit(app.cc1101, packets[pkt_id], 5))
-                {
-                    printf("TX ok\n");
-                    for(int i = 0; i < 5; i++)
-                        printf("%02X ", packets[pkt_id][i]);
-                    printf("\n");
-
-                }
-                else
-                {
-                    printf("TX failure\n");
-                }
-
-                if(pkt_id++ >= 5)
-                    pkt_id = 0;
-
-                //printf("rx: %d\n", radio_rx_sync(&app, data));
-                timer_start_ms(app.timer, timeout);
+//                if(cc1101_transmit(app.cc1101, packets[pkt_id], 5))
+//                {
+//                    printf("TX ok\n");
+//                    for(int i = 0; i < 5; i++)
+//                        printf("%02X ", packets[pkt_id][i]);
+//                    printf("\n");
+//
+//                }
+//                else
+//                {
+//                    printf("TX failure\n");
+//                }
+//
+//                if(pkt_id++ >= 5)
+//                    pkt_id = 0;
+//
+//                //printf("rx: %d\n", radio_rx_sync(&app, data));
+//                timer_start_ms(app.timer, timeout);
             }
         break;
 
         case HAL_USBD:
             comm_request(&app, &ipc);
             break;
+        case HAL_USBD_IFACE:
+            comm_interface_request(&app, &ipc);
+            break;
         default:
-            printf("APP: Unhandled IPC\n");
+            printf("APP: Unhandled IPC, HAL_GROUP %X, ITEM %X\n", HAL_GROUP(ipc.cmd), HAL_ITEM(ipc.cmd));
             error(ERROR_NOT_SUPPORTED);
             break;
         }

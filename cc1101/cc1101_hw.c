@@ -192,7 +192,6 @@ static inline void cc1101_rf_config(CC1101_HW* cc1101)
     cc1101_write_register(CC_DEVIATN,  CC_DEVIATN_VALUE);    // Modem deviation setting (when FSK modulation is enabled).
     cc1101_write_register(CC_FREND1,   CC_FREND1_VALUE);     // Front end RX configuration.
     cc1101_write_register(CC_FREND0,   CC_FREND0_VALUE);     // Front end RX configuration.
-    cc1101_write_register(CC_MCSM0,    CC_MCSM0_VALUE);      // Main Radio Control State Machine configuration.
     cc1101_write_register(CC_FOCCFG,   CC_FOCCFG_VALUE);     // Frequency Offset Compensation Configuration.
     cc1101_write_register(CC_BSCFG,    CC_BSCFG_VALUE);      // Bit synchronization Configuration.
     cc1101_write_register(CC_AGCCTRL2, CC_AGCCTRL2_VALUE);   // AGC control.
@@ -205,7 +204,9 @@ static inline void cc1101_rf_config(CC1101_HW* cc1101)
     cc1101_write_register(CC_TEST2,    CC_TEST2_VALUE);      // Various test settings.
     cc1101_write_register(CC_TEST1,    CC_TEST1_VALUE);      // Various test settings.
     cc1101_write_register(CC_TEST0,    CC_TEST0_VALUE);      // Various test settings.
-    cc1101_write_register(CC_FIFOTHR,  CC_FIFOTHR_VALUE);    // fifo threshold
+
+    cc1101_write_register(CC_FIFOTHR,  CC_FIFOTHR_CLOSE_IN_RX_ATT_0dB |
+                                        CC_FIFOTHR_TX_33_RX_32);
 
     /* GDOs CFG */
     cc1101_write_register(CC_IOCFG2,   CC_GDO_CFG_RX_CRC_OK);
@@ -225,8 +226,15 @@ static inline void cc1101_rf_config(CC1101_HW* cc1101)
     /* Default output power */
     cc1101_write_register(CC_PATABLE, CC_Pwr0dBm);
 
-    cc1101_write_register(CC_MCSM2, CC_MCSM2_VALUE);
-    cc1101_write_register(CC_MCSM1, CC_MCSM1_VALUE);
+    // Main Radio Control State Machine configuration.
+    cc1101_write_register(CC_MCSM0,    CC_MCSM0_FS_AUTOCAL_IDLE_TO_RXTX |
+                                        CC_MCSM0_PO_TIMEOUT_64);
+
+    cc1101_write_register(CC_MCSM1, CC_MCSM1_CCA_MODE_ALWAYS_CLEAR |
+                                        CC_MCSM1_RXOFF_MODE_IDLE |
+                                        CC_MCSM1_TXOFF_MODE_IDLE);
+
+    cc1101_write_register(CC_MCSM2, CC_MCSM2_RX_TIME_SYNC_UNTIL_END_OF_PKT);
 }
 
 #if (CC1101_DEBUG_INFO)

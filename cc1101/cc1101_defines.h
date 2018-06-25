@@ -124,6 +124,31 @@ be configured to values less than 0x30. The GDO0 default value is CLK_XOSC/192. 
 #define CC_GDO_CFG_CLK_XOCS_DIV128              0x3E
 #define CC_GDO_CFG_CLK_XOCS_DIV192              0x3F
 
+// FIFOTHR
+#define CC_FIFOTHR_ADC_RETENTION_31_88          (0 << 6)
+#define CC_FIFOTHR_ADC_RETENTION_35_81          (1 << 6)
+#define CC_FIFOTHR_CLOSE_IN_RX_ATT_0dB          (0 << 4)
+#define CC_FIFOTHR_CLOSE_IN_RX_ATT_6dB          (1 << 4)
+#define CC_FIFOTHR_CLOSE_IN_RX_ATT_12dB         (2 << 4)
+#define CC_FIFOTHR_CLOSE_IN_RX_ATT_18dB         (3 << 4)
+
+#define CC_FIFOTHR_TX_61_RX_04                  (0x00)
+#define CC_FIFOTHR_TX_57_RX_08                  (0x01)
+#define CC_FIFOTHR_TX_53_RX_12                  (0x02)
+#define CC_FIFOTHR_TX_49_RX_16                  (0x03)
+#define CC_FIFOTHR_TX_45_RX_20                  (0x04)
+#define CC_FIFOTHR_TX_41_RX_24                  (0x05)
+#define CC_FIFOTHR_TX_37_RX_28                  (0x06)
+#define CC_FIFOTHR_TX_33_RX_32                  (0x07)
+#define CC_FIFOTHR_TX_29_RX_36                  (0x08)
+#define CC_FIFOTHR_TX_25_RX_40                  (0x09)
+#define CC_FIFOTHR_TX_21_RX_44                  (0x0A)
+#define CC_FIFOTHR_TX_17_RX_48                  (0x0B)
+#define CC_FIFOTHR_TX_13_RX_52                  (0x0C)
+#define CC_FIFOTHR_TX_09_RX_56                  (0x0D)
+#define CC_FIFOTHR_TX_05_RX_60                  (0x0E)
+#define CC_FIFOTHR_TX_01_RX_64                  (0x0F)
+
 // MDMCFG2
 #define CC_MDMCFG2_DEM_DCFILT_OFF               (0 << 7)
 #define CC_MDMCFG2_DEM_DCFILT_ON                (1 << 7) /* Only for data rates <= 250 kBaud */
@@ -156,6 +181,41 @@ be configured to values less than 0x30. The GDO0 default value is CLK_XOSC/192. 
 #define CC_MDMCFG1_PREAMBLE_BYTES_24            (7 << 4)
 
 // MDMCFG0
+
+// MCSM2
+#define CC_MCSM2_RX_TIME_RSSI                   (1 << 4)
+#define CC_MCSM2_RX_TIME_QUAL                   (1 << 3)
+#define CC_MCSM2_RX_TIME_SYNC_UNTIL_END_OF_PKT  (7 << 0)
+
+// MCSM1
+#define CC_MCSM1_CCA_MODE_ALWAYS_CLEAR          (0 << 4)
+#define CC_MCSM1_CCA_MODE_RSSI_BELOW_THRESHOLD  (1 << 4)
+#define CC_MCSM1_CCA_MODE_RX_PACKET             (2 << 4)
+#define CC_MCSM1_CCA_MODE_RSSI_BELOW_RX_PACKET  (3 << 4)
+
+#define CC_MCSM1_RXOFF_MODE_IDLE                (0 << 2)
+#define CC_MCSM1_RXOFF_MODE_FSTXON              (1 << 2)
+#define CC_MCSM1_RXOFF_MODE_TX                  (2 << 2)
+#define CC_MCSM1_RXOFF_MODE_STAY_RX             (3 << 2)
+
+#define CC_MCSM1_TXOFF_MODE_IDLE                (0 << 0)
+#define CC_MCSM1_TXOFF_MODE_FSTXON              (1 << 0)
+#define CC_MCSM1_TXOFF_MODE_STAY_TX             (2 << 0)
+#define CC_MCSM1_TXOFF_MODE_RX                  (3 << 0)
+
+// MCSM0
+#define CC_MCSM0_FS_AUTOCAL_NEVER               (0 << 4)
+#define CC_MCSM0_FS_AUTOCAL_IDLE_TO_RXTX        (1 << 4)
+#define CC_MCSM0_FS_AUTOCAL_RXTX_TO_IDLE        (2 << 4)
+#define CC_MCSM0_FS_AUTOCAL_4TH_RXTX_TO_IDLE    (3 << 4)
+
+#define CC_MCSM0_PO_TIMEOUT_1                   (0 << 2)
+#define CC_MCSM0_PO_TIMEOUT_16                  (1 << 2)
+#define CC_MCSM0_PO_TIMEOUT_64                  (2 << 2)
+#define CC_MCSM0_PO_TIMEOUT_256                 (3 << 2)
+
+#define CC_MCSM0_PIN_CTRL_ENABLE                (1 << 1)
+#define CC_MCSM0_XOSC_FORCE_ON                  (1 << 0)
 
 // STATUS
 #define CC_STATUS_CRC_OK                        (1 << 7)

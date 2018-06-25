@@ -43,7 +43,7 @@ INCLUDE_FOLDERS            += $(USERSPACE) $(USERSPACE)/core $(USERSPACE)/stm32
 #sys
 INCLUDE_FOLDERS            += $(REXOS)/drv $(REXOS)/drv/stm32 $(REXOS)/midware $(REXOS)/midware/usbd $(REXOS)/midware/tcpips
 
-INCLUDE_FOLDERS			   += cc1101
+INCLUDE_FOLDERS			   += ../cc1101
 
 INCLUDES                    = $(INCLUDE_FOLDERS:%=-I%)
 VPATH                      += $(INCLUDE_FOLDERS)

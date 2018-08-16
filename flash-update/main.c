@@ -75,6 +75,7 @@ static inline void flash_cmd_lock()
     FLASH->PECR |= FLASH_PECR_PRGLOCK;
 #elif defined(STM32L0)
     FLASH->PECR |= FLASH_PECR_PELOCK;
+    FLASH->PECR |= FLASH_PECR_PRGLOCK;
 #endif
 }
 
@@ -129,12 +130,6 @@ static inline void flash_cmd_enable_half_page_write()
     memory page */
     if(!(FLASH->PECR & FLASH_PECR_PROG))
         FLASH->PECR |= FLASH_PECR_PROG;
-    /* Wait for the BSY bit to be cleared */
-    while ((FLASH->SR & FLASH_SR_BSY) != 0);
-#if defined(STM32L0)
-    /* Wait for the EOP bit to be cleared */
-    while ((FLASH->SR & FLASH_SR_EOP) != 0);
-#endif // STM32L0
 }
 
 static inline void flash_cmd_disable_half_page_write()
@@ -182,25 +177,22 @@ static inline int flash_cmd_erase(uint32_t addr)
 #if defined(STM32L0) || defined(STM32L1)
 static inline int flash_cmd_program_half_page(unsigned int addr, unsigned int data)
 {
-#if defined(STM32L1)
     uint32_t *src = (uint32_t*)data;
-#endif // STM32L1
     uint32_t *dst = (uint32_t*)addr;
     /* Directly write half a page with 32 different words to the program memory address
     space. The words must be written sequentially starting from word 0 and ending with
     word 31 */
     flash_cmd_enable_half_page_write();
 
-#if defined(STM32L1)
     for(int i = 0; i < (FLASH_HALF_PAGE_SIZE >> 2); i++)
         dst[i] = src[i];
-#elif defined(STM32L0)
-    for(int i = 0; i < (FLASH_HALF_PAGE_SIZE >> 2); i++)
-        *(uint32_t*)(addr) = *dst++;
-#endif
 
-    /* wait last operation */
+    /* Wait for the BSY bit to be cleared */
     while ((FLASH->SR & FLASH_SR_BSY) != 0);
+#if defined(STM32L0)
+    /* Wait for the EOP bit to be cleared */
+    while ((FLASH->SR & FLASH_SR_EOP) != 0);
+#endif // STM32L0
 
     flash_cmd_disable_half_page_write();
     return 0;
@@ -224,7 +216,9 @@ static inline int flash_cmd_program_word(unsigned int addr, unsigned int data)
 static inline void flash_cmd_program(uint32_t dst, uint32_t src, int size)
 {
     unsigned int last_word = 0;
-#if defined(STM32L0) || defined(STM32L1)
+
+    /* HALF PAGE WRITE FROZEN AT SMT32L0 :( */
+#if defined(STM32L1)
     uint8_t buffer[FLASH_HALF_PAGE_SIZE] = { 0 };
     /* program half pages of source */
     for(; size >= FLASH_HALF_PAGE_SIZE; size -= FLASH_HALF_PAGE_SIZE, dst += FLASH_HALF_PAGE_SIZE, src += FLASH_HALF_PAGE_SIZE)

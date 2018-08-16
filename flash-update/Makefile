@@ -13,8 +13,8 @@ NM                         = $(CROSS)nm
 
 #----------------------------------------------------------
 #MCU                        = STM32F072RB
-MCU							= STM32L151C8
-#MCU						= STM32L052K8
+#MCU							= STM32L151C8
+MCU							= STM32L052K8
 TARGET_NAME                 = flash_update-core
 HEADER_TARGET               = flash_update
 #----------------------------------------------------------
@@ -25,8 +25,8 @@ LD_SCRIPT                   = script.ld
 #----------------------------------------------------------
 CMSIS_DIR                   = ../rexos/CMSIS
 #CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32F0xx
-CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L1xx
-#CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L0xx
+#CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L1xx
+CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L0xx
 #----------------------------------------------------------
 INCLUDE_FOLDERS             = $(CMSIS_DIR)/Include $(CMSIS_DEVICE_DIR)/Include
 
@@ -38,7 +38,7 @@ SRC_C                       = main.c
 OBJ                         = $(SRC_AS:%.S=%.o) $(SRC_C:%.c=%.o)
 #----------------------------------------------------------
 DEFINES                     = -D$(MCU)
-MCU_FLAGS                   = -mcpu=cortex-m3 -mthumb -D__CORTEX_M3 -D__thumb2__=1 -mtune=cortex-m3 -mapcs-frame -fpic -std=gnu99
+MCU_FLAGS                   = -mcpu=cortex-m0 -mthumb -D__CORTEX_M0 -D__thumb2__=1 -mtune=cortex-m0 -mapcs-frame -fpic -std=gnu99
 NO_DEFAULTS                 = -fdata-sections -ffunction-sections -fno-hosted -fno-builtin  -nostdlib -nodefaultlibs
 FLAGS_CC                    = $(INCLUDES) $(DEFINES) -I. -O$(OPTIMIZATION) -Wall -c -fmessage-length=0 $(MCU_FLAGS) $(NO_DEFAULTS)
 FLAGS_LD                    = -Xlinker --gc-sections $(MCU_FLAGS)
@@ -58,8 +58,8 @@ all: $(TARGET_NAME).elf
 	@python bin2h.py $(OUTPUT_DIR)/$(TARGET_NAME).bin $(HEADER_TARGET) $(MCU)
 	@mkdir -p $(RAMCODE_DIR)
 	@mv $(HEADER_TARGET).* $(RAMCODE_DIR)
-	@cp -vf $(RAMCODE_DIR)/$(HEADER_TARGET).* ../rboot-main
-#	@cp -vf $(RAMCODE_DIR)/$(HEADER_TARGET).* ../../usb_switcher/firmware
+#	@cp -vf $(RAMCODE_DIR)/$(HEADER_TARGET).* ../rboot-main
+	@cp -vf $(RAMCODE_DIR)/$(HEADER_TARGET).* ../../usb_switcher/firmware
 
 .c.o:
 	@-mkdir -p $(BUILD_DIR)

@@ -245,7 +245,7 @@ static inline void flash_cmd_program(uint32_t dst, uint32_t src, int size)
 // IRQ should be disabled
 // addresses and bytes_to_copy also had checked
 // bytes_to_copy - in bytes
-int flash_update(unsigned int dst_addr, unsigned int src_addr, int bytes_to_copy)
+int flash_update(unsigned int dst_addr, unsigned int src_addr, int bytes_to_copy, bool reset)
 {
     __DSB();
     __ISB();
@@ -267,8 +267,11 @@ int flash_update(unsigned int dst_addr, unsigned int src_addr, int bytes_to_copy
     flash_cmd_lock();
 
     /* Reset core */
-//    NVIC_SystemReset();
+    if(!reset)
+        return 0;
+    NVIC_SystemReset();
     /* Never return */
-//    HALT();
+    HALT();
+    /* calm compiler */
     return 0;
 }

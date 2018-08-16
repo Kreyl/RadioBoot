@@ -12,8 +12,7 @@ OBJDUMP                    = $(CROSS)objdump
 NM                         = $(CROSS)nm
 
 #----------------------------------------------------------
-MCU 						= STM32L052K8
-#MCU 						= STM32L151C8
+MCU 						= STM32L151C8
 #MCU                         = STM32F072RB
 TARGET_NAME                 = rboot-main
 #----------------------------------------------------------
@@ -22,8 +21,8 @@ OUTPUT_DIR                  = output
 
 #----------------------------------------------------------
 CMSIS_DIR                   = CMSIS
-CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L0xx
-#CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L1xx
+#CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L0xx
+CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L1xx
 #CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32F0xx
 #----------------------------------------------------------
 INCLUDE_FOLDERS 			= ./ core board board/ST 
@@ -38,8 +37,8 @@ SRC_AS                      = cortexm.S
 SRC_C						+= system.c board.c
 SRC_C						+= stm32_power.c stm32_pin.c stm32_uart.c
 SRC_C                       += main.c dbg.c printf.c
-#SRC_C						+= f_upd_test.c 
-#SRC_C						+= flash_update.c 
+SRC_C						+= f_upd_test.c 
+SRC_C						+= flash_update.c 
 #test.c
 
 

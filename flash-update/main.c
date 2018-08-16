@@ -131,8 +131,10 @@ static inline void flash_cmd_enable_half_page_write()
         FLASH->PECR |= FLASH_PECR_PROG;
     /* Wait for the BSY bit to be cleared */
     while ((FLASH->SR & FLASH_SR_BSY) != 0);
+#if defined(STM32L0)
     /* Wait for the EOP bit to be cleared */
     while ((FLASH->SR & FLASH_SR_EOP) != 0);
+#endif // STM32L0
 }
 
 static inline void flash_cmd_disable_half_page_write()
@@ -189,21 +191,16 @@ static inline int flash_cmd_program_half_page(unsigned int addr, unsigned int da
     word 31 */
     flash_cmd_enable_half_page_write();
 
-    for(int i = 0; i < (FLASH_HALF_PAGE_SIZE >> 2); i++)
-    {
 #if defined(STM32L1)
+    for(int i = 0; i < (FLASH_HALF_PAGE_SIZE >> 2); i++)
         dst[i] = src[i];
 #elif defined(STM32L0)
+    for(int i = 0; i < (FLASH_HALF_PAGE_SIZE >> 2); i++)
         *(uint32_t*)(addr) = *dst++;
 #endif
-    }
 
     /* wait last operation */
-    while ((FLASH->SR & FLASH_SR_BSY) != 0)
-    {
-        __NOP();
-        __NOP();
-    }
+    while ((FLASH->SR & FLASH_SR_BSY) != 0);
 
     flash_cmd_disable_half_page_write();
     return 0;
@@ -276,8 +273,8 @@ int flash_update(unsigned int dst_addr, unsigned int src_addr, int bytes_to_copy
     flash_cmd_lock();
 
     /* Reset core */
-    NVIC_SystemReset();
+//    NVIC_SystemReset();
     /* Never return */
-    HALT();
+//    HALT();
     return 0;
 }

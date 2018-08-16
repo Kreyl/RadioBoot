@@ -85,13 +85,18 @@ static const USART_TypeDef_P UART_REGS[UARTS_COUNT]=        {USART1, USART2, USA
 
 void board_dbg_init()
 {
-    pin_enable(UART_TX_PIN, STM32_GPIO_MODE_AF, AF7);
+    unsigned int mantissa, fraction;
+    pin_enable(UART_TX_PIN, STM32_GPIO_MODE_AF, UART_AF_NUMBER);
 
     //power up (required prior to reg work)
     if (UART == UART_1 || UART >= UART_6)
+    {
         RCC->APB2ENR |= 1 << UART_POWER_PINS[UART];
+    }
     else
+    {
         RCC->APB1ENR |= 1 << UART_POWER_PINS[UART];
+    }
 
     UART_REGS[UART]->CR1 &= ~USART_CR1_UE;
 
@@ -100,8 +105,7 @@ void board_dbg_init()
     UART_REGS[UART]->CR2 = 0;
     UART_REGS[UART]->CR3 = 0;
 
-    unsigned int mantissa, fraction;
-    mantissa = (25 * power_get_core_clock()) / (4 * (UART_BAUD));
+    mantissa = (25 * power_get_clock(POWER_CLOCK_APB1)) / (4 * (UART_BAUD));
     fraction = ((mantissa % 100) * 8 + 25)  / 50;
     mantissa = mantissa / 100;
     UART_REGS[UART]->BRR = (mantissa << 4) | fraction;

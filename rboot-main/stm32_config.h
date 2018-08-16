@@ -12,6 +12,8 @@
 //------------------------------ POWER -----------------------------------------------
 //depends on hardware implementation
 #define POWER_MANAGEMENT                        0
+//disable only for power saving if no EXTI or remap is used
+#define SYSCFG_ENABLED                          0
 //save few bytes here
 #define STM32_DECODE_RESET                      0
 //0 meaning HSI. If not defined, 25MHz will be defined by default by ST lib
@@ -23,6 +25,7 @@
 //STM32L0 || STM32L
 #define MSI_RANGE                               0
 
+//
 #define PLL_MUL                                 8
 #define PLL_DIV                                 4
 
@@ -44,6 +47,7 @@
 //PIN_DEFAULT and PIN_UNUSED can be also set.
 #define UART                                    UART_1
 #define UART_TX_PIN                             A9
+#define UART_AF_NUMBER                          AF4
 #define UART_BAUD                               115200
 #define UART_DATA_BITS                          8
 #define UART_PARITY                             'N'

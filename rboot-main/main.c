@@ -11,12 +11,12 @@
 #include "config.h"
 
 
-#define RAM
+//#define RAM
 
 #ifdef RAM
 #include "flash_update.h"
 #else
-#include "f_upd_test.h"
+//#include "f_upd_test.h"
 #endif
 
 //#include "test.h"
@@ -41,8 +41,8 @@ int main(void)
     system.reboot = false;
 
     // Enable LED
-    gpio_enable(B1, GPIO_MODE_OUT);
-    pin_set(B1);
+    gpio_enable(A15, GPIO_MODE_OUT);
+    pin_set(A15);
 
 #ifdef RAM
     uint8_t ram[FLASH_UPD_SIZE] = { 0 };
@@ -57,8 +57,10 @@ int main(void)
 #ifdef RAM
     flash_upd_sram(ram, 0x08000000, 0x08002000, 27908);
 #else
-    flash_update(0x08007000, 0x08000000, 2048);
+//    flash_update(0x08007000, 0x08000000, 2048);
 #endif
+
+    __enable_irq();
 
 #if (DFU_DEBUG)
     printf("OK\n");

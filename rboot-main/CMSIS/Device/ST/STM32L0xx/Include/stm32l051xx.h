@@ -1,13 +1,13 @@
 /**
   ******************************************************************************
-  * @file    stm32l052xx.h
+  * @file    stm32l051xx.h
   * @author  MCD Application Team
   * @version V1.1.0
   * @date    18-June-2014
-  * @brief   CMSIS Cortex-M0+ Device Peripheral Access Layer Header File.
-  *          This file contains all the peripheral register's definitions, bits
-  *          definitions and memory mapping for STM32L0xx devices.
-  *
+  * @brief   CMSIS Cortex-M0+ Device Peripheral Access Layer Header File. 
+  *          This file contains all the peripheral register's definitions, bits 
+  *          definitions and memory mapping for STM32L0xx devices.  
+  *          
   *          This file contains:
   *           - Data structures and the address mapping for all peripherals
   *           - Peripheral's registers declarations and bits definition
@@ -47,23 +47,23 @@
   * @{
   */
 
-/** @addtogroup stm32l052xx
+/** @addtogroup stm32l051xx
   * @{
   */
-
-#ifndef __STM32L052xx_H
-#define __STM32L052xx_H
+    
+#ifndef __STM32L051xx_H
+#define __STM32L051xx_H
 
 #ifdef __cplusplus
  extern "C" {
-#endif
-
+#endif 
+  
 
 /** @addtogroup Configuration_section_for_CMSIS
   * @{
   */
 /**
-  * @brief Configuration of the Cortex-M0+ Processor and Core Peripherals
+  * @brief Configuration of the Cortex-M0+ Processor and Core Peripherals 
   */
 #define __CM0PLUS_REV             0 /*!< Core Revision r0p0                            */
 #define __MPU_PRESENT             1 /*!< STM32L0xx  provides an MPU                    */
@@ -75,14 +75,14 @@
 /**
   * @}
   */
-
+   
 /** @addtogroup Peripheral_interrupt_number_definition
   * @{
   */
-
+   
 /**
- * @brief STM32L0xx Interrupt Number Definition, according to the selected device
- *        in @ref Library_configuration_section
+ * @brief STM32L0xx Interrupt Number Definition, according to the selected device 
+ *        in @ref Library_configuration_section 
  */
 
 /*!< Interrupt Number Definition */
@@ -100,19 +100,18 @@ typedef enum
   PVD_IRQn                    = 1,      /*!< PVD through EXTI Line detect Interrupt                        */
   RTC_IRQn                    = 2,      /*!< RTC through EXTI Line Interrupt                               */
   FLASH_IRQn                  = 3,      /*!< FLASH Interrupt                                               */
-  RCC_CRS_IRQn                = 4,      /*!< RCC and CRS Interrupts                                        */
+  RCC_IRQn                    = 4,      /*!< RCC Interrupt                                                 */
   EXTI0_1_IRQn                = 5,      /*!< EXTI Line 0 and 1 Interrupts                                  */
   EXTI2_3_IRQn                = 6,      /*!< EXTI Line 2 and 3 Interrupts                                  */
   EXTI4_15_IRQn               = 7,      /*!< EXTI Line 4 to 15 Interrupts                                  */
-  TSC_IRQn                    = 8,      /*!< TSC Interrupt                                                 */
   DMA1_Channel1_IRQn          = 9,      /*!< DMA1 Channel 1 Interrupt                                      */
   DMA1_Channel2_3_IRQn        = 10,     /*!< DMA1 Channel 2 and Channel 3 Interrupts                       */
   DMA1_Channel4_5_6_7_IRQn    = 11,     /*!< DMA1 Channel 4, Channel 5, Channel 6 and Channel 7 Interrupts */
   ADC1_COMP_IRQn              = 12,     /*!< ADC1, COMP1 and COMP2 Interrupts                              */
   LPTIM1_IRQn                 = 13,     /*!< LPTIM1 Interrupt                                              */
   TIM2_IRQn                   = 15,     /*!< TIM2 Interrupt                                                */
-  TIM6_DAC_IRQn               = 17,     /*!< TIM6 and DAC Interrupts                                       */
-  TIM21_IRQn                   = 20,     /*!< TIM21 Interrupt                                               */
+  TIM6_IRQn                   = 17,     /*!< TIM6  Interrupt                                               */
+  TIM21_IRQn                  = 20,     /*!< TIM21 Interrupt                                               */
   TIM22_IRQn                  = 22,     /*!< TIM22 Interrupt                                               */
   I2C1_IRQn                   = 23,     /*!< I2C1 Interrupt                                                */
   I2C2_IRQn                   = 24,     /*!< I2C2 Interrupt                                                */
@@ -120,8 +119,7 @@ typedef enum
   SPI2_IRQn                   = 26,     /*!< SPI2 Interrupt                                                */
   USART1_IRQn                 = 27,     /*!< USART1 Interrupt                                              */
   USART2_IRQn                 = 28,     /*!< USART2 Interrupt                                              */
-  RNG_LPUART1_IRQn            = 29,     /*!< RNG and LPUART1 Interrupts                                    */
-  USB_IRQn                    = 31      /*!< USB global Interrupt                                          */
+  LPUART1_IRQn                = 29,     /*!< LPUART1 Interrupts                                            */
 } IRQn_Type;
 
 /**
@@ -130,14 +128,14 @@ typedef enum
 
 #include "core_cm0plus.h"
 #include "system_stm32l0xx.h"
-#include <stdint.h>
+#include <stdint.h"
 
 /** @addtogroup Peripheral_registers_structures
   * @{
-  */
+  */   
 
-/**
-  * @brief Analog to Digital Converter
+/** 
+  * @brief Analog to Digital Converter  
   */
 
 typedef struct
@@ -166,7 +164,7 @@ typedef struct
 
 
 /**
-  * @brief Comparator
+  * @brief Comparator 
   */
 
 typedef struct
@@ -175,8 +173,8 @@ typedef struct
 } COMP_TypeDef;
 
 
-/**
-  * @brief CRC calculation unit
+/** 
+  * @brief CRC calculation unit 
   */
 
 typedef struct
@@ -189,35 +187,7 @@ typedef struct
   __IO uint32_t POL;         /*!< CRC polynomial register,                     Address offset: 0x14 */
 } CRC_TypeDef;
 
-/**
-  * @brief Clock Recovery System
-  */
-typedef struct
-{
-__IO uint32_t CR;     /*!< CRS ccontrol register,              Address offset: 0x00 */
-__IO uint32_t CFGR;   /*!< CRS configuration register,         Address offset: 0x04 */
-__IO uint32_t ISR;    /*!< CRS interrupt and status register,  Address offset: 0x08 */
-__IO uint32_t ICR;    /*!< CRS interrupt flag clear register,  Address offset: 0x0C */
-} CRS_TypeDef;
-
-/**
-  * @brief Digital to Analog Converter
-  */
-
-typedef struct
-{
-  __IO uint32_t CR;            /*!< DAC control register,                                    Address offset: 0x00 */
-  __IO uint32_t SWTRIGR;       /*!< DAC software trigger register,                           Address offset: 0x04 */
-  __IO uint32_t DHR12R1;       /*!< DAC channel1 12-bit right-aligned data holding register, Address offset: 0x08 */
-  __IO uint32_t DHR12L1;       /*!< DAC channel1 12-bit left aligned data holding register,  Address offset: 0x0C */
-  __IO uint32_t DHR8R1;        /*!< DAC channel1 8-bit right aligned data holding register,  Address offset: 0x10 */
-  uint32_t      RESERVED0[6];  /*!<                                                                     0x14-0x28 */
-  __IO uint32_t DOR1;          /*!< DAC channel1 data output register,                       Address offset: 0x2C */
-  uint32_t      RESERVED1;     /*!<                                                                          0x30 */
-  __IO uint32_t SR;            /*!< DAC status register,                                     Address offset: 0x34 */
-} DAC_TypeDef;
-
-/**
+/** 
   * @brief Debug MCU
   */
 
@@ -229,7 +199,7 @@ typedef struct
   __IO uint32_t APB2FZ;       /*!< Debug MCU APB2 freeze register,              Address offset: 0x0C */
 }DBGMCU_TypeDef;
 
-/**
+/** 
   * @brief DMA Controller
   */
 
@@ -252,7 +222,7 @@ typedef struct
   __IO uint32_t CSELR;           /*!< DMA channel selection register,                  Address offset: 0xA8 */
 } DMA_Request_TypeDef;
 
-/**
+/** 
   * @brief External Interrupt/Event Controller
   */
 
@@ -266,7 +236,7 @@ typedef struct
   __IO uint32_t PR;           /*!<EXTI Pending register,                                    Address offset: 0x14 */
 }EXTI_TypeDef;
 
-/**
+/** 
   * @brief FLASH Registers
   */
 typedef struct
@@ -283,7 +253,7 @@ typedef struct
 } FLASH_TypeDef;
 
 
-/**
+/** 
   * @brief Option Bytes Registers
   */
 typedef struct
@@ -292,9 +262,9 @@ typedef struct
   __IO uint32_t USER;              /*!< user register,                          Address offset: 0x04 */
   __IO uint32_t WRP01;             /*!< write protection register 0 1,          Address offset: 0x08 */
 } OB_TypeDef;
+  
 
-
-/**
+/** 
   * @brief General Purpose IO
   */
 
@@ -312,7 +282,7 @@ typedef struct
   __IO uint32_t BRR;          /*!< GPIO bit reset register,                                  Address offset: 0x28 */
 }GPIO_TypeDef;
 
-/**
+/** 
   * @brief LPTIMIMER
   */
 typedef struct
@@ -327,7 +297,7 @@ typedef struct
   __IO uint32_t CNT;      /*!< LPTIM Counter register,                             Address offset: 0x1C */
 } LPTIM_TypeDef;
 
-/**
+/** 
   * @brief SysTem Configuration
   */
 
@@ -337,12 +307,12 @@ typedef struct
   __IO uint32_t CFGR2;         /*!< SYSCFG configuration register 2,                           Address offset: 0x04 */
   __IO uint32_t EXTICR[4];     /*!< SYSCFG external interrupt configuration register,          Address offset: 0x14-0x08 */
        uint32_t RESERVED[2];   /*!< Reserved,                                                  0x18-0x1C */
-  __IO uint32_t CFGR3;         /*!< SYSCFG configuration register 3,                           Address offset: 0x20 */
+  __IO uint32_t CFGR3;         /*!< SYSCFG configuration register 3,                           Address offset: 0x20 */       
 } SYSCFG_TypeDef;
 
 
 
-/**
+/** 
   * @brief Inter-integrated Circuit Interface
   */
 
@@ -362,7 +332,7 @@ typedef struct
 }I2C_TypeDef;
 
 
-/**
+/** 
   * @brief Independent WATCHDOG
   */
 typedef struct
@@ -374,7 +344,7 @@ typedef struct
   __IO uint32_t WINR; /*!< IWDG Window register,    Address offset: 0x10 */
 } IWDG_TypeDef;
 
-/**
+/** 
   * @brief MIFARE Firewall
   */
 
@@ -389,10 +359,10 @@ typedef struct
   __IO uint32_t LSSA ;    /*!< Library Segment Start Address register,            Address offset: 0x18 */
   __IO uint32_t LSL ;     /*!< Library Segment Length register,                   Address offset: 0x1C */
   __IO uint32_t CR ;      /*!< Configuration  register,                           Address offset: 0x20 */
-
+ 
 } FW_TypeDef;
 
-/**
+/** 
   * @brief Power Control
   */
 
@@ -402,7 +372,7 @@ typedef struct
   __IO uint32_t CSR;  /*!< PWR power control/status register, Address offset: 0x04 */
 } PWR_TypeDef;
 
-/**
+/** 
   * @brief Reset and Clock Control
   */
 typedef struct
@@ -431,25 +401,16 @@ typedef struct
 } RCC_TypeDef;
 
 
-/**
-  * @brief Random numbers generator
-  */
-typedef struct
-{
-  __IO uint32_t CR;  /*!< RNG control register, Address offset: 0x00 */
-  __IO uint32_t SR;  /*!< RNG status register,  Address offset: 0x04 */
-  __IO uint32_t DR;  /*!< RNG data register,    Address offset: 0x08 */
-} RNG_TypeDef;
 
 
-/**
+/** 
   * @brief Real-Time Clock
   */
 typedef struct
 {
   __IO uint32_t TR;         /*!< RTC time register,                                         Address offset: 0x00 */
   __IO uint32_t DR;         /*!< RTC date register,                                         Address offset: 0x04 */
-  __IO uint32_t CR;         /*!< RTC control register,                                      Address offset: 0x08 */
+  __IO uint32_t CR;         /*!< RTC control register,                                      Address offset: 0x08 */                                                                                            
   __IO uint32_t ISR;        /*!< RTC initialization and status register,                    Address offset: 0x0C */
   __IO uint32_t PRER;       /*!< RTC prescaler register,                                    Address offset: 0x10 */
   __IO uint32_t WUTR;       /*!< RTC wakeup timer register,                                 Address offset: 0x14 */
@@ -475,10 +436,10 @@ typedef struct
 } RTC_TypeDef;
 
 
-/**
+/** 
   * @brief Serial Peripheral Interface
   */
-
+  
 typedef struct
 {
   __IO uint32_t CR1;      /*!< SPI Control register 1 (not used in I2S mode),       Address offset: 0x00 */
@@ -492,7 +453,7 @@ typedef struct
   __IO uint32_t I2SPR;    /*!< SPI_I2S prescaler register,                          Address offset: 0x20 */
 } SPI_TypeDef;
 
-/**
+/** 
   * @brief TIM
   */
 typedef struct
@@ -520,39 +481,20 @@ typedef struct
   __IO uint32_t OR;              /*!< TIM option register,                         Address offset: 0x50 */
 } TIM_TypeDef;
 
-/**
-  * @brief Touch Sensing Controller (TSC)
-  */
-typedef struct
-{
-  __IO uint32_t CR;            /*!< TSC control register,                                     Address offset: 0x00 */
-  __IO uint32_t IER;           /*!< TSC interrupt enable register,                            Address offset: 0x04 */
-  __IO uint32_t ICR;           /*!< TSC interrupt clear register,                             Address offset: 0x08 */
-  __IO uint32_t ISR;           /*!< TSC interrupt status register,                            Address offset: 0x0C */
-  __IO uint32_t IOHCR;         /*!< TSC I/O hysteresis control register,                      Address offset: 0x10 */
-  uint32_t      RESERVED1;     /*!< Reserved,                                                 Address offset: 0x14 */
-  __IO uint32_t IOASCR;        /*!< TSC I/O analog switch control register,                   Address offset: 0x18 */
-  uint32_t      RESERVED2;     /*!< Reserved,                                                 Address offset: 0x1C */
-  __IO uint32_t IOSCR;         /*!< TSC I/O sampling control register,                        Address offset: 0x20 */
-  uint32_t      RESERVED3;     /*!< Reserved,                                                 Address offset: 0x24 */
-  __IO uint32_t IOCCR;         /*!< TSC I/O channel control register,                         Address offset: 0x28 */
-  uint32_t      RESERVED4;     /*!< Reserved,                                                 Address offset: 0x2C */
-  __IO uint32_t IOGCSR;        /*!< TSC I/O group control status register,                    Address offset: 0x30 */
-  __IO uint32_t IOGXCR[8];     /*!< TSC I/O group x counter register,                         Address offset: 0x34-50 */
-} TSC_TypeDef;
 
-/**
+
+/** 
   * @brief Universal Synchronous Asynchronous Receiver Transmitter
   */
-
+  
 typedef struct
 {
-  __IO uint32_t CR1;    /*!< USART Control register 1,                 Address offset: 0x00 */
-  __IO uint32_t CR2;    /*!< USART Control register 2,                 Address offset: 0x04 */
+  __IO uint32_t CR1;    /*!< USART Control register 1,                 Address offset: 0x00 */ 
+  __IO uint32_t CR2;    /*!< USART Control register 2,                 Address offset: 0x04 */ 
   __IO uint32_t CR3;    /*!< USART Control register 3,                 Address offset: 0x08 */
-  __IO uint32_t BRR;    /*!< USART Baud rate register,                 Address offset: 0x0C */
+  __IO uint32_t BRR;    /*!< USART Baud rate register,                 Address offset: 0x0C */  
   __IO uint32_t GTPR;   /*!< USART Guard time and prescaler register,  Address offset: 0x10 */
-  __IO uint32_t RTOR;   /*!< USART Receiver Time Out register,         Address offset: 0x14 */
+  __IO uint32_t RTOR;   /*!< USART Receiver Time Out register,         Address offset: 0x14 */  
   __IO uint32_t RQR;    /*!< USART Request register,                   Address offset: 0x18 */
   __IO uint32_t ISR;    /*!< USART Interrupt and status register,      Address offset: 0x1C */
   __IO uint32_t ICR;    /*!< USART Interrupt flag Clear register,      Address offset: 0x20 */
@@ -560,7 +502,7 @@ typedef struct
   __IO uint32_t TDR;    /*!< USART Transmit Data register,             Address offset: 0x28 */
 } USART_TypeDef;
 
-/**
+/** 
   * @brief Window WATCHDOG
   */
 typedef struct
@@ -570,49 +512,11 @@ typedef struct
   __IO uint32_t SR;   /*!< WWDG Status register,        Address offset: 0x08 */
 } WWDG_TypeDef;
 
-/**
-  * @brief Universal Serial Bus Full Speed Device
-  */
-
-typedef struct
-{
-  __IO uint16_t EP0R;            /*!< USB Endpoint 0 register,                Address offset: 0x00 */
-  __IO uint16_t RESERVED0;       /*!< Reserved */
-  __IO uint16_t EP1R;            /*!< USB Endpoint 1 register,                Address offset: 0x04 */
-  __IO uint16_t RESERVED1;       /*!< Reserved */
-  __IO uint16_t EP2R;            /*!< USB Endpoint 2 register,                Address offset: 0x08 */
-  __IO uint16_t RESERVED2;       /*!< Reserved */
-  __IO uint16_t EP3R;            /*!< USB Endpoint 3 register,                Address offset: 0x0C */
-  __IO uint16_t RESERVED3;       /*!< Reserved */
-  __IO uint16_t EP4R;            /*!< USB Endpoint 4 register,                Address offset: 0x10 */
-  __IO uint16_t RESERVED4;       /*!< Reserved */
-  __IO uint16_t EP5R;            /*!< USB Endpoint 5 register,                Address offset: 0x14 */
-  __IO uint16_t RESERVED5;       /*!< Reserved */
-  __IO uint16_t EP6R;            /*!< USB Endpoint 6 register,                Address offset: 0x18 */
-  __IO uint16_t RESERVED6;       /*!< Reserved */
-  __IO uint16_t EP7R;            /*!< USB Endpoint 7 register,                Address offset: 0x1C */
-  __IO uint16_t RESERVED7[17];   /*!< Reserved */
-  __IO uint16_t CNTR;            /*!< Control register,                       Address offset: 0x40 */
-  __IO uint16_t RESERVED8;       /*!< Reserved */
-  __IO uint16_t ISTR;            /*!< Interrupt status register,              Address offset: 0x44 */
-  __IO uint16_t RESERVED9;       /*!< Reserved */
-  __IO uint16_t FNR;             /*!< Frame number register,                  Address offset: 0x48 */
-  __IO uint16_t RESERVEDA;       /*!< Reserved */
-  __IO uint16_t DADDR;           /*!< Device address register,                Address offset: 0x4C */
-  __IO uint16_t RESERVEDB;       /*!< Reserved */
-  __IO uint16_t BTABLE;          /*!< Buffer Table address register,          Address offset: 0x50 */
-  __IO uint16_t RESERVEDC;       /*!< Reserved */
-  __IO uint16_t LPMCSR;          /*!< LPM Control and Status register,        Address offset: 0x54 */
-  __IO uint16_t RESERVEDD;       /*!< Reserved */
-  __IO uint16_t BCDR;            /*!< Battery Charging detector register,     Address offset: 0x58 */
-  __IO uint16_t RESERVEDE;       /*!< Reserved */
-} USB_TypeDef;
-
 
 /**
   * @}
   */
-
+  
 /** @addtogroup Peripheral_memory_map
   * @{
   */
@@ -639,9 +543,7 @@ typedef struct
 #define LPUART1_BASE          (APBPERIPH_BASE + 0x00004800)
 #define I2C1_BASE             (APBPERIPH_BASE + 0x00005400)
 #define I2C2_BASE             (APBPERIPH_BASE + 0x00005800)
-#define CRS_BASE              (APBPERIPH_BASE + 0x00006C00)
 #define PWR_BASE              (APBPERIPH_BASE + 0x00007000)
-#define DAC_BASE              (APBPERIPH_BASE + 0x00007400)
 #define LPTIM1_BASE           (APBPERIPH_BASE + 0x00007C00)
 
 #define SYSCFG_BASE           (APBPERIPH_BASE + 0x00010000)
@@ -650,7 +552,7 @@ typedef struct
 #define EXTI_BASE             (APBPERIPH_BASE + 0x00010400)
 #define TIM21_BASE            (APBPERIPH_BASE + 0x00010800)
 #define TIM22_BASE            (APBPERIPH_BASE + 0x00011400)
-#define FW_BASE         (APBPERIPH_BASE + 0x00011C00)
+#define FW_BASE               (APBPERIPH_BASE + 0x00011C00)
 #define ADC1_BASE             (APBPERIPH_BASE + 0x00012400)
 #define ADC_BASE              (APBPERIPH_BASE + 0x00012708)
 #define SPI1_BASE             (APBPERIPH_BASE + 0x00013000)
@@ -672,8 +574,6 @@ typedef struct
 #define FLASH_R_BASE          (AHBPERIPH_BASE + 0x00002000) /*!< FLASH registers base address */
 #define OB_BASE               ((uint32_t)0x1FF80000)        /*!< FLASH Option Bytes base address */
 #define CRC_BASE              (AHBPERIPH_BASE + 0x00003000)
-#define TSC_BASE              (AHBPERIPH_BASE + 0x00004000)
-#define RNG_BASE              (AHBPERIPH_BASE + 0x00005000)
 
 #define GPIOA_BASE            (IOPPERIPH_BASE + 0x00000000)
 #define GPIOB_BASE            (IOPPERIPH_BASE + 0x00000400)
@@ -684,10 +584,10 @@ typedef struct
 /**
   * @}
   */
-
+  
 /** @addtogroup Peripheral_declaration
   * @{
-  */
+  */  
 
 #define TIM2                ((TIM_TypeDef *) TIM2_BASE)
 #define TIM6                ((TIM_TypeDef *) TIM6_BASE)
@@ -699,9 +599,7 @@ typedef struct
 #define LPUART1             ((USART_TypeDef *) LPUART1_BASE)
 #define I2C1                ((I2C_TypeDef *) I2C1_BASE)
 #define I2C2                ((I2C_TypeDef *) I2C2_BASE)
-#define CRS                 ((CRS_TypeDef *) CRS_BASE)
 #define PWR                 ((PWR_TypeDef *) PWR_BASE)
-#define DAC                 ((DAC_TypeDef *) DAC_BASE)
 #define LPTIM1              ((LPTIM_TypeDef *) LPTIM1_BASE)
 
 #define SYSCFG              ((SYSCFG_TypeDef *) SYSCFG_BASE)
@@ -710,7 +608,7 @@ typedef struct
 #define EXTI                ((EXTI_TypeDef *) EXTI_BASE)
 #define TIM21                ((TIM_TypeDef *) TIM21_BASE)
 #define TIM22               ((TIM_TypeDef *) TIM22_BASE)
-#define FW                ((FW_TypeDef *) FW_BASE)
+#define FW                  ((FW_TypeDef *) FW_BASE)
 #define ADC1                ((ADC_TypeDef *) ADC1_BASE)
 #define ADC                 ((ADC_Common_TypeDef *) ADC_BASE)
 #define SPI1                ((SPI_TypeDef *) SPI1_BASE)
@@ -729,19 +627,15 @@ typedef struct
 
 
 #define FLASH               ((FLASH_TypeDef *) FLASH_R_BASE)
-#define OB                  ((OB_TypeDef *) OB_BASE)
+#define OB                  ((OB_TypeDef *) OB_BASE) 
 #define RCC                 ((RCC_TypeDef *) RCC_BASE)
 #define CRC                 ((CRC_TypeDef *) CRC_BASE)
-#define TSC                 ((TSC_TypeDef *) TSC_BASE)
-#define RNG                 ((RNG_TypeDef *) RNG_BASE)
 
 #define GPIOA               ((GPIO_TypeDef *) GPIOA_BASE)
 #define GPIOB               ((GPIO_TypeDef *) GPIOB_BASE)
 #define GPIOC               ((GPIO_TypeDef *) GPIOC_BASE)
 #define GPIOD               ((GPIO_TypeDef *) GPIOD_BASE)
 #define GPIOH               ((GPIO_TypeDef *) GPIOH_BASE)
-
-#define USB              ((USB_TypeDef *) USB_BASE)
 
 /**
   * @}
@@ -750,11 +644,11 @@ typedef struct
 /** @addtogroup Exported_constants
   * @{
   */
-
+  
   /** @addtogroup Peripheral_Registers_Bits_Definition
   * @{
   */
-
+    
 /******************************************************************************/
 /*                         Peripheral Registers Bits Definition               */
 /******************************************************************************/
@@ -966,100 +860,6 @@ typedef struct
 
 /******************************************************************************/
 /*                                                                            */
-/*                          CRS Clock Recovery System                         */
-/*                                                                            */
-/******************************************************************************/
-
-/*******************  Bit definition for CRS_CR register  *********************/
-#define  CRS_CR_SYNCOKIE                     ((uint32_t)0x00000001) /* SYNC event OK interrupt enable        */
-#define  CRS_CR_SYNCWARNIE                   ((uint32_t)0x00000002) /* SYNC warning interrupt enable         */
-#define  CRS_CR_ERRIE                        ((uint32_t)0x00000004) /* SYNC error interrupt enable           */
-#define  CRS_CR_ESYNCIE                      ((uint32_t)0x00000008) /* Expected SYNC(ESYNCF) interrupt Enable*/
-#define  CRS_CR_CEN                          ((uint32_t)0x00000020) /* Frequency error counter enable        */
-#define  CRS_CR_AUTOTRIMEN                   ((uint32_t)0x00000040) /* Automatic trimming enable             */
-#define  CRS_CR_SWSYNC                       ((uint32_t)0x00000080) /* A Software SYNC event is generated    */
-#define  CRS_CR_TRIM                         ((uint32_t)0x00003F00) /* HSI48 oscillator smooth trimming      */
-
-/*******************  Bit definition for CRS_CFGR register  *********************/
-#define  CRS_CFGR_RELOAD                     ((uint32_t)0x0000FFFF) /* Counter reload value               */
-#define  CRS_CFGR_FELIM                      ((uint32_t)0x00FF0000) /* Frequency error limit              */
-
-#define  CRS_CFGR_SYNCDIV                    ((uint32_t)0x07000000) /* SYNC divider                       */
-#define  CRS_CFGR_SYNCDIV_0                  ((uint32_t)0x01000000) /* Bit 0                              */
-#define  CRS_CFGR_SYNCDIV_1                  ((uint32_t)0x02000000) /* Bit 1                              */
-#define  CRS_CFGR_SYNCDIV_2                  ((uint32_t)0x04000000) /* Bit 2                              */
-
-#define  CRS_CFGR_SYNCSRC                    ((uint32_t)0x30000000) /* SYNC signal source selection       */
-#define  CRS_CFGR_SYNCSRC_0                  ((uint32_t)0x10000000) /* Bit 0                              */
-#define  CRS_CFGR_SYNCSRC_1                  ((uint32_t)0x20000000) /* Bit 1                              */
-
-#define  CRS_CFGR_SYNCPOL                    ((uint32_t)0x80000000) /* SYNC polarity selection            */
-
-/*******************  Bit definition for CRS_ISR register  *********************/
-#define  CRS_ISR_SYNCOKF                     ((uint32_t)0x00000001) /* SYNC event OK flag             */
-#define  CRS_ISR_SYNCWARNF                   ((uint32_t)0x00000002) /* SYNC warning                   */
-#define  CRS_ISR_ERRF                        ((uint32_t)0x00000004) /* SYNC error flag                */
-#define  CRS_ISR_ESYNCF                      ((uint32_t)0x00000008) /* Expected SYNC flag             */
-#define  CRS_ISR_SYNCERR                     ((uint32_t)0x00000100) /* SYNC error                     */
-#define  CRS_ISR_SYNCMISS                    ((uint32_t)0x00000200) /* SYNC missed                    */
-#define  CRS_ISR_TRIMOVF                     ((uint32_t)0x00000400) /* Trimming overflow or underflow */
-#define  CRS_ISR_FEDIR                       ((uint32_t)0x00008000) /* Frequency error direction      */
-#define  CRS_ISR_FECAP                       ((uint32_t)0xFFFF0000) /* Frequency error capture        */
-
-/*******************  Bit definition for CRS_ICR register  *********************/
-#define  CRS_ICR_SYNCOKC                     ((uint32_t)0x00000001) /* SYNC event OK clear flag     */
-#define  CRS_ICR_SYNCWARNC                   ((uint32_t)0x00000002) /* SYNC warning clear flag      */
-#define  CRS_ICR_ERRC                        ((uint32_t)0x00000004) /* Error clear flag             */
-#define  CRS_ICR_ESYNCC                      ((uint32_t)0x00000008) /* Expected SYNC clear flag     */
-
-/******************************************************************************/
-/*                                                                            */
-/*                 Digital to Analog Converter (DAC)                          */
-/*                                                                            */
-/******************************************************************************/
-/********************  Bit definition for DAC_CR register  ********************/
-#define  DAC_CR_EN1                          ((uint32_t)0x00000001)        /*!< DAC channel1 enable */
-#define  DAC_CR_BOFF1                        ((uint32_t)0x00000002)        /*!< DAC channel1 output buffer disable */
-#define  DAC_CR_TEN1                         ((uint32_t)0x00000004)        /*!< DAC channel1 Trigger enable */
-
-#define  DAC_CR_TSEL1                        ((uint32_t)0x00000038)        /*!< TSEL1[2:0] (DAC channel1 Trigger selection) */
-#define  DAC_CR_TSEL1_0                      ((uint32_t)0x00000008)        /*!< Bit 0 */
-#define  DAC_CR_TSEL1_1                      ((uint32_t)0x00000010)        /*!< Bit 1 */
-#define  DAC_CR_TSEL1_2                      ((uint32_t)0x00000020)        /*!< Bit 2 */
-
-#define  DAC_CR_WAVE1                        ((uint32_t)0x000000C0)        /*!< WAVE1[1:0] (DAC channel1 noise/triangle wave generation enable) */
-#define  DAC_CR_WAVE1_0                      ((uint32_t)0x00000040)        /*!< Bit 0 */
-#define  DAC_CR_WAVE1_1                      ((uint32_t)0x00000080)        /*!< Bit 1 */
-
-#define  DAC_CR_MAMP1                        ((uint32_t)0x00000F00)        /*!< MAMP1[3:0] (DAC channel1 Mask/Amplitude selector) */
-#define  DAC_CR_MAMP1_0                      ((uint32_t)0x00000100)        /*!< Bit 0 */
-#define  DAC_CR_MAMP1_1                      ((uint32_t)0x00000200)        /*!< Bit 1 */
-#define  DAC_CR_MAMP1_2                      ((uint32_t)0x00000400)        /*!< Bit 2 */
-#define  DAC_CR_MAMP1_3                      ((uint32_t)0x00000800)        /*!< Bit 3 */
-
-#define  DAC_CR_DMAEN1                       ((uint32_t)0x00001000)        /*!< DAC channel1 DMA enable */
-#define  DAC_CR_DMAUDRIE1                    ((uint32_t)0x00002000)        /*!< DAC channel1 DMA Interrupt enable */
-
-/*****************  Bit definition for DAC_SWTRIGR register  ******************/
-#define  DAC_SWTRIGR_SWTRIG1                 ((uint8_t)0x01)               /*!< DAC channel1 software trigger */
-
-/*****************  Bit definition for DAC_DHR12R1 register  ******************/
-#define  DAC_DHR12R1_DACC1DHR                ((uint16_t)0x0FFF)            /*!< DAC channel1 12-bit Right aligned data */
-
-/*****************  Bit definition for DAC_DHR12L1 register  ******************/
-#define  DAC_DHR12L1_DACC1DHR                ((uint16_t)0xFFF0)            /*!< DAC channel1 12-bit Left aligned data */
-
-/******************  Bit definition for DAC_DHR8R1 register  ******************/
-#define  DAC_DHR8R1_DACC1DHR                 ((uint8_t)0xFF)               /*!< DAC channel1 8-bit Right aligned data */
-
-/*******************  Bit definition for DAC_DOR1 register  *******************/
-#define  DAC_DOR1_DACC1DOR                   ((uint16_t)0x0FFF)            /*!< DAC channel1 data output */
-
-/********************  Bit definition for DAC_SR register  ********************/
-#define  DAC_SR_DMAUDR1                      ((uint32_t)0x00002000)        /*!< DAC channel1 DMA underrun flag */
-
-/******************************************************************************/
-/*                                                                            */
 /*                           Debug MCU (DBGMCU)                               */
 /*                                                                            */
 /******************************************************************************/
@@ -1204,12 +1004,12 @@ typedef struct
 
 
 /*******************  Bit definition for DMA_CSELR register  *******************/
-#define  DMA_CSELR_C1S                          ((uint32_t)0x0000000F)          /*!< Channel 1 Selection */
-#define  DMA_CSELR_C2S                          ((uint32_t)0x000000F0)          /*!< Channel 2 Selection */
-#define  DMA_CSELR_C3S                          ((uint32_t)0x00000F00)          /*!< Channel 3 Selection */
-#define  DMA_CSELR_C4S                          ((uint32_t)0x0000F000)          /*!< Channel 4 Selection */
-#define  DMA_CSELR_C5S                          ((uint32_t)0x000F0000)          /*!< Channel 5 Selection */
-#define  DMA_CSELR_C6S                          ((uint32_t)0x00F00000)          /*!< Channel 6 Selection */
+#define  DMA_CSELR_C1S                          ((uint32_t)0x0000000F)          /*!< Channel 1 Selection */ 
+#define  DMA_CSELR_C2S                          ((uint32_t)0x000000F0)          /*!< Channel 2 Selection */ 
+#define  DMA_CSELR_C3S                          ((uint32_t)0x00000F00)          /*!< Channel 3 Selection */ 
+#define  DMA_CSELR_C4S                          ((uint32_t)0x0000F000)          /*!< Channel 4 Selection */ 
+#define  DMA_CSELR_C5S                          ((uint32_t)0x000F0000)          /*!< Channel 5 Selection */ 
+#define  DMA_CSELR_C6S                          ((uint32_t)0x00F00000)          /*!< Channel 6 Selection */ 
 #define  DMA_CSELR_C7S                          ((uint32_t)0x0F000000)          /*!< Channel 7 Selection */
 
 
@@ -1397,8 +1197,8 @@ typedef struct
 #define FLASH_PECR_FTDW                      ((uint32_t)0x00000100)        /*!< Fixed Time Data write for Word/Half Word/Byte programming */
 #define FLASH_PECR_ERASE                     ((uint32_t)0x00000200)        /*!< Page erasing mode */
 #define FLASH_PECR_FPRG                      ((uint32_t)0x00000400)        /*!< Fast Page/Half Page programming mode */
-#define FLASH_PECR_EOPIE                     ((uint32_t)0x00010000)        /*!< End of programming interrupt */
-#define FLASH_PECR_ERRIE                     ((uint32_t)0x00020000)        /*!< Error interrupt */
+#define FLASH_PECR_EOPIE                     ((uint32_t)0x00010000)        /*!< End of programming interrupt */ 
+#define FLASH_PECR_ERRIE                     ((uint32_t)0x00020000)        /*!< Error interrupt */ 
 #define FLASH_PECR_OBL_LAUNCH                ((uint32_t)0x00040000)        /*!< Launch the option byte loading */
 #define FLASH_PECR_HALF_ARRAY                ((uint32_t)0x00080000)        /*!< Half array mode */
 
@@ -1439,22 +1239,6 @@ typedef struct
 
 /******************  Bit definition for FLASH_WRPR register  ******************/
 #define  FLASH_WRPR_WRP                      ((uint32_t)0x0000FFFF)        /*!< Write Protection bits */
-
-/***************************  Keys  *******************************************/
-#define FLASH_PEKEY1                         ((uint32_t)0x89ABCDEF)        /*!< Flash EEPROM and FLASH_PECR register key1 */
-#define FLASH_PEKEY2                         ((uint32_t)0x02030405)        /*!< used to unlock EEPROM and FLASH_PECR. */
-
-#define FLASH_PDKEY1                         ((uint32_t)0x04152637)        /*!< Flash power down key1 */
-#define FLASH_PDKEY2                         ((uint32_t)0xFAFBFCFD)        /*!< Flash power down key2:
-                                                                                used with FLASH_PDKEY1 to unlock the RUN_PD bit in FLASH_ACR */
-
-#define FLASH_PRGKEY1                        ((uint32_t)0x8C9DAEBF)        /*!< Flash program memory key1 */
-#define FLASH_PRGKEY2                        ((uint32_t)0x13141516)        /*!< Flash program memory key2:
-                                                                                used with FLASH_PRGKEY2 to unlock the program memory */
-
-#define FLASH_OPTKEY1                        ((uint32_t)0xFBEAD9C8)        /*!< Flash option key1 */
-#define FLASH_OPTKEY2                        ((uint32_t)0x24252627)        /*!< Flash option key2:
-                                                                                used with FLASH_OPTKEY1 to unlock the write access to the option byte block */
 
 /******************************************************************************/
 /*                                                                            */
@@ -1954,17 +1738,17 @@ typedef struct
 /******************************************************************************/
 
 /*******Bit definition for CSSA;CSL;NVDSSA;NVDSL;VDSSA;VDSL register */
-#define  FW_CSSA_ADD                        ((uint32_t)0x00FFFF00)        /*!< Code Segment Start Address */
-#define  FW_CSL_LENG                        ((uint32_t)0x003FFF00)        /*!< Code Segment Length        */
-#define  FW_NVDSSA_ADD                      ((uint32_t)0x00FFFF00)        /*!< Non Volatile Dat Segment Start Address */
-#define  FW_NVDSL_LENG                      ((uint32_t)0x003FFF00)        /*!< Non Volatile Data Segment Length */
-#define  FW_VDSSA_ADD                       ((uint32_t)0x0000FFC0)        /*!< Volatile Data Segment Start Address */
-#define  FW_VDSL_LENG                       ((uint32_t)0x0000FFC0)        /*!< Volatile Data Segment Length */
+#define  FW_CSSA_ADD                        ((uint32_t)0x00FFFF00)        /*!< Code Segment Start Address */ 
+#define  FW_CSL_LENG                        ((uint32_t)0x003FFF00)        /*!< Code Segment Length        */  
+#define  FW_NVDSSA_ADD                      ((uint32_t)0x00FFFF00)        /*!< Non Volatile Dat Segment Start Address */ 
+#define  FW_NVDSL_LENG                      ((uint32_t)0x003FFF00)        /*!< Non Volatile Data Segment Length */ 
+#define  FW_VDSSA_ADD                       ((uint32_t)0x0000FFC0)        /*!< Volatile Data Segment Start Address */ 
+#define  FW_VDSL_LENG                       ((uint32_t)0x0000FFC0)        /*!< Volatile Data Segment Length */ 
 
 /**************************Bit definition for CR register *********************/
-#define  FW_CR_FPA                          ((uint32_t)0x00000001)         /*!< Firewall Pre Arm*/
-#define  FW_CR_VDS                          ((uint32_t)0x00000002)         /*!< Volatile Data Sharing*/
-#define  FW_CR_VDE                          ((uint32_t)0x00000004)         /*!< Volatile Data Execution*/
+#define  FW_CR_FPA                          ((uint32_t)0x00000001)         /*!< Firewall Pre Arm*/ 
+#define  FW_CR_VDS                          ((uint32_t)0x00000002)         /*!< Volatile Data Sharing*/ 
+#define  FW_CR_VDE                          ((uint32_t)0x00000004)         /*!< Volatile Data Execution*/ 
 
 /******************************************************************************/
 /*                                                                            */
@@ -2163,7 +1947,6 @@ typedef struct
 #define  RCC_CFGR_MCOSEL_2                      ((uint32_t)0x04000000)        /*!< Bit 2 */
 #define  RCC_CFGR_MCOSEL_3                      ((uint32_t)0x08000000)        /*!< Bit 3 */
 
-
 #define  RCC_CFGR_MCO_NOCLOCK                ((uint32_t)0x00000000)        /*!< No clock */
 #define  RCC_CFGR_MCO_SYSCLK                 ((uint32_t)0x01000000)        /*!< System clock selected as MCO source */
 #define  RCC_CFGR_MCO_HSI                    ((uint32_t)0x02000000)        /*!< Internal 16 MHz RC oscillator clock selected */
@@ -2224,8 +2007,6 @@ typedef struct
 #define  RCC_AHBRSTR_DMA1RST                 ((uint32_t)0x00000001)        /*!< DMA1 reset */
 #define  RCC_AHBRSTR_MIFRST                  ((uint32_t)0x00000100)        /*!< Memory interface reset reset */
 #define  RCC_AHBRSTR_CRCRST                  ((uint32_t)0x00001000)        /*!< CRC reset */
-#define  RCC_AHBRSTR_TSCRST                   ((uint32_t)0x00010000)        /*!< TSC reset */
-#define  RCC_AHBRSTR_RNGRST                  ((uint32_t)0x00100000)        /*!< RNG reset */
 
 /*****************  Bit definition for RCC_APB2RSTR register  *****************/
 #define  RCC_APB2RSTR_SYSCFGRST              ((uint32_t)0x00000001)        /*!< SYSCFG clock reset */
@@ -2245,10 +2026,7 @@ typedef struct
 #define  RCC_APB1RSTR_LPUART1RST             ((uint32_t)0x00040000)        /*!< LPUART1 clock reset */
 #define  RCC_APB1RSTR_I2C1RST                ((uint32_t)0x00200000)        /*!< I2C 1 clock reset */
 #define  RCC_APB1RSTR_I2C2RST                ((uint32_t)0x00400000)        /*!< I2C 2 clock reset */
-#define  RCC_APB1RSTR_USBRST                 ((uint32_t)0x00800000)        /*!< USB clock reset */
-#define  RCC_APB1RSTR_CRSRST                 ((uint32_t)0x08000000)        /*!< CRS clock reset */
 #define  RCC_APB1RSTR_PWRRST                 ((uint32_t)0x10000000)        /*!< PWR clock reset */
-#define  RCC_APB1RSTR_DACRST                 ((uint32_t)0x20000000)        /*!< DAC clock reset */
 #define  RCC_APB1RSTR_LPTIM1RST              ((uint32_t)0x80000000)        /*!< LPTIM1 clock reset */
 
 /*****************  Bit definition for RCC_IOPENR register  ******************/
@@ -2262,8 +2040,6 @@ typedef struct
 #define  RCC_AHBENR_DMA1EN                   ((uint32_t)0x00000001)        /*!< DMA1 clock enable */
 #define  RCC_AHBENR_MIFEN                    ((uint32_t)0x00000100)        /*!< NVM interface clock enable bit */
 #define  RCC_AHBENR_CRCEN                    ((uint32_t)0x00001000)        /*!< CRC clock enable */
-#define  RCC_AHBENR_TSCEN                     ((uint32_t)0x00010000)        /*!< TSC clock enable */
-#define  RCC_AHBENR_RNGEN                    ((uint32_t)0x00100000)        /*!< RNG clock enable */
 
 /*****************  Bit definition for RCC_APB2ENR register  ******************/
 #define  RCC_APB2ENR_SYSCFGEN                ((uint32_t)0x00000001)        /*!< SYSCFG clock enable */
@@ -2284,10 +2060,7 @@ typedef struct
 #define  RCC_APB1ENR_LPUART1EN               ((uint32_t)0x00040000)        /*!< LPUART1 clock enable */
 #define  RCC_APB1ENR_I2C1EN                  ((uint32_t)0x00200000)        /*!< I2C1 clock enable */
 #define  RCC_APB1ENR_I2C2EN                  ((uint32_t)0x00400000)        /*!< I2C2 clock enable */
-#define  RCC_APB1ENR_USBEN                   ((uint32_t)0x00800000)        /*!< USB clock enable */
-#define  RCC_APB1ENR_CRSEN                   ((uint32_t)0x08000000)        /*!< CRS clock enable */
 #define  RCC_APB1ENR_PWREN                   ((uint32_t)0x10000000)        /*!< PWR clock enable */
-#define  RCC_APB1ENR_DACEN                   ((uint32_t)0x20000000)        /*!< DAC clock enable */
 #define  RCC_APB1ENR_LPTIM1EN                ((uint32_t)0x80000000)        /*!< LPTIM1 clock enable */
 
 /******************  Bit definition for RCC_IOPSMENR register  ****************/
@@ -2302,8 +2075,6 @@ typedef struct
 #define  RCC_AHBSMENR_MIFSMEN                  ((uint32_t)0x00000100)        /*!< NVM interface clock enable during sleep mode */
 #define  RCC_AHBSMENR_SRAMSMEN                 ((uint32_t)0x00000200)        /*!< SRAM clock enabled in sleep mode */
 #define  RCC_AHBSMENR_CRCSMEN                  ((uint32_t)0x00001000)        /*!< CRC clock enabled in sleep mode */
-#define  RCC_AHBSMENR_TSCSMEN                  ((uint32_t)0x00010000)        /*!< TSC clock enabled in sleep mode */
-#define  RCC_AHBSMENR_RNGSMEN                  ((uint32_t)0x00100000)        /*!< RNG clock enabled in sleep mode */
 
 /*****************  Bit definition for RCC_APB2SMENR register  ******************/
 #define  RCC_APB2SMENR_SYSCFGSMEN              ((uint32_t)0x00000001)        /*!< SYSCFG clock enabled in sleep mode */
@@ -2323,10 +2094,7 @@ typedef struct
 #define  RCC_APB1SMENR_LPUART1SMEN             ((uint32_t)0x00040000)        /*!< LPUART1 clock enabled in sleep mode */
 #define  RCC_APB1SMENR_I2C1SMEN                ((uint32_t)0x00200000)        /*!< I2C1 clock enabled in sleep mode */
 #define  RCC_APB1SMENR_I2C2SMEN                ((uint32_t)0x00400000)        /*!< I2C2 clock enabled in sleep mode */
-#define  RCC_APB1SMENR_USBSMEN                 ((uint32_t)0x00800000)        /*!< USB clock enabled in sleep mode */
-#define  RCC_APB1SMENR_CRSSMEN                 ((uint32_t)0x08000000)        /*!< CRS clock enabled in sleep mode */
 #define  RCC_APB1SMENR_PWRSMEN                 ((uint32_t)0x10000000)        /*!< PWR clock enabled in sleep mode */
-#define  RCC_APB1SMENR_DACSMEN                 ((uint32_t)0x20000000)        /*!< DAC clock enabled in sleep mode */
 #define  RCC_APB1SMENR_LPTIM1SMEN              ((uint32_t)0x80000000)        /*!< LPTIM1 clock enabled in sleep mode */
 
 /*******************  Bit definition for RCC_CCIPR register  *******************/
@@ -2340,7 +2108,7 @@ typedef struct
 #define  RCC_CCIPR_USART2SEL_0                ((uint32_t)0x00000004)        /*!< Bit 0 */
 #define  RCC_CCIPR_USART2SEL_1                ((uint32_t)0x00000008)        /*!< Bit 1 */
 
-/*!< LPUART1 Clock source selection */
+/*!< LPUART1 Clock source selection */ 
 #define  RCC_CCIPR_LPUART1SEL                  ((uint32_t)0x0000C00)        /*!< LPUART1SEL[1:0] bits */
 #define  RCC_CCIPR_LPUART1SEL_0                ((uint32_t)0x0000400)        /*!< Bit 0 */
 #define  RCC_CCIPR_LPUART1SEL_1                ((uint32_t)0x0000800)        /*!< Bit 1 */
@@ -2350,13 +2118,13 @@ typedef struct
 #define  RCC_CCIPR_I2C1SEL_0                  ((uint32_t)0x00001000)        /*!< Bit 0 */
 #define  RCC_CCIPR_I2C1SEL_1                  ((uint32_t)0x00002000)        /*!< Bit 1 */
 
-/*!< LPTIM1 Clock source selection */
+/*!< LPTIM1 Clock source selection */ 
 #define  RCC_CCIPR_LPTIM1SEL                  ((uint32_t)0x000C0000)        /*!< LPTIM1SEL [1:0] bits */
 #define  RCC_CCIPR_LPTIM1SEL_0                ((uint32_t)0x00040000)        /*!< Bit 0 */
 #define  RCC_CCIPR_LPTIM1SEL_1                ((uint32_t)0x00080000)        /*!< Bit 1 */
 
-/*!< HSI48 Clock source selection */
-#define  RCC_CCIPR_HSI48SEL                  ((uint32_t)0x04000000)        /*!< HSI48 RC clock source selection bit for USB and RNG*/
+/*!< HSI48 Clock source selection */ 
+#define  RCC_CCIPR_HSI48SEL                  ((uint32_t)0x04000000)        /*!< HSI48 RC clock source selection bit for USB*/
 
 /* Bit name alias maintained for legacy */
 #define  RCC_CCIPR_HSI48MSEL                  RCC_CCIPR_HSI48SEL
@@ -2398,22 +2166,6 @@ typedef struct
 #define  RCC_CSR_IWDGRSTF                   ((uint32_t)0x20000000)        /*!< Independent Watchdog reset flag */
 #define  RCC_CSR_WWDGRSTF                   ((uint32_t)0x40000000)        /*!< Window watchdog reset flag */
 #define  RCC_CSR_LPWRRSTF                   ((uint32_t)0x80000000)        /*!< Low-Power reset flag */
-
-/******************************************************************************/
-/*                                                                            */
-/*                                    RNG                                     */
-/*                                                                            */
-/******************************************************************************/
-/********************  Bits definition for RNG_CR register  *******************/
-#define RNG_CR_RNGEN                         ((uint32_t)0x00000004)
-#define RNG_CR_IE                            ((uint32_t)0x00000008)
-
-/********************  Bits definition for RNG_SR register  *******************/
-#define RNG_SR_DRDY                          ((uint32_t)0x00000001)
-#define RNG_SR_CECS                          ((uint32_t)0x00000002)
-#define RNG_SR_SECS                          ((uint32_t)0x00000004)
-#define RNG_SR_CEIS                          ((uint32_t)0x00000020)
-#define RNG_SR_SEIS                          ((uint32_t)0x00000040)
 
 /******************************************************************************/
 /*                                                                            */
@@ -2794,7 +2546,7 @@ typedef struct
 #define  SPI_SR_MODF                         ((uint32_t)0x00000020)            /*!< Mode fault */
 #define  SPI_SR_OVR                          ((uint32_t)0x00000040)            /*!< Overrun flag */
 #define  SPI_SR_BSY                          ((uint32_t)0x00000080)            /*!< Busy flag */
-#define  SPI_SR_FRE                          ((uint32_t)0x00000100)            /*!< TI frame format error */
+#define  SPI_SR_FRE                          ((uint32_t)0x00000100)            /*!< TI frame format error */  
 
 /********************  Bit definition for SPI_DR register  ********************/
 #define  SPI_DR_DR                           ((uint32_t)0x0000FFFF)            /*!< Data Register */
@@ -2861,32 +2613,32 @@ typedef struct
 #define SYSCFG_EXTICR1_EXTI2            ((uint32_t)0x00000F00) /*!< EXTI 2 configuration */
 #define SYSCFG_EXTICR1_EXTI3            ((uint32_t)0x0000F000) /*!< EXTI 3 configuration */
 
-/**
-  * @brief  EXTI0 configuration
+/** 
+  * @brief  EXTI0 configuration  
   */
 #define SYSCFG_EXTICR1_EXTI0_PA         ((uint32_t)0x00000000) /*!< PA[0] pin */
 #define SYSCFG_EXTICR1_EXTI0_PB         ((uint32_t)0x00000001) /*!< PB[0] pin */
 #define SYSCFG_EXTICR1_EXTI0_PC         ((uint32_t)0x00000002) /*!< PC[0] pin */
 #define SYSCFG_EXTICR1_EXTI0_PH         ((uint32_t)0x00000005) /*!< PH[0] pin */
 
-/**
-  * @brief  EXTI1 configuration
-  */
+/** 
+  * @brief  EXTI1 configuration  
+  */ 
 #define SYSCFG_EXTICR1_EXTI1_PA         ((uint32_t)0x00000000) /*!< PA[1] pin */
 #define SYSCFG_EXTICR1_EXTI1_PB         ((uint32_t)0x00000010) /*!< PB[1] pin */
 #define SYSCFG_EXTICR1_EXTI1_PC         ((uint32_t)0x00000020) /*!< PC[1] pin */
 #define SYSCFG_EXTICR1_EXTI1_PH         ((uint32_t)0x00000050) /*!< PH[1] pin */
 
-/**
-  * @brief  EXTI2 configuration
+/** 
+  * @brief  EXTI2 configuration  
   */
 #define SYSCFG_EXTICR1_EXTI2_PA         ((uint32_t)0x00000000) /*!< PA[2] pin */
 #define SYSCFG_EXTICR1_EXTI2_PB         ((uint32_t)0x00000100) /*!< PB[2] pin */
 #define SYSCFG_EXTICR1_EXTI2_PC         ((uint32_t)0x00000200) /*!< PC[2] pin */
 #define SYSCFG_EXTICR1_EXTI2_PD         ((uint32_t)0x00000300) /*!< PD[2] pin */
 
-/**
-  * @brief  EXTI3 configuration
+/** 
+  * @brief  EXTI3 configuration  
   */
 #define SYSCFG_EXTICR1_EXTI3_PA         ((uint32_t)0x00000000) /*!< PA[3] pin */
 #define SYSCFG_EXTICR1_EXTI3_PB         ((uint32_t)0x00001000) /*!< PB[3] pin */
@@ -2898,30 +2650,30 @@ typedef struct
 #define SYSCFG_EXTICR2_EXTI6            ((uint32_t)0x00000F00) /*!< EXTI 6 configuration */
 #define SYSCFG_EXTICR2_EXTI7            ((uint32_t)0x0000F000) /*!< EXTI 7 configuration */
 
-/**
-  * @brief  EXTI4 configuration
+/** 
+  * @brief  EXTI4 configuration  
   */
 #define SYSCFG_EXTICR2_EXTI4_PA         ((uint32_t)0x00000000) /*!< PA[4] pin */
 #define SYSCFG_EXTICR2_EXTI4_PB         ((uint32_t)0x00000001) /*!< PB[4] pin */
 #define SYSCFG_EXTICR2_EXTI4_PC         ((uint32_t)0x00000002) /*!< PC[4] pin */
 
 
-/**
-  * @brief  EXTI5 configuration
+/** 
+  * @brief  EXTI5 configuration  
   */
 #define SYSCFG_EXTICR2_EXTI5_PA         ((uint32_t)0x00000000) /*!< PA[5] pin */
 #define SYSCFG_EXTICR2_EXTI5_PB         ((uint32_t)0x00000010) /*!< PB[5] pin */
 #define SYSCFG_EXTICR2_EXTI5_PC         ((uint32_t)0x00000020) /*!< PC[5] pin */
 
-/**
-  * @brief  EXTI6 configuration
+/** 
+  * @brief  EXTI6 configuration  
   */
 #define SYSCFG_EXTICR2_EXTI6_PA         ((uint32_t)0x00000000) /*!< PA[6] pin */
 #define SYSCFG_EXTICR2_EXTI6_PB         ((uint32_t)0x00000100) /*!< PB[6] pin */
 #define SYSCFG_EXTICR2_EXTI6_PC         ((uint32_t)0x00000200) /*!< PC[6] pin */
 
-/**
-  * @brief  EXTI7 configuration
+/** 
+  * @brief  EXTI7 configuration  
   */
 #define SYSCFG_EXTICR2_EXTI7_PA         ((uint32_t)0x00000000) /*!< PA[7] pin */
 #define SYSCFG_EXTICR2_EXTI7_PB         ((uint32_t)0x00001000) /*!< PB[7] pin */
@@ -2933,29 +2685,29 @@ typedef struct
 #define SYSCFG_EXTICR3_EXTI10           ((uint32_t)0x00000F00) /*!< EXTI 10 configuration */
 #define SYSCFG_EXTICR3_EXTI11           ((uint32_t)0x0000F000) /*!< EXTI 11 configuration */
 
-/**
-  * @brief  EXTI8 configuration
+/** 
+  * @brief  EXTI8 configuration  
   */
 #define SYSCFG_EXTICR3_EXTI8_PA         ((uint32_t)0x00000000) /*!< PA[8] pin */
 #define SYSCFG_EXTICR3_EXTI8_PB         ((uint32_t)0x00000001) /*!< PB[8] pin */
 #define SYSCFG_EXTICR3_EXTI8_PC         ((uint32_t)0x00000002) /*!< PC[8] pin */
 
-/**
-  * @brief  EXTI9 configuration
+/** 
+  * @brief  EXTI9 configuration  
   */
 #define SYSCFG_EXTICR3_EXTI9_PA         ((uint32_t)0x00000000) /*!< PA[9] pin */
 #define SYSCFG_EXTICR3_EXTI9_PB         ((uint32_t)0x00000010) /*!< PB[9] pin */
 #define SYSCFG_EXTICR3_EXTI9_PC         ((uint32_t)0x00000020) /*!< PC[9] pin */
 
-/**
-  * @brief  EXTI10 configuration
+/** 
+  * @brief  EXTI10 configuration  
   */
 #define SYSCFG_EXTICR3_EXTI10_PA        ((uint32_t)0x00000000) /*!< PA[10] pin */
 #define SYSCFG_EXTICR3_EXTI10_PB        ((uint32_t)0x00000100) /*!< PB[10] pin */
 #define SYSCFG_EXTICR3_EXTI10_PC        ((uint32_t)0x00000200) /*!< PC[10] pin */
 
-/**
-  * @brief  EXTI11 configuration
+/** 
+  * @brief  EXTI11 configuration  
   */
 #define SYSCFG_EXTICR3_EXTI11_PA        ((uint32_t)0x00000000) /*!< PA[11] pin */
 #define SYSCFG_EXTICR3_EXTI11_PB        ((uint32_t)0x00001000) /*!< PB[11] pin */
@@ -2967,29 +2719,29 @@ typedef struct
 #define SYSCFG_EXTICR4_EXTI14           ((uint32_t)0x00000F00) /*!< EXTI 14 configuration */
 #define SYSCFG_EXTICR4_EXTI15           ((uint32_t)0x0000F000) /*!< EXTI 15 configuration */
 
-/**
-  * @brief  EXTI12 configuration
+/** 
+  * @brief  EXTI12 configuration  
   */
 #define SYSCFG_EXTICR4_EXTI12_PA        ((uint32_t)0x00000000) /*!< PA[12] pin */
 #define SYSCFG_EXTICR4_EXTI12_PB        ((uint32_t)0x00000001) /*!< PB[12] pin */
 #define SYSCFG_EXTICR4_EXTI12_PC        ((uint32_t)0x00000002) /*!< PC[12] pin */
 
-/**
-  * @brief  EXTI13 configuration
+/** 
+  * @brief  EXTI13 configuration  
   */
 #define SYSCFG_EXTICR4_EXTI13_PA        ((uint32_t)0x00000000) /*!< PA[13] pin */
 #define SYSCFG_EXTICR4_EXTI13_PB        ((uint32_t)0x00000010) /*!< PB[13] pin */
 #define SYSCFG_EXTICR4_EXTI13_PC        ((uint32_t)0x00000020) /*!< PC[13] pin */
 
-/**
-  * @brief  EXTI14 configuration
+/** 
+  * @brief  EXTI14 configuration  
   */
 #define SYSCFG_EXTICR4_EXTI14_PA        ((uint32_t)0x00000000) /*!< PA[14] pin */
 #define SYSCFG_EXTICR4_EXTI14_PB        ((uint32_t)0x00000100) /*!< PB[14] pin */
 #define SYSCFG_EXTICR4_EXTI14_PC        ((uint32_t)0x00000200) /*!< PC[14] pin */
 
-/**
-  * @brief  EXTI15 configuration
+/** 
+  * @brief  EXTI15 configuration  
   */
 #define SYSCFG_EXTICR4_EXTI15_PA        ((uint32_t)0x00000000) /*!< PA[15] pin */
 #define SYSCFG_EXTICR4_EXTI15_PB        ((uint32_t)0x00001000) /*!< PB[15] pin */
@@ -3342,221 +3094,6 @@ typedef struct
 
 /******************************************************************************/
 /*                                                                            */
-/*                          Touch Sensing Controller (TSC)                    */
-/*                                                                            */
-/******************************************************************************/
-/*******************  Bit definition for TSC_CR register  *********************/
-#define  TSC_CR_TSCE                         ((uint32_t)0x00000001)            /*!<Touch sensing controller enable */
-#define  TSC_CR_START                        ((uint32_t)0x00000002)            /*!<Start acquisition */
-#define  TSC_CR_AM                           ((uint32_t)0x00000004)            /*!<Acquisition mode */
-#define  TSC_CR_SYNCPOL                      ((uint32_t)0x00000008)            /*!<Synchronization pin polarity */
-#define  TSC_CR_IODEF                        ((uint32_t)0x00000010)            /*!<IO default mode */
-
-#define  TSC_CR_MCV                          ((uint32_t)0x000000E0)            /*!<MCV[2:0] bits (Max Count Value) */
-#define  TSC_CR_MCV_0                        ((uint32_t)0x00000020)            /*!<Bit 0 */
-#define  TSC_CR_MCV_1                        ((uint32_t)0x00000040)            /*!<Bit 1 */
-#define  TSC_CR_MCV_2                        ((uint32_t)0x00000080)            /*!<Bit 2 */
-
-#define  TSC_CR_PGPSC                        ((uint32_t)0x00007000)            /*!<PGPSC[2:0] bits (Pulse Generator Prescaler) */
-#define  TSC_CR_PGPSC_0                      ((uint32_t)0x00001000)            /*!<Bit 0 */
-#define  TSC_CR_PGPSC_1                      ((uint32_t)0x00002000)            /*!<Bit 1 */
-#define  TSC_CR_PGPSC_2                      ((uint32_t)0x00004000)            /*!<Bit 2 */
-
-#define  TSC_CR_SSPSC                        ((uint32_t)0x00008000)            /*!<Spread Spectrum Prescaler */
-#define  TSC_CR_SSE                          ((uint32_t)0x00010000)            /*!<Spread Spectrum Enable */
-
-#define  TSC_CR_SSD                          ((uint32_t)0x00FE0000)            /*!<SSD[6:0] bits (Spread Spectrum Deviation) */
-#define  TSC_CR_SSD_0                        ((uint32_t)0x00020000)            /*!<Bit 0 */
-#define  TSC_CR_SSD_1                        ((uint32_t)0x00040000)            /*!<Bit 1 */
-#define  TSC_CR_SSD_2                        ((uint32_t)0x00080000)            /*!<Bit 2 */
-#define  TSC_CR_SSD_3                        ((uint32_t)0x00100000)            /*!<Bit 3 */
-#define  TSC_CR_SSD_4                        ((uint32_t)0x00200000)            /*!<Bit 4 */
-#define  TSC_CR_SSD_5                        ((uint32_t)0x00400000)            /*!<Bit 5 */
-#define  TSC_CR_SSD_6                        ((uint32_t)0x00800000)            /*!<Bit 6 */
-
-#define  TSC_CR_CTPL                         ((uint32_t)0x0F000000)            /*!<CTPL[3:0] bits (Charge Transfer pulse low) */
-#define  TSC_CR_CTPL_0                       ((uint32_t)0x01000000)            /*!<Bit 0 */
-#define  TSC_CR_CTPL_1                       ((uint32_t)0x02000000)            /*!<Bit 1 */
-#define  TSC_CR_CTPL_2                       ((uint32_t)0x04000000)            /*!<Bit 2 */
-#define  TSC_CR_CTPL_3                       ((uint32_t)0x08000000)            /*!<Bit 3 */
-
-#define  TSC_CR_CTPH                         ((uint32_t)0xF0000000)            /*!<CTPH[3:0] bits (Charge Transfer pulse high) */
-#define  TSC_CR_CTPH_0                       ((uint32_t)0x10000000)            /*!<Bit 0 */
-#define  TSC_CR_CTPH_1                       ((uint32_t)0x20000000)            /*!<Bit 1 */
-#define  TSC_CR_CTPH_2                       ((uint32_t)0x40000000)            /*!<Bit 2 */
-#define  TSC_CR_CTPH_3                       ((uint32_t)0x80000000)            /*!<Bit 3 */
-
-/*******************  Bit definition for TSC_IER register  ********************/
-#define  TSC_IER_EOAIE                       ((uint32_t)0x00000001)            /*!<End of acquisition interrupt enable */
-#define  TSC_IER_MCEIE                       ((uint32_t)0x00000002)            /*!<Max count error interrupt enable */
-
-/*******************  Bit definition for TSC_ICR register  ********************/
-#define  TSC_ICR_EOAIC                       ((uint32_t)0x00000001)            /*!<End of acquisition interrupt clear */
-#define  TSC_ICR_MCEIC                       ((uint32_t)0x00000002)            /*!<Max count error interrupt clear */
-
-/*******************  Bit definition for TSC_ISR register  ********************/
-#define  TSC_ISR_EOAF                        ((uint32_t)0x00000001)            /*!<End of acquisition flag */
-#define  TSC_ISR_MCEF                        ((uint32_t)0x00000002)            /*!<Max count error flag */
-
-/*******************  Bit definition for TSC_IOHCR register  ******************/
-#define  TSC_IOHCR_G1_IO1                    ((uint32_t)0x00000001)            /*!<GROUP1_IO1 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G1_IO2                    ((uint32_t)0x00000002)            /*!<GROUP1_IO2 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G1_IO3                    ((uint32_t)0x00000004)            /*!<GROUP1_IO3 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G1_IO4                    ((uint32_t)0x00000008)            /*!<GROUP1_IO4 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G2_IO1                    ((uint32_t)0x00000010)            /*!<GROUP2_IO1 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G2_IO2                    ((uint32_t)0x00000020)            /*!<GROUP2_IO2 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G2_IO3                    ((uint32_t)0x00000040)            /*!<GROUP2_IO3 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G2_IO4                    ((uint32_t)0x00000080)            /*!<GROUP2_IO4 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G3_IO1                    ((uint32_t)0x00000100)            /*!<GROUP3_IO1 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G3_IO2                    ((uint32_t)0x00000200)            /*!<GROUP3_IO2 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G3_IO3                    ((uint32_t)0x00000400)            /*!<GROUP3_IO3 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G3_IO4                    ((uint32_t)0x00000800)            /*!<GROUP3_IO4 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G4_IO1                    ((uint32_t)0x00001000)            /*!<GROUP4_IO1 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G4_IO2                    ((uint32_t)0x00002000)            /*!<GROUP4_IO2 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G4_IO3                    ((uint32_t)0x00004000)            /*!<GROUP4_IO3 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G4_IO4                    ((uint32_t)0x00008000)            /*!<GROUP4_IO4 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G5_IO1                    ((uint32_t)0x00010000)            /*!<GROUP5_IO1 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G5_IO2                    ((uint32_t)0x00020000)            /*!<GROUP5_IO2 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G5_IO3                    ((uint32_t)0x00040000)            /*!<GROUP5_IO3 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G5_IO4                    ((uint32_t)0x00080000)            /*!<GROUP5_IO4 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G6_IO1                    ((uint32_t)0x00100000)            /*!<GROUP6_IO1 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G6_IO2                    ((uint32_t)0x00200000)            /*!<GROUP6_IO2 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G6_IO3                    ((uint32_t)0x00400000)            /*!<GROUP6_IO3 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G6_IO4                    ((uint32_t)0x00800000)            /*!<GROUP6_IO4 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G7_IO1                    ((uint32_t)0x01000000)            /*!<GROUP7_IO1 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G7_IO2                    ((uint32_t)0x02000000)            /*!<GROUP7_IO2 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G7_IO3                    ((uint32_t)0x04000000)            /*!<GROUP7_IO3 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G7_IO4                    ((uint32_t)0x08000000)            /*!<GROUP7_IO4 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G8_IO1                    ((uint32_t)0x10000000)            /*!<GROUP8_IO1 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G8_IO2                    ((uint32_t)0x20000000)            /*!<GROUP8_IO2 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G8_IO3                    ((uint32_t)0x40000000)            /*!<GROUP8_IO3 schmitt trigger hysteresis mode */
-#define  TSC_IOHCR_G8_IO4                    ((uint32_t)0x80000000)            /*!<GROUP8_IO4 schmitt trigger hysteresis mode */
-
-/*******************  Bit definition for TSC_IOASCR register  *****************/
-#define  TSC_IOASCR_G1_IO1                   ((uint32_t)0x00000001)            /*!<GROUP1_IO1 analog switch enable */
-#define  TSC_IOASCR_G1_IO2                   ((uint32_t)0x00000002)            /*!<GROUP1_IO2 analog switch enable */
-#define  TSC_IOASCR_G1_IO3                   ((uint32_t)0x00000004)            /*!<GROUP1_IO3 analog switch enable */
-#define  TSC_IOASCR_G1_IO4                   ((uint32_t)0x00000008)            /*!<GROUP1_IO4 analog switch enable */
-#define  TSC_IOASCR_G2_IO1                   ((uint32_t)0x00000010)            /*!<GROUP2_IO1 analog switch enable */
-#define  TSC_IOASCR_G2_IO2                   ((uint32_t)0x00000020)            /*!<GROUP2_IO2 analog switch enable */
-#define  TSC_IOASCR_G2_IO3                   ((uint32_t)0x00000040)            /*!<GROUP2_IO3 analog switch enable */
-#define  TSC_IOASCR_G2_IO4                   ((uint32_t)0x00000080)            /*!<GROUP2_IO4 analog switch enable */
-#define  TSC_IOASCR_G3_IO1                   ((uint32_t)0x00000100)            /*!<GROUP3_IO1 analog switch enable */
-#define  TSC_IOASCR_G3_IO2                   ((uint32_t)0x00000200)            /*!<GROUP3_IO2 analog switch enable */
-#define  TSC_IOASCR_G3_IO3                   ((uint32_t)0x00000400)            /*!<GROUP3_IO3 analog switch enable */
-#define  TSC_IOASCR_G3_IO4                   ((uint32_t)0x00000800)            /*!<GROUP3_IO4 analog switch enable */
-#define  TSC_IOASCR_G4_IO1                   ((uint32_t)0x00001000)            /*!<GROUP4_IO1 analog switch enable */
-#define  TSC_IOASCR_G4_IO2                   ((uint32_t)0x00002000)            /*!<GROUP4_IO2 analog switch enable */
-#define  TSC_IOASCR_G4_IO3                   ((uint32_t)0x00004000)            /*!<GROUP4_IO3 analog switch enable */
-#define  TSC_IOASCR_G4_IO4                   ((uint32_t)0x00008000)            /*!<GROUP4_IO4 analog switch enable */
-#define  TSC_IOASCR_G5_IO1                   ((uint32_t)0x00010000)            /*!<GROUP5_IO1 analog switch enable */
-#define  TSC_IOASCR_G5_IO2                   ((uint32_t)0x00020000)            /*!<GROUP5_IO2 analog switch enable */
-#define  TSC_IOASCR_G5_IO3                   ((uint32_t)0x00040000)            /*!<GROUP5_IO3 analog switch enable */
-#define  TSC_IOASCR_G5_IO4                   ((uint32_t)0x00080000)            /*!<GROUP5_IO4 analog switch enable */
-#define  TSC_IOASCR_G6_IO1                   ((uint32_t)0x00100000)            /*!<GROUP6_IO1 analog switch enable */
-#define  TSC_IOASCR_G6_IO2                   ((uint32_t)0x00200000)            /*!<GROUP6_IO2 analog switch enable */
-#define  TSC_IOASCR_G6_IO3                   ((uint32_t)0x00400000)            /*!<GROUP6_IO3 analog switch enable */
-#define  TSC_IOASCR_G6_IO4                   ((uint32_t)0x00800000)            /*!<GROUP6_IO4 analog switch enable */
-#define  TSC_IOASCR_G7_IO1                   ((uint32_t)0x01000000)            /*!<GROUP7_IO1 analog switch enable */
-#define  TSC_IOASCR_G7_IO2                   ((uint32_t)0x02000000)            /*!<GROUP7_IO2 analog switch enable */
-#define  TSC_IOASCR_G7_IO3                   ((uint32_t)0x04000000)            /*!<GROUP7_IO3 analog switch enable */
-#define  TSC_IOASCR_G7_IO4                   ((uint32_t)0x08000000)            /*!<GROUP7_IO4 analog switch enable */
-#define  TSC_IOASCR_G8_IO1                   ((uint32_t)0x10000000)            /*!<GROUP8_IO1 analog switch enable */
-#define  TSC_IOASCR_G8_IO2                   ((uint32_t)0x20000000)            /*!<GROUP8_IO2 analog switch enable */
-#define  TSC_IOASCR_G8_IO3                   ((uint32_t)0x40000000)            /*!<GROUP8_IO3 analog switch enable */
-#define  TSC_IOASCR_G8_IO4                   ((uint32_t)0x80000000)            /*!<GROUP8_IO4 analog switch enable */
-
-/*******************  Bit definition for TSC_IOSCR register  ******************/
-#define  TSC_IOSCR_G1_IO1                    ((uint32_t)0x00000001)            /*!<GROUP1_IO1 sampling mode */
-#define  TSC_IOSCR_G1_IO2                    ((uint32_t)0x00000002)            /*!<GROUP1_IO2 sampling mode */
-#define  TSC_IOSCR_G1_IO3                    ((uint32_t)0x00000004)            /*!<GROUP1_IO3 sampling mode */
-#define  TSC_IOSCR_G1_IO4                    ((uint32_t)0x00000008)            /*!<GROUP1_IO4 sampling mode */
-#define  TSC_IOSCR_G2_IO1                    ((uint32_t)0x00000010)            /*!<GROUP2_IO1 sampling mode */
-#define  TSC_IOSCR_G2_IO2                    ((uint32_t)0x00000020)            /*!<GROUP2_IO2 sampling mode */
-#define  TSC_IOSCR_G2_IO3                    ((uint32_t)0x00000040)            /*!<GROUP2_IO3 sampling mode */
-#define  TSC_IOSCR_G2_IO4                    ((uint32_t)0x00000080)            /*!<GROUP2_IO4 sampling mode */
-#define  TSC_IOSCR_G3_IO1                    ((uint32_t)0x00000100)            /*!<GROUP3_IO1 sampling mode */
-#define  TSC_IOSCR_G3_IO2                    ((uint32_t)0x00000200)            /*!<GROUP3_IO2 sampling mode */
-#define  TSC_IOSCR_G3_IO3                    ((uint32_t)0x00000400)            /*!<GROUP3_IO3 sampling mode */
-#define  TSC_IOSCR_G3_IO4                    ((uint32_t)0x00000800)            /*!<GROUP3_IO4 sampling mode */
-#define  TSC_IOSCR_G4_IO1                    ((uint32_t)0x00001000)            /*!<GROUP4_IO1 sampling mode */
-#define  TSC_IOSCR_G4_IO2                    ((uint32_t)0x00002000)            /*!<GROUP4_IO2 sampling mode */
-#define  TSC_IOSCR_G4_IO3                    ((uint32_t)0x00004000)            /*!<GROUP4_IO3 sampling mode */
-#define  TSC_IOSCR_G4_IO4                    ((uint32_t)0x00008000)            /*!<GROUP4_IO4 sampling mode */
-#define  TSC_IOSCR_G5_IO1                    ((uint32_t)0x00010000)            /*!<GROUP5_IO1 sampling mode */
-#define  TSC_IOSCR_G5_IO2                    ((uint32_t)0x00020000)            /*!<GROUP5_IO2 sampling mode */
-#define  TSC_IOSCR_G5_IO3                    ((uint32_t)0x00040000)            /*!<GROUP5_IO3 sampling mode */
-#define  TSC_IOSCR_G5_IO4                    ((uint32_t)0x00080000)            /*!<GROUP5_IO4 sampling mode */
-#define  TSC_IOSCR_G6_IO1                    ((uint32_t)0x00100000)            /*!<GROUP6_IO1 sampling mode */
-#define  TSC_IOSCR_G6_IO2                    ((uint32_t)0x00200000)            /*!<GROUP6_IO2 sampling mode */
-#define  TSC_IOSCR_G6_IO3                    ((uint32_t)0x00400000)            /*!<GROUP6_IO3 sampling mode */
-#define  TSC_IOSCR_G6_IO4                    ((uint32_t)0x00800000)            /*!<GROUP6_IO4 sampling mode */
-#define  TSC_IOSCR_G7_IO1                    ((uint32_t)0x01000000)            /*!<GROUP7_IO1 sampling mode */
-#define  TSC_IOSCR_G7_IO2                    ((uint32_t)0x02000000)            /*!<GROUP7_IO2 sampling mode */
-#define  TSC_IOSCR_G7_IO3                    ((uint32_t)0x04000000)            /*!<GROUP7_IO3 sampling mode */
-#define  TSC_IOSCR_G7_IO4                    ((uint32_t)0x08000000)            /*!<GROUP7_IO4 sampling mode */
-#define  TSC_IOSCR_G8_IO1                    ((uint32_t)0x10000000)            /*!<GROUP8_IO1 sampling mode */
-#define  TSC_IOSCR_G8_IO2                    ((uint32_t)0x20000000)            /*!<GROUP8_IO2 sampling mode */
-#define  TSC_IOSCR_G8_IO3                    ((uint32_t)0x40000000)            /*!<GROUP8_IO3 sampling mode */
-#define  TSC_IOSCR_G8_IO4                    ((uint32_t)0x80000000)            /*!<GROUP8_IO4 sampling mode */
-
-/*******************  Bit definition for TSC_IOCCR register  ******************/
-#define  TSC_IOCCR_G1_IO1                    ((uint32_t)0x00000001)            /*!<GROUP1_IO1 channel mode */
-#define  TSC_IOCCR_G1_IO2                    ((uint32_t)0x00000002)            /*!<GROUP1_IO2 channel mode */
-#define  TSC_IOCCR_G1_IO3                    ((uint32_t)0x00000004)            /*!<GROUP1_IO3 channel mode */
-#define  TSC_IOCCR_G1_IO4                    ((uint32_t)0x00000008)            /*!<GROUP1_IO4 channel mode */
-#define  TSC_IOCCR_G2_IO1                    ((uint32_t)0x00000010)            /*!<GROUP2_IO1 channel mode */
-#define  TSC_IOCCR_G2_IO2                    ((uint32_t)0x00000020)            /*!<GROUP2_IO2 channel mode */
-#define  TSC_IOCCR_G2_IO3                    ((uint32_t)0x00000040)            /*!<GROUP2_IO3 channel mode */
-#define  TSC_IOCCR_G2_IO4                    ((uint32_t)0x00000080)            /*!<GROUP2_IO4 channel mode */
-#define  TSC_IOCCR_G3_IO1                    ((uint32_t)0x00000100)            /*!<GROUP3_IO1 channel mode */
-#define  TSC_IOCCR_G3_IO2                    ((uint32_t)0x00000200)            /*!<GROUP3_IO2 channel mode */
-#define  TSC_IOCCR_G3_IO3                    ((uint32_t)0x00000400)            /*!<GROUP3_IO3 channel mode */
-#define  TSC_IOCCR_G3_IO4                    ((uint32_t)0x00000800)            /*!<GROUP3_IO4 channel mode */
-#define  TSC_IOCCR_G4_IO1                    ((uint32_t)0x00001000)            /*!<GROUP4_IO1 channel mode */
-#define  TSC_IOCCR_G4_IO2                    ((uint32_t)0x00002000)            /*!<GROUP4_IO2 channel mode */
-#define  TSC_IOCCR_G4_IO3                    ((uint32_t)0x00004000)            /*!<GROUP4_IO3 channel mode */
-#define  TSC_IOCCR_G4_IO4                    ((uint32_t)0x00008000)            /*!<GROUP4_IO4 channel mode */
-#define  TSC_IOCCR_G5_IO1                    ((uint32_t)0x00010000)            /*!<GROUP5_IO1 channel mode */
-#define  TSC_IOCCR_G5_IO2                    ((uint32_t)0x00020000)            /*!<GROUP5_IO2 channel mode */
-#define  TSC_IOCCR_G5_IO3                    ((uint32_t)0x00040000)            /*!<GROUP5_IO3 channel mode */
-#define  TSC_IOCCR_G5_IO4                    ((uint32_t)0x00080000)            /*!<GROUP5_IO4 channel mode */
-#define  TSC_IOCCR_G6_IO1                    ((uint32_t)0x00100000)            /*!<GROUP6_IO1 channel mode */
-#define  TSC_IOCCR_G6_IO2                    ((uint32_t)0x00200000)            /*!<GROUP6_IO2 channel mode */
-#define  TSC_IOCCR_G6_IO3                    ((uint32_t)0x00400000)            /*!<GROUP6_IO3 channel mode */
-#define  TSC_IOCCR_G6_IO4                    ((uint32_t)0x00800000)            /*!<GROUP6_IO4 channel mode */
-#define  TSC_IOCCR_G7_IO1                    ((uint32_t)0x01000000)            /*!<GROUP7_IO1 channel mode */
-#define  TSC_IOCCR_G7_IO2                    ((uint32_t)0x02000000)            /*!<GROUP7_IO2 channel mode */
-#define  TSC_IOCCR_G7_IO3                    ((uint32_t)0x04000000)            /*!<GROUP7_IO3 channel mode */
-#define  TSC_IOCCR_G7_IO4                    ((uint32_t)0x08000000)            /*!<GROUP7_IO4 channel mode */
-#define  TSC_IOCCR_G8_IO1                    ((uint32_t)0x10000000)            /*!<GROUP8_IO1 channel mode */
-#define  TSC_IOCCR_G8_IO2                    ((uint32_t)0x20000000)            /*!<GROUP8_IO2 channel mode */
-#define  TSC_IOCCR_G8_IO3                    ((uint32_t)0x40000000)            /*!<GROUP8_IO3 channel mode */
-#define  TSC_IOCCR_G8_IO4                    ((uint32_t)0x80000000)            /*!<GROUP8_IO4 channel mode */
-
-/*******************  Bit definition for TSC_IOGCSR register  *****************/
-#define  TSC_IOGCSR_G1E                      ((uint32_t)0x00000001)            /*!<Analog IO GROUP1 enable */
-#define  TSC_IOGCSR_G2E                      ((uint32_t)0x00000002)            /*!<Analog IO GROUP2 enable */
-#define  TSC_IOGCSR_G3E                      ((uint32_t)0x00000004)            /*!<Analog IO GROUP3 enable */
-#define  TSC_IOGCSR_G4E                      ((uint32_t)0x00000008)            /*!<Analog IO GROUP4 enable */
-#define  TSC_IOGCSR_G5E                      ((uint32_t)0x00000010)            /*!<Analog IO GROUP5 enable */
-#define  TSC_IOGCSR_G6E                      ((uint32_t)0x00000020)            /*!<Analog IO GROUP6 enable */
-#define  TSC_IOGCSR_G7E                      ((uint32_t)0x00000040)            /*!<Analog IO GROUP7 enable */
-#define  TSC_IOGCSR_G8E                      ((uint32_t)0x00000080)            /*!<Analog IO GROUP8 enable */
-#define  TSC_IOGCSR_G1S                      ((uint32_t)0x00010000)            /*!<Analog IO GROUP1 status */
-#define  TSC_IOGCSR_G2S                      ((uint32_t)0x00020000)            /*!<Analog IO GROUP2 status */
-#define  TSC_IOGCSR_G3S                      ((uint32_t)0x00040000)            /*!<Analog IO GROUP3 status */
-#define  TSC_IOGCSR_G4S                      ((uint32_t)0x00080000)            /*!<Analog IO GROUP4 status */
-#define  TSC_IOGCSR_G5S                      ((uint32_t)0x00100000)            /*!<Analog IO GROUP5 status */
-#define  TSC_IOGCSR_G6S                      ((uint32_t)0x00200000)            /*!<Analog IO GROUP6 status */
-#define  TSC_IOGCSR_G7S                      ((uint32_t)0x00400000)            /*!<Analog IO GROUP7 status */
-#define  TSC_IOGCSR_G8S                      ((uint32_t)0x00800000)            /*!<Analog IO GROUP8 status */
-
-/*******************  Bit definition for TSC_IOGXCR register  *****************/
-#define  TSC_IOGXCR_CNT                      ((uint32_t)0x00003FFF)            /*!<CNT[13:0] bits (Counter value) */
-
-/******************************************************************************/
-/*                                                                            */
 /*      Universal Synchronous Asynchronous Receiver Transmitter (USART)       */
 /*                                                                            */
 /******************************************************************************/
@@ -3642,7 +3179,7 @@ typedef struct
 #define  USART_CR3_WUS_0                     ((uint32_t)0x00100000)            /*!< Bit 0 */
 #define  USART_CR3_WUS_1                     ((uint32_t)0x00200000)            /*!< Bit 1 */
 #define  USART_CR3_WUFIE                     ((uint32_t)0x00400000)            /*!< Wake Up Interrupt Enable */
-#define  USART_CR3_UCESM                     ((uint32_t)0x00800000)            /*!< Clock Enable in Stop mode */
+#define  USART_CR3_UCESM                     ((uint32_t)0x00800000)            /*!< Clock Enable in Stop mode */ 
 
 /******************  Bit definition for USART_BRR register  *******************/
 #define  USART_BRR_DIV_FRACTION              ((uint32_t)0x0000000F)                /*!< Fraction of USARTDIV */
@@ -3710,133 +3247,6 @@ typedef struct
 
 /******************************************************************************/
 /*                                                                            */
-/*                         USB Device General registers                       */
-/*                                                                            */
-/******************************************************************************/
-#define USB_BASE                           ((uint32_t)0x40005C00)           /*!< USB_IP Peripheral Registers base address */
-#define USB_PMAADDR                        ((uint32_t)0x40006000)           /*!< USB_IP Packet Memory Area base address */
-
-#define USB_CNTR                           (USB_BASE + 0x40)             /*!< Control register */
-#define USB_ISTR                           (USB_BASE + 0x44)             /*!< Interrupt status register */
-#define USB_FNR                            (USB_BASE + 0x48)             /*!< Frame number register */
-#define USB_DADDR                          (USB_BASE + 0x4C)             /*!< Device address register */
-#define USB_BTABLE                         (USB_BASE + 0x50)             /*!< Buffer Table address register */
-#define USB_LPMCSR                         (USB_BASE + 0x54)             /*!< LPM Control and Status register */
-#define USB_BCDR                           (USB_BASE + 0x58)             /*!< Battery Charging detector register*/
-
-/****************************  ISTR interrupt events  *************************/
-#define USB_ISTR_CTR                         ((uint16_t)0x8000)             /*!< Correct TRansfer (clear-only bit) */
-#define USB_ISTR_PMAOVR                      ((uint16_t)0x4000)             /*!< DMA OVeR/underrun (clear-only bit) */
-#define USB_ISTR_ERR                         ((uint16_t)0x2000)             /*!< ERRor (clear-only bit) */
-#define USB_ISTR_WKUP                        ((uint16_t)0x1000)             /*!< WaKe UP (clear-only bit) */
-#define USB_ISTR_SUSP                        ((uint16_t)0x0800)             /*!< SUSPend (clear-only bit) */
-#define USB_ISTR_RESET                       ((uint16_t)0x0400)             /*!< RESET (clear-only bit) */
-#define USB_ISTR_SOF                         ((uint16_t)0x0200)             /*!< Start Of Frame (clear-only bit) */
-#define USB_ISTR_ESOF                        ((uint16_t)0x0100)             /*!< Expected Start Of Frame (clear-only bit) */
-#define USB_ISTR_L1REQ                       ((uint16_t)0x0080)             /*!< LPM L1 state request  */
-#define USB_ISTR_DIR                         ((uint16_t)0x0010)             /*!< DIRection of transaction (read-only bit)  */
-#define USB_ISTR_EP_ID                       ((uint16_t)0x000F)             /*!< EndPoint IDentifier (read-only bit)  */
-
-#define USB_CLR_CTR                          (~USB_ISTR_CTR)             /*!< clear Correct TRansfer bit */
-#define USB_CLR_PMAOVR                       (~USB_ISTR_PMAOVR)          /*!< clear DMA OVeR/underrun bit*/
-#define USB_CLR_ERR                          (~USB_ISTR_ERR)             /*!< clear ERRor bit */
-#define USB_CLR_WKUP                         (~USB_ISTR_WKUP)            /*!< clear WaKe UP bit */
-#define USB_CLR_SUSP                         (~USB_ISTR_SUSP)            /*!< clear SUSPend bit */
-#define USB_CLR_RESET                        (~USB_ISTR_RESET)           /*!< clear RESET bit */
-#define USB_CLR_SOF                          (~USB_ISTR_SOF)             /*!< clear Start Of Frame bit */
-#define USB_CLR_ESOF                         (~USB_ISTR_ESOF)            /*!< clear Expected Start Of Frame bit */
-#define USB_CLR_L1REQ                        (~USB_ISTR_L1REQ)           /*!< clear LPM L1  bit */
-/*************************  CNTR control register bits definitions  ***********/
-#define USB_CNTR_CTRM                        ((uint16_t)0x8000)             /*!< Correct TRansfer Mask */
-#define USB_CNTR_PMAOVRM                     ((uint16_t)0x4000)             /*!< DMA OVeR/underrun Mask */
-#define USB_CNTR_ERRM                        ((uint16_t)0x2000)             /*!< ERRor Mask */
-#define USB_CNTR_WKUPM                       ((uint16_t)0x1000)             /*!< WaKe UP Mask */
-#define USB_CNTR_SUSPM                       ((uint16_t)0x0800)             /*!< SUSPend Mask */
-#define USB_CNTR_RESETM                      ((uint16_t)0x0400)             /*!< RESET Mask   */
-#define USB_CNTR_SOFM                        ((uint16_t)0x0200)             /*!< Start Of Frame Mask */
-#define USB_CNTR_ESOFM                       ((uint16_t)0x0100)             /*!< Expected Start Of Frame Mask */
-#define USB_CNTR_L1REQM                      ((uint16_t)0x0080)             /*!< LPM L1 state request interrupt mask */
-#define USB_CNTR_L1RESUME                    ((uint16_t)0x0020)             /*!< LPM L1 Resume request */
-#define USB_CNTR_RESUME                      ((uint16_t)0x0010)             /*!< RESUME request */
-#define USB_CNTR_FSUSP                       ((uint16_t)0x0008)             /*!< Force SUSPend */
-#define USB_CNTR_LPMODE                      ((uint16_t)0x0004)             /*!< Low-power MODE */
-#define USB_CNTR_PDWN                        ((uint16_t)0x0002)             /*!< Power DoWN */
-#define USB_CNTR_FRES                        ((uint16_t)0x0001)             /*!< Force USB RESet */
-/*************************  BCDR control register bits definitions  ***********/
-#define  USB_BCDR_DPPU                       ((uint16_t)0x8000)             /*!< DP Pull-up Enable */
-#define  USB_BCDR_PS2DET                     ((uint16_t)0x0080)             /*!< PS2 port or proprietary charger detected */
-#define  USB_BCDR_SDET                       ((uint16_t)0x0040)             /*!< Secondary detection (SD) status */
-#define  USB_BCDR_PDET                       ((uint16_t)0x0020)             /*!< Primary detection (PD) status */
-#define  USB_BCDR_DCDET                      ((uint16_t)0x0010)             /*!< Data contact detection (DCD) status */
-#define  USB_BCDR_SDEN                       ((uint16_t)0x0008)             /*!< Secondary detection (SD) mode enable */
-#define  USB_BCDR_PDEN                       ((uint16_t)0x0004)             /*!< Primary detection (PD) mode enable */
-#define  USB_BCDR_DCDEN                      ((uint16_t)0x0002)             /*!< Data contact detection (DCD) mode enable */
-#define  USB_BCDR_BCDEN                      ((uint16_t)0x0001)             /*!< Battery charging detector (BCD) enable */
-/***************************  LPM register bits definitions  ******************/
-#define  USB_LPMCSR_BESL                     ((uint16_t)0x00F0)             /*!< BESL value received with last ACKed LPM Token  */
-#define  USB_LPMCSR_REMWAKE                  ((uint16_t)0x0008)             /*!< bRemoteWake value received with last ACKed LPM Token */
-#define  USB_LPMCSR_LPMACK                   ((uint16_t)0x0002)             /*!< LPM Token acknowledge enable*/
-#define  USB_LPMCSR_LMPEN                    ((uint16_t)0x0001)             /*!< LPM support enable  */
-/********************  FNR Frame Number Register bit definitions   ************/
-#define USB_FNR_RXDP                         ((uint16_t)0x8000)             /*!< status of D+ data line */
-#define USB_FNR_RXDM                         ((uint16_t)0x4000)             /*!< status of D- data line */
-#define USB_FNR_LCK                          ((uint16_t)0x2000)             /*!< LoCKed */
-#define USB_FNR_LSOF                         ((uint16_t)0x1800)             /*!< Lost SOF */
-#define USB_FNR_FN                           ((uint16_t)0x07FF)             /*!< Frame Number */
-/********************  DADDR Device ADDRess bit definitions    ****************/
-#define USB_DADDR_EF                         ((uint8_t)0x80)                /*!< USB device address Enable Function */
-#define USB_DADDR_ADD                        ((uint8_t)0x7F)                /*!< USB device address */
-/******************************  Endpoint register    *************************/
-#define USB_EP0R                              USB_BASE                   /*!< endpoint 0 register address */
-#define USB_EP1R                             (USB_BASE + 0x04)           /*!< endpoint 1 register address */
-#define USB_EP2R                             (USB_BASE + 0x08)           /*!< endpoint 2 register address */
-#define USB_EP3R                             (USB_BASE + 0x0C)           /*!< endpoint 3 register address */
-#define USB_EP4R                             (USB_BASE + 0x10)           /*!< endpoint 4 register address */
-#define USB_EP5R                             (USB_BASE + 0x14)           /*!< endpoint 5 register address */
-#define USB_EP6R                             (USB_BASE + 0x18)           /*!< endpoint 6 register address */
-#define USB_EP7R                             (USB_BASE + 0x1C)           /*!< endpoint 7 register address */
-/* bit positions */
-#define USB_EP_CTR_RX                        ((uint16_t)0x8000)             /*!<  EndPoint Correct TRansfer RX */
-#define USB_EP_DTOG_RX                       ((uint16_t)0x4000)             /*!<  EndPoint Data TOGGLE RX */
-#define USB_EPRX_STAT                        ((uint16_t)0x3000)             /*!<  EndPoint RX STATus bit field */
-#define USB_EP_SETUP                         ((uint16_t)0x0800)             /*!<  EndPoint SETUP */
-#define USB_EP_T_FIELD                       ((uint16_t)0x0600)             /*!<  EndPoint TYPE */
-#define USB_EP_KIND                          ((uint16_t)0x0100)             /*!<  EndPoint KIND */
-#define USB_EP_CTR_TX                        ((uint16_t)0x0080)             /*!<  EndPoint Correct TRansfer TX */
-#define USB_EP_DTOG_TX                       ((uint16_t)0x0040)             /*!<  EndPoint Data TOGGLE TX */
-#define USB_EPTX_STAT                        ((uint16_t)0x0030)             /*!<  EndPoint TX STATus bit field */
-#define USB_EPADDR_FIELD                     ((uint16_t)0x000F)             /*!<  EndPoint ADDRess FIELD */
-
-/* EndPoint REGister MASK (no toggle fields) */
-#define USB_EPREG_MASK     (USB_EP_CTR_RX|USB_EP_SETUP|USB_EP_T_FIELD|USB_EP_KIND|USB_EP_CTR_TX|USB_EPADDR_FIELD)
-                                                                               /*!< EP_TYPE[1:0] EndPoint TYPE */
-#define USB_EP_TYPE_MASK                     ((uint16_t)0x0600)             /*!< EndPoint TYPE Mask */
-#define USB_EP_BULK                          ((uint16_t)0x0000)             /*!< EndPoint BULK */
-#define USB_EP_CONTROL                       ((uint16_t)0x0200)             /*!< EndPoint CONTROL */
-#define USB_EP_ISOCHRONOUS                   ((uint16_t)0x0400)             /*!< EndPoint ISOCHRONOUS */
-#define USB_EP_INTERRUPT                     ((uint16_t)0x0600)             /*!< EndPoint INTERRUPT */
-#define USB_EP_T_MASK      (~USB_EP_T_FIELD & USB_EPREG_MASK)
-
-#define USB_EPKIND_MASK    (~USB_EP_KIND & USB_EPREG_MASK)            /*!< EP_KIND EndPoint KIND */
-                                                                               /*!< STAT_TX[1:0] STATus for TX transfer */
-#define USB_EP_TX_DIS                        ((uint16_t)0x0000)             /*!< EndPoint TX DISabled */
-#define USB_EP_TX_STALL                      ((uint16_t)0x0010)             /*!< EndPoint TX STALLed */
-#define USB_EP_TX_NAK                        ((uint16_t)0x0020)             /*!< EndPoint TX NAKed */
-#define USB_EP_TX_VALID                      ((uint16_t)0x0030)             /*!< EndPoint TX VALID */
-#define USB_EPTX_DTOG1                       ((uint16_t)0x0010)             /*!< EndPoint TX Data TOGgle bit1 */
-#define USB_EPTX_DTOG2                       ((uint16_t)0x0020)             /*!< EndPoint TX Data TOGgle bit2 */
-#define USB_EPTX_DTOGMASK  (USB_EPTX_STAT|USB_EPREG_MASK)
-                                                                               /*!< STAT_RX[1:0] STATus for RX transfer */
-#define USB_EP_RX_DIS                        ((uint16_t)0x0000)             /*!< EndPoint RX DISabled */
-#define USB_EP_RX_STALL                      ((uint16_t)0x1000)             /*!< EndPoint RX STALLed */
-#define USB_EP_RX_NAK                        ((uint16_t)0x2000)             /*!< EndPoint RX NAKed */
-#define USB_EP_RX_VALID                      ((uint16_t)0x3000)             /*!< EndPoint RX VALID */
-#define USB_EPRX_DTOG1                       ((uint16_t)0x1000)             /*!< EndPoint RX Data TOGgle bit1 */
-#define USB_EPRX_DTOG2                       ((uint16_t)0x2000)             /*!< EndPoint RX Data TOGgle bit1 */
-#define USB_EPRX_DTOGMASK  (USB_EPRX_STAT|USB_EPREG_MASK)
-
-/******************************************************************************/
-/*                                                                            */
 /*                         Window WATCHDOG (WWDG)                             */
 /*                                                                            */
 /******************************************************************************/
@@ -3874,7 +3284,7 @@ typedef struct
 
 /**
   * @}
-  */
+  */ 
 
 /**
   * @}
@@ -3894,8 +3304,6 @@ typedef struct
 /******************************* CRC Instances ********************************/
 #define IS_CRC_ALL_INSTANCE(INSTANCE) ((INSTANCE) == CRC)
 
-/******************************* DAC Instances ********************************/
-#define IS_DAC_ALL_INSTANCE(INSTANCE) ((INSTANCE) == DAC)
 
 /******************************** DMA Instances *******************************/
 #define IS_DMA_STREAM_ALL_INSTANCE(INSTANCE) (((INSTANCE) == DMA1_Stream0) || \
@@ -3922,8 +3330,6 @@ typedef struct
 /******************************** I2S Instances *******************************/
 #define IS_I2S_INSTANCE(INSTANCE)  ((INSTANCE) == SPI2)
 
-/******************************* RNG Instances ********************************/
-#define IS_RNG_ALL_INSTANCE(INSTANCE)  ((INSTANCE) == RNG)
 
 /****************************** RTC Instances *********************************/
 #define IS_RTC_ALL_INSTANCE(INSTANCE)  ((INSTANCE) == RTC)
@@ -4037,13 +3443,10 @@ typedef struct
 
 /*********************** UART Instances : IRDA mode ***************************/
 #define IS_IRDA_INSTANCE(INSTANCE) (((INSTANCE) == USART1) || \
-                                    ((INSTANCE) == USART2))
+                                    ((INSTANCE) == USART2))     
 
 /****************************** IWDG Instances ********************************/
 #define IS_IWDG_ALL_INSTANCE(INSTANCE)  ((INSTANCE) == IWDG)
-
-/****************************** USB Instances ********************************/
-#define IS_USB_ALL_INSTANCE(INSTANCE) ((INSTANCE) == USB)
 
 /****************************** WWDG Instances ********************************/
 #define IS_WWDG_ALL_INSTANCE(INSTANCE)  ((INSTANCE) == WWDG)
@@ -4056,29 +3459,27 @@ typedef struct
 /*  For a painless codes migration between the STM32L0xx device product       */
 /*  lines, the aliases defined below are put in place to overcome the         */
 /*  differences in the interrupt handlers and IRQn definitions.               */
-/*  No need to update developed interrupt code when moving across             */
+/*  No need to update developed interrupt code when moving across             */ 
 /*  product lines within the same STM32L0 Family                              */
 /******************************************************************************/
 
 /* Aliases for __IRQn */
 
-#define LPUART1_IRQn             RNG_LPUART1_IRQn
-#define AES_LPUART1_IRQn         RNG_LPUART1_IRQn
-#define AES_RNG_LPUART1_IRQn     RNG_LPUART1_IRQn
+#define RNG_LPUART1_IRQn         LPUART1_IRQn
+#define AES_LPUART1_IRQn         LPUART1_IRQn
+#define AES_RNG_LPUART1_IRQn     LPUART1_IRQn
 
-#define TIM6_IRQn                TIM6_DAC_IRQn
-
-#define RCC_IRQn      RCC_CRS_IRQn
+#define TIM6_DAC_IRQn     TIM6_IRQn
+#define RCC_CRS_IRQn      RCC_IRQn
 
 /* Aliases for __IRQHandler */
-#define LPUART1_IRQHandler             RNG_LPUART1_IRQHandler
-#define AES_LPUART1_IRQHandler         RNG_LPUART1_IRQHandler
-#define AES_RNG_LPUART1_IRQHandler     RNG_LPUART1_IRQHandler
+#define RNG_LPUART1_IRQHandler         LPUART1_IRQHandler
+#define AES_LPUART1_IRQHandler         LPUART1_IRQHandler
+#define AES_RNG_LPUART1_IRQHandler     LPUART1_IRQHandler
 
-#define TIM6_IRQHandler                TIM6_DAC_IRQHandler
-
-#define RCC_IRQHandler             RCC_CRS_IRQHandler
-
+#define TIM6_DAC_IRQHandler            TIM6_IRQHandler
+#define RCC_CRS_IRQHandler             RCC_IRQHandler
+  
 /**
   * @}
   */
@@ -4091,7 +3492,7 @@ typedef struct
 }
 #endif /* __cplusplus */
 
-#endif /* __STM32L052xx_H */
+#endif /* __STM32L051xx_H */
 
 
 

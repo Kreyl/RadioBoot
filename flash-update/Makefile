@@ -13,7 +13,8 @@ NM                         = $(CROSS)nm
 
 #----------------------------------------------------------
 #MCU                         = STM32F072RB
-MCU							= STM32L151C8
+#MCU						= STM32L151C8
+MCU							= STM32L052K8
 TARGET_NAME                 = flash_update-core
 HEADER_TARGET               = flash_update
 #----------------------------------------------------------
@@ -25,6 +26,7 @@ LD_SCRIPT                   = script.ld
 CMSIS_DIR                   = ../rexos/CMSIS
 #CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32F0xx
 CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L1xx
+CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L0xx
 #----------------------------------------------------------
 INCLUDE_FOLDERS             = $(CMSIS_DIR)/Include $(CMSIS_DEVICE_DIR)/Include
 
@@ -56,7 +58,8 @@ all: $(TARGET_NAME).elf
 	@python bin2h.py $(OUTPUT_DIR)/$(TARGET_NAME).bin $(HEADER_TARGET) $(MCU)
 	@mkdir -p $(RAMCODE_DIR)
 	@mv $(HEADER_TARGET).* $(RAMCODE_DIR)
-	@cp -vf $(RAMCODE_DIR)/$(HEADER_TARGET).* ../rboot-main
+#	@cp -vf $(RAMCODE_DIR)/$(HEADER_TARGET).* ../rboot-main
+	@cp -vf $(RAMCODE_DIR)/$(HEADER_TARGET).* ../../usb_switcher/firmware
 
 .c.o:
 	@-mkdir -p $(BUILD_DIR)

@@ -1440,22 +1440,6 @@ typedef struct
 /******************  Bit definition for FLASH_WRPR register  ******************/
 #define  FLASH_WRPR_WRP                      ((uint32_t)0x0000FFFF)        /*!< Write Protection bits */
 
-/***************************  Keys  *******************************************/
-#define FLASH_PEKEY1                         ((uint32_t)0x89ABCDEF)        /*!< Flash EEPROM and FLASH_PECR register key1 */
-#define FLASH_PEKEY2                         ((uint32_t)0x02030405)        /*!< used to unlock EEPROM and FLASH_PECR. */
-
-#define FLASH_PDKEY1                         ((uint32_t)0x04152637)        /*!< Flash power down key1 */
-#define FLASH_PDKEY2                         ((uint32_t)0xFAFBFCFD)        /*!< Flash power down key2:
-                                                                                used with FLASH_PDKEY1 to unlock the RUN_PD bit in FLASH_ACR */
-
-#define FLASH_PRGKEY1                        ((uint32_t)0x8C9DAEBF)        /*!< Flash program memory key1 */
-#define FLASH_PRGKEY2                        ((uint32_t)0x13141516)        /*!< Flash program memory key2:
-                                                                                used with FLASH_PRGKEY2 to unlock the program memory */
-
-#define FLASH_OPTKEY1                        ((uint32_t)0xFBEAD9C8)        /*!< Flash option key1 */
-#define FLASH_OPTKEY2                        ((uint32_t)0x24252627)        /*!< Flash option key2:
-                                                                                used with FLASH_OPTKEY1 to unlock the write access to the option byte block */
-
 /******************************************************************************/
 /*                                                                            */
 /*                       General Purpose IOs (GPIO)                           */

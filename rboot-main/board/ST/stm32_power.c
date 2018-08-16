@@ -6,8 +6,10 @@
  */
 
 #include <stdbool.h>
-#include "stm32.h"
 #include "stm32_power.h"
+#include "stm32.h"
+
+#include "stm32_config.h"
 
 
 #if defined(STM32F1)
@@ -297,15 +299,20 @@ static bool stm32_power_pll_on(STM32_CLOCK_SOURCE_TYPE src)
 {
     RCC->CFGR &= ~(0xf << 18);
     RCC->CFGR |= (PLL_MUL - 2) << 18;
-    RCC->CFGR2 = (PLL_DIV - 1) & 0xf;
+
+    // PLL_DIV not used in STM32F0
+    // RCC->CFGR2 = (PLL_DIV - 1) & 0xf; // Fuck this shit.
 
     //Actually there is NO PLL_SRC0 bit on 072 at least.
+
 #if (HSE_VALUE)
     if (src == STM32_CLOCK_SOURCE_HSE)
         RCC->CFGR |= (1 << 16);
     else
 #endif
+    {
         RCC->CFGR &= ~(1 << 16);
+    }
     //turn PLL on
     RCC->CR |= RCC_CR_PLLON;
     while (!(RCC->CR & RCC_CR_PLLRDY)) {}
@@ -640,6 +647,7 @@ void power_init()
     RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
 #endif
 #endif //SYSCFG_ENABLED
+
 #if defined (STM32L0) || defined(STM32F03x) || defined(STM32F04x) || defined(STM32F05x)
     PWR->CSR &= ~(PWR_CSR_EWUP1 | PWR_CSR_EWUP2);
 #elif defined (STM32L1)

@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include "../rexos/userspace/stm32/stm32.h"
 
-#if defined(STM32F0)
+#if defined(STM32F0) || defined(STM32F1)
 #define FLASH_PAGE_SIZE                       1024
 #elif defined(STM32L0)
 #define FLASH_PAGE_SIZE                       128
@@ -26,7 +26,7 @@ static inline void flash_cmd_unlock()
     /* (1) Wait till no operation is on going */
     while ((FLASH->SR & FLASH_SR_BSY) != 0);
 
-#if defined(STM32F0)
+#if defined(STM32F0) || defined(STM32F1)
     /* (2) Check that the Flash is unlocked */
     if ((FLASH->CR & FLASH_CR_LOCK) != 0)
     {
@@ -68,7 +68,7 @@ static inline void flash_cmd_lock()
     /* Wait till no operation is on going */
     while ((FLASH->SR & FLASH_SR_BSY) != 0);
     /* lock FLASH */
-#if defined(STM32F0)
+#if defined(STM32F0) || defined(STM32F1)
     FLASH->CR |= FLASH_CR_LOCK;
 #elif defined(STM32L1)
     FLASH->PECR |= FLASH_PECR_PELOCK;
@@ -79,9 +79,12 @@ static inline void flash_cmd_lock()
 #endif
 }
 
-#if defined(STM32F0)
+#if defined(STM32F0) || defined(STM32F1)
 static void flash_cmd_program_prepare()
 {
+#if defined(STM32F1)
+    while ((FLASH->SR & FLASH_SR_BSY) != 0);        /* (0) Wait until the BSY bit is reset in the FLASH_SR register */
+#endif // STM32F1
     FLASH->CR |= FLASH_CR_PG;                       /* (1) Set the PG bit in the FLASH_CR register to enable programming */
                                                     /* (2) Perform program */
 }
@@ -141,7 +144,7 @@ static inline void flash_cmd_disable_half_page_write()
 // FLASH memory must be already unlocked.
 static inline int flash_cmd_erase(uint32_t addr)
 {
-#if defined(STM32F0)
+#if defined(STM32F0) || defined(STM32F1)
     FLASH->CR |= FLASH_CR_PER;                      /* (1) Set the PER bit in the FLASH_CR register to enable page erasing */
     FLASH->AR = addr;                               /* (2) Program the FLASH_AR register to select a page to erase */
     FLASH->CR |= FLASH_CR_STRT;                     /* (3) Set the STRT bit in the FLASH_CR register to start the erasing */
@@ -201,7 +204,7 @@ static inline int flash_cmd_program_half_page(unsigned int addr, unsigned int da
 
 static inline int flash_cmd_program_word(unsigned int addr, unsigned int data)
 {
-#if defined(STM32F0)
+#if defined(STM32F0) || defined(STM32F1)
     flash_cmd_program_prepare();
     *((uint16_t*)addr) = (uint16_t)data;
     *((uint16_t*)(addr + sizeof(uint16_t))) = (uint16_t)(data >> 16);
@@ -230,16 +233,19 @@ static inline void flash_cmd_program(uint32_t dst, uint32_t src, int size)
 #endif // STM32L1
 
     /* program full words of source */
-    for (; size >= sizeof(uint32_t); size -= sizeof(uint32_t), dst += sizeof(uint32_t), src += sizeof(uint32_t))
+    for (; size > sizeof(uint32_t); size -= sizeof(uint32_t), dst += sizeof(uint32_t), src += sizeof(uint32_t))
         flash_cmd_program_word(dst, *(unsigned int*)src);
 
     /* program last word. If word is not full - other bytes will be 0x00 */
-    while(size-- != 0)
+    if(size != 0)
     {
-        last_word <<= 8;
-        last_word |= *(uint8_t*)(src + size);
+        while(size-- != 0)
+        {
+            last_word <<= 8;
+            last_word |= *(uint8_t*)(src + size);
+        }
+        flash_cmd_program_word(dst, last_word);
     }
-    flash_cmd_program_word(dst, last_word);
 }
 
 // IRQ should be disabled

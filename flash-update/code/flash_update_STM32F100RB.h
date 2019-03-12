@@ -2,8 +2,8 @@
 *      Author: RL
 */
 
-#ifndef FLASH_UPDATE_H
-#define FLASH_UPDATE_H
+#ifndef FLASH_UPDATE_STM32F100RB_H
+#define FLASH_UPDATE_STM32F100RB_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -26,4 +26,4 @@ extern const uint8_t __FLASH_UPD[FLASH_UPD_SIZE];
 
 typedef int (*FLASH_UPD_TYPE)(unsigned int, unsigned int, int, bool);
 
-#endif // FLASH_UPDATE_H
+#endif // FLASH_UPDATE_STM32F100RB_H

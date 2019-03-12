@@ -12,11 +12,14 @@ OBJDUMP                    = $(CROSS)objdump
 NM                         = $(CROSS)nm
 
 #----------------------------------------------------------
-#MCU                        = STM32F072RB
+#MCU                   		= STM32F072RB
+#MCU							= STM32L052K8
 #MCU							= STM32L151C8
-MCU							= STM32L052K8
+MCU							= STM32F100RB
+
 TARGET_NAME                 = flash_update-core
-HEADER_TARGET               = flash_update
+
+HEADER_TARGET               = flash_update_$(MCU)
 #----------------------------------------------------------
 BUILD_DIR                   = build
 OUTPUT_DIR                  = output
@@ -25,8 +28,9 @@ LD_SCRIPT                   = script.ld
 #----------------------------------------------------------
 CMSIS_DIR                   = ../rexos/CMSIS
 #CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32F0xx
+#CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L0xx
 #CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L1xx
-CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32L0xx
+CMSIS_DEVICE_DIR            = $(CMSIS_DIR)/Device/ST/STM32F10x
 #----------------------------------------------------------
 INCLUDE_FOLDERS             = $(CMSIS_DIR)/Include $(CMSIS_DEVICE_DIR)/Include
 
@@ -38,10 +42,15 @@ SRC_C                       = main.c
 OBJ                         = $(SRC_AS:%.S=%.o) $(SRC_C:%.c=%.o)
 #----------------------------------------------------------
 DEFINES                     = -D$(MCU)
-MCU_FLAGS                   = -mcpu=cortex-m0 -mthumb -D__CORTEX_M0 -D__thumb2__=1 -mtune=cortex-m0 -mapcs-frame -fpic -std=gnu99
+ifeq ($(LIB_FOLDER), STM32F0xx)
+MCU_FLAGS                   = -mcpu=cortex-m0 -mthumb -D__CORTEX_M0 -D__thumb2__=1 -mtune=cortex-m0 -mapcs-frame -std=gnu99
+else 
+MCU_FLAGS                   = -mcpu=cortex-m3 -mthumb -D__CORTEX_M3 -D__thumb2__=1 -mtune=cortex-m3 -msoft-float -mapcs-frame -std=gnu99
+endif
 NO_DEFAULTS                 = -fdata-sections -ffunction-sections -fno-hosted -fno-builtin  -nostdlib -nodefaultlibs
-FLAGS_CC                    = $(INCLUDES) $(DEFINES) -I. -O$(OPTIMIZATION) -Wall -c -fmessage-length=0 $(MCU_FLAGS) $(NO_DEFAULTS)
-FLAGS_LD                    = -Xlinker --gc-sections $(MCU_FLAGS)
+FPIC						+= -fpic
+FLAGS_CC                    = $(INCLUDES) $(DEFINES) -I. -O$(OPTIMIZATION) -Wall -c -fmessage-length=0 $(MCU_FLAGS) $(NO_DEFAULTS) $(FPIC)
+FLAGS_LD                    = -Xlinker --gc-sections $(MCU_FLAGS) $(FPIC)
 #----------------------------------------------------------
 all: $(TARGET_NAME).elf
 

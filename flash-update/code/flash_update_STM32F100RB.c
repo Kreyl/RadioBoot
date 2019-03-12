@@ -2,7 +2,7 @@
 *      Author: RL
 */
 
-#include "flash_update.h"
+#include "flash_update_STM32F100RB.h"
 
 /* Automatically composed file - DO NOT CHANGE */
 /* Target MCU: STM32F100RB */

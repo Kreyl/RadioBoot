@@ -47,8 +47,11 @@ static inline void flash_cmd_unlock()
         while((FLASH->PECR & FLASH_PECR_PELOCK) != 0);
     }
 
+#if defined(STM32L1)
     /* Wait till no operation is on going */
-    while ((FLASH->SR & FLASH_SR_BSY) != 0);
+    /* This generates HARD FAULT on stm32l052 */
+//    while ((FLASH->SR & FLASH_SR_BSY) != 0);
+#endif // STM32L1
 
     /* Check that the PELOCK is unlocked */
     if ((FLASH->PECR & FLASH_PECR_PELOCK) == 0)
@@ -193,8 +196,12 @@ static inline int flash_cmd_program_half_page(unsigned int addr, unsigned int da
     /* Wait for the BSY bit to be cleared */
     while ((FLASH->SR & FLASH_SR_BSY) != 0);
 #if defined(STM32L0)
-    /* Wait for the EOP bit to be cleared */
-    while ((FLASH->SR & FLASH_SR_EOP) != 0);
+    /* Check the EOP flag in the FLASH_SR register */
+    if ((FLASH->SR & FLASH_SR_EOP) != 0)
+    {
+        /* clear it by software by writing it at 1 */
+        FLASH->SR = FLASH_SR_EOP;
+    }
 #endif // STM32L0
 
     flash_cmd_disable_half_page_write();
@@ -221,7 +228,7 @@ static inline void flash_cmd_program(uint32_t dst, uint32_t src, int size)
     unsigned int last_word = 0;
 
     /* HALF PAGE WRITE FROZEN AT SMT32L0 :( */
-#if defined(STM32L1)
+#if defined(STM32L1) || defined(STM32L0)
     uint8_t buffer[FLASH_HALF_PAGE_SIZE] = { 0 };
     /* program half pages of source */
     for(; size >= FLASH_HALF_PAGE_SIZE; size -= FLASH_HALF_PAGE_SIZE, dst += FLASH_HALF_PAGE_SIZE, src += FLASH_HALF_PAGE_SIZE)
@@ -272,9 +279,10 @@ int flash_update(unsigned int dst_addr, unsigned int src_addr, int bytes_to_copy
     /* lock flash */
     flash_cmd_lock();
 
-    /* Reset core */
     if(!reset)
         return 0;
+
+    /* Reset core */
     NVIC_SystemReset();
     /* Never return */
     HALT();

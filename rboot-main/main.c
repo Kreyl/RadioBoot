@@ -13,9 +13,9 @@
 #define RAM
 
 #ifdef RAM
-#include "flash_update.h"
+#include "flash_update_STM32L052K8.h"
 #else
-//#include "f_upd_test.h"
+#include "f_upd_test.h"
 #endif
 
 //#include "test.h"
@@ -49,14 +49,18 @@ int main(void)
 #endif
 
 #if (DFU_DEBUG)
+#if defined(RAM)
+    printf("Update firmware from RAM...\n");
+#else
     printf("Update firmware...\n");
+#endif
 #endif
     __disable_irq();
 
 #ifdef RAM
-    flash_upd_sram(ram, 0x08007000, 0x08000000, 1050);
+    flash_upd_sram(ram, 0x08007000, 0x08000000, 128, false);
 #else
-//    flash_update(0x08007000, 0x08000000, 2048);
+    flash_update(0x08007000, 0x08000000, 2048);
 #endif
 
     __enable_irq();
